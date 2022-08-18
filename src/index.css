@@ -22,7 +22,7 @@ code {
   height: 100vh;
 }
 
-button{
+button {
   background-color: #141414;
   border: 1px solid rgba(54, 54, 54, 0.6);
   font-weight: 600;
@@ -37,4 +37,12 @@ button{
   color: white;
   width: 130px;
   opacity: 1;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid rgba(54, 54, 54, 0.6);
+  border-radius: 50px;
 }

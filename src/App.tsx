@@ -1,28 +1,29 @@
 import { useRef, useState } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
 import { ElementDefinition } from "cytoscape";
+import { layouts } from "./layouts";
 
 function App() {
   const cyRef = useRef<cytoscape.Core | undefined>();
-
-  const gerarGrafo = (n = 8, m = n * 2) => {
+  const [layout, setLayout] = useState(layouts.klay);
+  const randomGraph = (n = 8, m = n * 2) => {
     function randint(min: number, max: number): number {
       return min + Math.floor(Math.random() * (max - min));
     }
 
     const ids = [];
     for (let i = 0; i < n; i++) {
-      ids.push(String.fromCharCode("a".charCodeAt(0) + i));
+      ids.push(String(i));
     }
 
-    const elementos: ElementDefinition[] = [];
+    const nodes: ElementDefinition[] = [];
 
     ids.forEach((id) => {
-      elementos.push({
+      nodes.push({
         data: { id, label: id },
         position: {
-          x: 300 + Math.random() * 500,
-          y: 100 + Math.random() * 500,
+          x: 200 + randint(100, 800),
+          y: 100 + randint(100, 600),
         },
       });
     });
@@ -32,33 +33,29 @@ function App() {
       let id1 = ids[idIndex1];
       const id2 = ids[randint(false ? idIndex1 + 1 : 0, ids.length)];
 
-      if (id1 === id2) {
-        id1 = ids[randint(0, ids.length)];
-      }
-      elementos.push({ data: { source: id1, target: id2 } });
+      id1 !== id2 && nodes.push({ data: { source: id1, target: id2 } });
     }
-    return elementos;
+    return nodes;
   };
-
-  const [elementos, setElementos] = useState(() => gerarGrafo(8));
-  console.log("elemnt", elementos);
+  const [elements, setElements] = useState(() => randomGraph(8));
+  console.log("elemnt", elements);
+  console.log(layouts.random);
   return (
     <div className="container">
       <div className="buttonContainer">
-        <button onClick={() => setElementos(gerarGrafo())}>new graph</button>
+        <button onClick={() => setElements(randomGraph())}>new graph</button>
+        <button onClick={() => setLayout(layouts.random)}>Random layout</button>
+        <button onClick={() => setLayout(layouts.grid)}>Grid layout</button>
+        <button onClick={() => setLayout(layouts.circle)}>Circle layout</button>
       </div>
       <CytoscapeComponent
-        elements={elementos}
+        elements={elements}
         style={{
           width: "1200px",
           height: "700px",
           border: "1px solid black",
         }}
-        // layout={{
-        //   name: "grid",
-        //   rows: 3,
-        // }}
-
+        layout={layout}
         stylesheet={[
           {
             selector: "node",
@@ -79,12 +76,6 @@ function App() {
                 console.log("atributeDepois", nodeAtribute);
                 return labelFinal;
               },
-            },
-          },
-          {
-            selector: "edge",
-            style: {
-              width: 5,
             },
           },
         ]}
