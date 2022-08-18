@@ -20,14 +20,21 @@ function App() {
     ids.forEach((id) => {
       elementos.push({
         data: { id, label: id },
-        position: { x: 100 + Math.random() * 5, y: 100 + Math.random() * 4 },
+        position: {
+          x: 300 + Math.random() * 500,
+          y: 100 + Math.random() * 500,
+        },
       });
     });
 
     for (let i = 0; i < m; i++) {
       const idIndex1 = randint(0, ids.length);
-      const id1 = ids[idIndex1];
+      let id1 = ids[idIndex1];
       const id2 = ids[randint(false ? idIndex1 + 1 : 0, ids.length)];
+
+      if (id1 === id2) {
+        id1 = ids[randint(0, ids.length)];
+      }
       elementos.push({ data: { source: id1, target: id2 } });
     }
     return elementos;
@@ -39,70 +46,12 @@ function App() {
     <div className="container">
       <div className="buttonContainer">
         <button onClick={() => setElementos(gerarGrafo())}>new graph</button>
-        <button onClick={() => setElementos(gerarGrafo())}>new graph</button>
       </div>
       <CytoscapeComponent
-        elements={[
-          {
-            data: { id: "1", label: "Node 1" },
-            position: { x: 0, y: 0 },
-          },
-          { data: { id: "2", label: "Node 2" }, position: { x: 100, y: 0 } },
-          {
-            data: { id: "3", label: "Node 3" },
-            position: { x: 100, y: 200 },
-          },
-          {
-            data: { id: "4", label: "Node 3" },
-            position: { x: 300, y: 100 },
-          },
-          {
-            data: { id: "5", label: "Node 5" },
-            position: { x: 400, y: 50 },
-          },
-          {
-            data: { id: "6", label: "Node 5" },
-            position: { x: 400, y: 50 },
-          },
-          {
-            data: {
-              source: "1",
-              target: "2",
-              label: "Edge from Node1 to Node2",
-            },
-          },
-          {
-            data: {
-              source: "3",
-              target: "4",
-              label: "Edge from Node3 to Node4",
-            },
-          },
-          {
-            data: {
-              source: "4",
-              target: "5",
-              label: "Edge from Node4 to Node5",
-            },
-          },
-          {
-            data: {
-              source: "6",
-              target: "2",
-              label: "Edge from Node5 to Node2",
-            },
-          },
-          {
-            data: {
-              source: "1",
-              target: "3",
-              label: "Edge from Node5 to Node2",
-            },
-          },
-        ]}
+        elements={elementos}
         style={{
-          width: "800px",
-          height: "500px",
+          width: "1200px",
+          height: "700px",
           border: "1px solid black",
         }}
         // layout={{
@@ -125,15 +74,6 @@ function App() {
                 let labelFinal = "";
                 Object.keys(nodeAtribute).map(function (key, index) {
                   labelFinal += ` ${key} = ${nodeAtribute[key]} `;
-                  console.log(
-                    "🚀 ~ file: App.tsx ~ line 95 ~ labelFinal",
-                    labelFinal
-                  );
-                  console.log(
-                    "🚀 ~ file: App.tsx ~ line 95 ~ nodeAtribute[key]",
-                    nodeAtribute[key]
-                  );
-                  console.log("🚀 ~ file: App.tsx ~ line 104 ~ key", key);
                 });
 
                 console.log("atributeDepois", nodeAtribute);
