@@ -16,7 +16,7 @@ code {
     monospace;
 }
 
-.container {
+.wrapper {
   display: grid;
   place-items: center;
   height: 100vh;
@@ -39,6 +39,19 @@ button {
   opacity: 1;
 }
 
+.mainContainer {
+  display: flex;
+  gap: 100px;
+  width: 100%;
+  justify-content: center;
+}
+
+.subtitle {
+  display: inline-flex;
+  margin-inline: 20px;
+  align-items: center;
+  flex-direction: column;
+}
 .buttonContainer {
   display: flex;
   gap: 20px;
