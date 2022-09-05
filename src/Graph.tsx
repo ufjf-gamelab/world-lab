@@ -1,17 +1,25 @@
-import { useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { layouts } from "./layouts";
 import CytoscapeComponent from "react-cytoscapejs";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 interface INode {
   id: string;
   label: string;
 }
+interface IClickedPosition {
+  x: number;
+  y: number;
+}
 export function Graph() {
   const cyRef = useRef<cytoscape.Core | undefined>();
   const [layout, setLayout] = useState(layouts.klay);
-  const [isCreatingNode, setIsCreatingNode] = useState(layouts.klay);
-  const [node, setNode] = useState<INode>();
-
+  const [isCreatingNode, setIsCreatingNode] = useState(false);
+  const [isFirstNodeSelected, setIsFirstNodeSelected] = useState(false);
+  const [primaryNode, setPrimaryNode] = useState<INode | null>(null);
+  const [numberOfNodes, setNumberOfNodes] = useState<number>(6);
+  const [secondaryNode, setSecondaryNode] = useState<INode | null>(null);
+  const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const defaultGraph = [
     {
       data: { id: "1", label: "Node 1" },
@@ -146,20 +154,80 @@ export function Graph() {
       },
     },
   ];
+
   const [elements, setElements] = useState(defaultGraph);
+
+  useEffect(() => {
+    const localElements = JSON.parse(window.localStorage.getItem("elements")!);
+    setElements(localElements);
+  }, []);
+
+  useEffect(() => {
+    if (clickedPosition && isCreatingNode) {
+      const newId = numberOfNodes + 1;
+      setElements((oldState) => [
+        ...oldState,
+        {
+          data: { id: newId.toString(), label: "Teste" },
+          position: { x: clickedPosition.x, y: clickedPosition.y },
+        },
+      ]);
+
+      window.localStorage.setItem("elements", JSON.stringify(elements));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clickedPosition]);
+
+  useEffect(() => {
+    if (secondaryNode) {
+      setElements((oldState) => [
+        ...oldState,
+        {
+          data: {
+            source: primaryNode ? primaryNode?.id : "",
+            target: secondaryNode ? secondaryNode?.id : "",
+            label: "Edge from Node1 to Node2",
+          },
+        },
+      ]);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secondaryNode]);
+
   const containerStyle = {
     width: "1200px",
     height: "700px",
     border: "1px solid black",
   };
 
+  const deleteNode = (selectedNode: any) => {
+    const newElements = elements.filter((node) => {
+      if (node.data.id !== selectedNode.id) {
+        console.log("node.data.id", node.data.id);
+        return true;
+      } else {
+        return false;
+      }
+    });
+    console.log(
+      "🚀 ~ file: Graph.tsx ~ line 220 ~ newElements ~ newElements",
+      newElements
+    );
+
+    setElements(newElements);
+  };
   return (
     <div className="wrapper">
       <div className="buttonContainer">
         <button onClick={() => setLayout(layouts.random)}>Random layout</button>
+        <button onClick={() => setElements(defaultGraph)}>Reset Nodes</button>
         <button onClick={() => setLayout(layouts.grid)}>Grid layout</button>
         <button onClick={() => setLayout(layouts.circle)}>Circle layout</button>
-        <button onClick={() => setLayout(layouts.circle)}>Create Node</button>
+        <button onClick={() => setIsCreatingNode(!isCreatingNode)}>
+          Create Node
+        </button>
+        <h4>creating node = {isCreatingNode ? "true" : "false"}</h4>
       </div>
       <div className="mainContainer">
         <CytoscapeComponent
@@ -179,7 +247,7 @@ export function Graph() {
                   const nodeAtribute = node.data();
                   let labelFinal = "";
                   Object.keys(nodeAtribute).map(function (key, index) {
-                    labelFinal += ` ${key} = ${nodeAtribute[key]} `;
+                    return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
                   });
 
                   return labelFinal;
@@ -187,7 +255,7 @@ export function Graph() {
               },
             },
             {
-              selector: "node#0",
+              selector: "node#1",
               style: {
                 "background-color": "red",
                 color: "red",
@@ -196,32 +264,44 @@ export function Graph() {
           ]}
           cy={(cy) => {
             cy.on("tap", function (event) {
-              console.log("🚀 ~ file: App.tsx ~ line 191 ~ event", event);
-              // target holds a reference to the originator
-              // of the event (core or element)
+              setNumberOfNodes(cy.nodes().length);
               var evtTarget = event.target;
+              // cy.$("#j").neighborhood((ele: any) => {
+              //   return ele.isNode();
+              // });
+
+              // console.log(je.connectedNodes());
 
               if (evtTarget === cy) {
-                console.log("tap on background");
+                if (isCreatingNode) setClickedPosition(event.position);
               } else {
                 var node = event.target;
-                let data = node._private.data;
+                let clickedNodedata = node._private.data;
 
-                if (event.target.nodeKey !== null) setNode(data);
-                console.log("tapped " + data);
+                if (node._private.nodeKey !== null && !isFirstNodeSelected) {
+                  setPrimaryNode(clickedNodedata);
+                  console.log("entrei IF1", !isFirstNodeSelected);
+                  setIsFirstNodeSelected(true);
+                } else if (
+                  node._private.nodeKey !== null &&
+                  !isFirstNodeSelected
+                ) {
+                  setSecondaryNode(clickedNodedata);
+                }
               }
             });
           }}
         />
         <div>
           <h1>Data</h1>
+          <button onClick={() => deleteNode(primaryNode)}>Delete Node</button>
           <div className="subtitle">
             <h2>Node ID</h2>
-            <h3>{node?.id}</h3>
+            <h3>{primaryNode?.id}</h3>
           </div>
           <div className="subtitle">
             <h2>Node Label</h2>
-            <h3>{node?.label}</h3>
+            <h3>{primaryNode?.label}</h3>
           </div>
         </div>
       </div>
