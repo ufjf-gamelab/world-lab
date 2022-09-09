@@ -46,6 +46,12 @@ button {
   justify-content: center;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
 .subtitle {
   display: inline-flex;
   margin-inline: 20px;
