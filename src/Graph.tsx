@@ -170,6 +170,7 @@ export function Graph() {
   const [elements, setElements] = useState(defaultGraph);
 
   useEffect(() => {
+    window.localStorage.setItem("elements", JSON.stringify(elements));
     const localElements = JSON.parse(window.localStorage.getItem("elements")!);
     setElements(localElements);
   }, []);
