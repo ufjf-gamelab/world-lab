@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { layouts } from "./layouts";
 import CytoscapeComponent from "react-cytoscapejs";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 interface INode {
   id: string;
@@ -18,6 +19,13 @@ interface IClickedPosition {
   x: number;
   y: number;
 }
+type Inputs = {
+  label: string;
+  difficulty: number;
+  isVisited: string;
+  exampleRequired: string;
+};
+
 export function Graph() {
   const cyRef = useRef<cytoscape.Core | undefined>();
   const [layout, setLayout] = useState(layouts.klay);
@@ -29,6 +37,14 @@ export function Graph() {
   const [secondaryNode, setSecondaryNode] = useState<INode | null>(null);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
   const defaultGraph = [
     {
       data: { id: "1", label: "Node 1", difficulty: 5, isVisited: false },
@@ -344,7 +360,25 @@ export function Graph() {
               <h3>{primaryNode?.isVisited ? "true" : "false"}</h3>
             </div>
           </>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* register your input into the hook by invoking the "register" function */}
+            <input defaultValue={primaryNode?.label} {...register("label")} />
+            <input
+              defaultValue={primaryNode?.difficulty}
+              {...register("difficulty")}
+            />
+            <input
+              defaultValue={primaryNode?.isVisited ? "true" : "false"}
+              {...register("isVisited")}
+            />
 
+            {/* include validation with required or other standard HTML validation rules */}
+            <input {...register("exampleRequired", { required: true })} />
+            {/* errors will return when field validation fails  */}
+            {errors.exampleRequired && <span>This field is required</span>}
+
+            <input type="submit" />
+          </form>
           <>
             <div className="header">
               <h1>Edge Data</h1>
