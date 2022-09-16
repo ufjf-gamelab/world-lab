@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { layouts } from "./layouts";
+import { GrAddCircle, GrEdit } from "react-icons/gr";
 import CytoscapeComponent from "react-cytoscapejs";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -23,7 +24,6 @@ type Inputs = {
   label: string;
   difficulty: number;
   isVisited: string;
-  exampleRequired: string;
 };
 
 export function Graph() {
@@ -31,11 +31,13 @@ export function Graph() {
   const [layout, setLayout] = useState(layouts.klay);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
   const [isNodeSelected, setIsNodeSelected] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [primaryNode, setPrimaryNode] = useState<INode | null>(null);
   const [relationship, setRelationship] = useState<INode[] | []>([]);
   const [numberOfNodes, setNumberOfNodes] = useState<number>(7);
   const [secondaryNode, setSecondaryNode] = useState<INode | null>(null);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
+  const [numberOfAtributes, setNumberOfAtributes] = useState<any>();
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
   const {
     register,
@@ -43,7 +45,21 @@ export function Graph() {
     watch,
     formState: { errors },
   } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = (nodeData: Inputs) => {
+    const data = {
+      label: nodeData.label,
+      difficulty: nodeData.difficulty,
+      isVisited: nodeData.isVisited,
+    };
+
+    cyRef.current?.$(`#${primaryNode?.id}`).data({
+      label: nodeData.label,
+      difficulty: nodeData.difficulty,
+      isVisited: nodeData.isVisited,
+    });
+
+    console.log(cyRef?.current?.nodes());
+  };
 
   const defaultGraph = [
     {
@@ -194,7 +210,6 @@ export function Graph() {
   useEffect(() => {
     if (clickedPosition && isCreatingNode) {
       const newId = numberOfNodes + 1;
-      console.log("number of nides", numberOfNodes);
       setElements((oldState) => [
         ...oldState,
         {
@@ -215,7 +230,6 @@ export function Graph() {
   }, [clickedPosition]);
   useEffect(() => {
     if (relationship.length === 2) {
-      console.log("entrei if 2");
       setElements((oldState) => [
         ...oldState,
         {
@@ -232,14 +246,8 @@ export function Graph() {
   }, [relationship]);
 
   const createRelationship = (node: INode) => {
-    console.log("entrei", node);
     if (relationship.length < 2) {
       setRelationship([...relationship, node]);
-      console.log(
-        "🚀 ~ file: Graph.tsx ~ line 204 ~ createRelationship ~ setRelationship",
-        relationship
-      );
-      console.log("entrei if 1", relationship);
     }
   };
   const containerStyle = {
@@ -301,7 +309,6 @@ export function Graph() {
             cyRef.current = cy;
             setNumberOfNodes(cy.nodes().length + 1);
             cy.on("tap", "node", function (event) {
-              var evtTarget = event.target;
               var node = event.target;
               let clickedElement = node._private.data;
               if (node._private.nodeKey === null) {
@@ -335,68 +342,80 @@ export function Graph() {
             });
           }}
         />
-        <div>
+        <div className="container">
           <>
             <div className="header">
               <h1>Data</h1>
+
+              <GrEdit onClick={() => setIsEditing(!isEditing)} />
+              <GrAddCircle />
               <button onClick={() => deleteNode(primaryNode)}>
                 Delete Node
               </button>
             </div>
-            <div className="subtitle">
-              <h2>Node ID</h2>
-              <h3>{primaryNode?.id}</h3>
-            </div>
-            <div className="subtitle">
-              <h2>Node Label</h2>
-              <h3>{primaryNode?.label}</h3>
-            </div>
-            <div className="subtitle">
-              <h2>Difficulty</h2>
-              <h3>{primaryNode?.difficulty}</h3>
-            </div>
-            <div className="subtitle">
-              <h2>Visited</h2>
-              <h3>{primaryNode?.isVisited ? "true" : "false"}</h3>
-            </div>
+            {!isEditing && (
+              <>
+                <div className="subtitle">
+                  <h2>Node ID</h2>
+                  <h3>{primaryNode?.id}</h3>
+                </div>
+                <div className="subtitle">
+                  <h2>Node Label</h2>
+                  <h3>{primaryNode?.label}</h3>
+                </div>
+                <div className="subtitle">
+                  <h2>Difficulty</h2>
+                  <h3>{primaryNode?.difficulty}</h3>
+                </div>
+                <div className="subtitle">
+                  <h2>Visited</h2>
+                  <h3>{primaryNode?.isVisited ? "true" : "false"}</h3>
+                </div>
+              </>
+            )}
           </>
+
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* register your input into the hook by invoking the "register" function */}
-            <input defaultValue={primaryNode?.label} {...register("label")} />
+            <h5>Label</h5>
+            <input
+              defaultValue={primaryNode?.label}
+              {...register("label", { required: true })}
+            />
+            <h5>difficulty</h5>
             <input
               defaultValue={primaryNode?.difficulty}
               {...register("difficulty")}
             />
+            <h5>isVisited</h5>
             <input
               defaultValue={primaryNode?.isVisited ? "true" : "false"}
-              {...register("isVisited")}
+              {...register("isVisited", { required: true })}
             />
-
-            {/* include validation with required or other standard HTML validation rules */}
-            <input {...register("exampleRequired", { required: true })} />
-            {/* errors will return when field validation fails  */}
-            {errors.exampleRequired && <span>This field is required</span>}
 
             <input type="submit" />
           </form>
-          <>
-            <div className="header">
-              <h1>Edge Data</h1>
-            </div>
-            <div className="subtitle">
-              <h2>Source</h2>
-              <h3>{selectedEdge?.source}</h3>
-            </div>
-            <div className="subtitle">
-              <h2>Target</h2>
-              <h3>{selectedEdge?.target}</h3>
-            </div>
 
-            <div className="subtitle">
-              <h2>Label</h2>
-              <h3>{selectedEdge?.label}</h3>
-            </div>
-          </>
+          {!isEditing && (
+            <>
+              <div className="header">
+                <h1>Edge Data</h1>
+              </div>
+              <div className="subtitle">
+                <h2>Source</h2>
+                <h3>{selectedEdge?.source}</h3>
+              </div>
+              <div className="subtitle">
+                <h2>Target</h2>
+                <h3>{selectedEdge?.target}</h3>
+              </div>
+
+              <div className="subtitle">
+                <h2>Label</h2>
+                <h3>{selectedEdge?.label}</h3>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
