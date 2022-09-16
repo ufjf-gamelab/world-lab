@@ -1,14 +1,23 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { layouts } from "./layouts";
-import { GrAddCircle, GrEdit } from "react-icons/gr";
+import { GrEdit } from "react-icons/gr";
 import CytoscapeComponent from "react-cytoscapejs";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 
 interface INode {
   id: string;
   label: string;
   difficulty: number;
   isVisited: boolean;
+  newAttributes?: {
+    attribute: string;
+    value: string;
+  }[];
+}
+
+interface IAttribute {
+  attribute: string;
+  value: string;
 }
 interface IEdge {
   target: string;
@@ -20,10 +29,14 @@ interface IClickedPosition {
   x: number;
   y: number;
 }
-type Inputs = {
+type FormValues = {
   label: string;
   difficulty: number;
-  isVisited: string;
+  isVisited: boolean;
+  newAttributes: {
+    attribute: string;
+    value: string;
+  }[];
 };
 
 export function Graph() {
@@ -37,28 +50,40 @@ export function Graph() {
   const [numberOfNodes, setNumberOfNodes] = useState<number>(7);
   const [secondaryNode, setSecondaryNode] = useState<INode | null>(null);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
-  const [numberOfAtributes, setNumberOfAtributes] = useState<any>();
+  const [numberOfAtributes, setNumberOfAtributes] = useState<any>({});
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
+
   const {
     register,
+    control,
+    setValue,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (nodeData: Inputs) => {
+  } = useForm<FormValues>({
+    defaultValues: {
+      newAttributes: [{ attribute: "", value: "" }],
+    },
+    mode: "onBlur",
+  });
+  const { fields, append, remove } = useFieldArray({
+    name: "newAttributes",
+    control,
+  });
+
+  const onSubmit: SubmitHandler<FormValues> = (nodeData: FormValues) => {
+    console.log("nodeData", nodeData);
+
+    nodeData.newAttributes.map((value) => {});
     const data = {
       label: nodeData.label,
       difficulty: nodeData.difficulty,
       isVisited: nodeData.isVisited,
+      newAttributes: [...nodeData.newAttributes],
     };
 
-    cyRef.current?.$(`#${primaryNode?.id}`).data({
-      label: nodeData.label,
-      difficulty: nodeData.difficulty,
-      isVisited: nodeData.isVisited,
-    });
-
-    console.log(cyRef?.current?.nodes());
+    console.log("data", data);
+    cyRef.current?.$(`#${primaryNode?.id}`).data(data);
+    console.log("primaryNode?.id", primaryNode);
   };
 
   const defaultGraph = [
@@ -317,6 +342,7 @@ export function Graph() {
                 setIsNodeSelected(false);
               } else if (node._private.nodeKey !== null) {
                 setPrimaryNode(clickedElement);
+                console.log(clickedElement);
                 createRelationship(clickedElement);
                 setSelectedEdge(null);
                 setIsNodeSelected(true);
@@ -348,7 +374,6 @@ export function Graph() {
               <h1>Data</h1>
 
               <GrEdit onClick={() => setIsEditing(!isEditing)} />
-              <GrAddCircle />
               <button onClick={() => deleteNode(primaryNode)}>
                 Delete Node
               </button>
@@ -371,29 +396,104 @@ export function Graph() {
                   <h2>Visited</h2>
                   <h3>{primaryNode?.isVisited ? "true" : "false"}</h3>
                 </div>
+
+                {primaryNode?.newAttributes?.map((a: IAttribute) => {
+                  return (
+                    <div className="subtitle">
+                      <h2>{a.attribute}</h2>
+                      <h3>{a.value}</h3>
+                    </div>
+                  );
+                })}
               </>
             )}
           </>
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* register your input into the hook by invoking the "register" function */}
-            <h5>Label</h5>
-            <input
-              defaultValue={primaryNode?.label}
-              {...register("label", { required: true })}
-            />
-            <h5>difficulty</h5>
-            <input
-              defaultValue={primaryNode?.difficulty}
-              {...register("difficulty")}
-            />
-            <h5>isVisited</h5>
-            <input
-              defaultValue={primaryNode?.isVisited ? "true" : "false"}
-              {...register("isVisited", { required: true })}
-            />
+            <div>
+              <input
+                {...register("label")}
+                defaultValue={primaryNode?.label}
+                placeholder="Label"
+              />
 
-            <input type="submit" />
+              <input
+                type="number"
+                {...register("difficulty", {
+                  valueAsNumber: true,
+                  required: true,
+                })}
+                defaultValue={primaryNode?.difficulty}
+              />
+
+              <input
+                type="checkbox"
+                {...register("isVisited")} // send value to hook form
+              />
+              {/* {primaryNode?.newAttributes?.map((field, index) => {
+                return (
+                  <div key={field.id}>
+                    <section className={"section"} key={field.id}>
+                      <input
+                        {...register("label")}
+                        defaultValue={primaryNode?.label}
+                        placeholder="Label"
+                      />
+                    </section>
+                  </div>
+                );
+              })} */}
+              {fields.map((field, index) => {
+                return (
+                  <div key={field.id}>
+                    <section className={"section"} key={field.id}>
+                      <input
+                        placeholder="attribute"
+                        {...register(
+                          `newAttributes.${index}.attribute` as const,
+                          {
+                            required: true,
+                          }
+                        )}
+                        className={
+                          errors?.newAttributes?.[index]?.attribute
+                            ? "error"
+                            : ""
+                        }
+                        defaultValue={field.attribute}
+                      />
+                      <input
+                        placeholder="name"
+                        {...register(`newAttributes.${index}.value` as const, {
+                          required: true,
+                        })}
+                        className={
+                          errors?.newAttributes?.[index]?.value ? "error" : ""
+                        }
+                        defaultValue={field.value}
+                      />
+
+                      <button type="button" onClick={() => remove(index)}>
+                        DELETE
+                      </button>
+                    </section>
+                  </div>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() =>
+                  append({
+                    attribute: "",
+                    value: "tee",
+                  })
+                }
+              >
+                APPEND
+              </button>
+              <input type="submit" />
+            </div>
           </form>
 
           {!isEditing && (

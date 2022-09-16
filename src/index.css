@@ -114,6 +114,24 @@ input[type="submit"] {
   letter-spacing: 10px;
 }
 
+.label,
+section > label {
+  line-height: 2;
+  text-align: left;
+  display: block;
+  margin-bottom: 13px;
+  margin-top: 20px;
+  color: white;
+  font-size: 14px;
+  font-weight: 200;
+}
+
+.section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
+}
+
 button[type="submit"]:hover,
 input[type="submit"]:hover {
   background: #bf1650;
@@ -147,6 +165,7 @@ button[type="button"] {
   appearance: none;
   background: #333;
   color: white;
+  margin: 0;
   border: none;
   text-transform: uppercase;
   padding: 10px 20px;
