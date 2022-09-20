@@ -3,7 +3,7 @@ import { layouts } from "./layouts";
 import { GrEdit } from "react-icons/gr";
 import CytoscapeComponent from "react-cytoscapejs";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
-
+import Modal from "react-modal";
 interface INode {
   id: string;
   label: string;
@@ -53,6 +53,27 @@ export function Graph() {
   const [numberOfAtributes, setNumberOfAtributes] = useState<any>({});
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
 
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+    },
+  };
+
   const {
     register,
     control,
@@ -81,9 +102,7 @@ export function Graph() {
       newAttributes: [...nodeData.newAttributes],
     };
 
-    console.log("data", data);
     cyRef.current?.$(`#${primaryNode?.id}`).data(data);
-    console.log("primaryNode?.id", primaryNode);
   };
 
   const defaultGraph = [
@@ -311,7 +330,7 @@ export function Graph() {
                 shape: "ellipse",
                 "text-wrap": "wrap",
                 "text-max-width": "200px",
-                label: function (node: any) {
+                label: function(node: any) {
                   const nodeAtribute = node.data();
                   // let labelFinal = "";
                   // Object.keys(nodeAtribute).map(function (key, index) {
@@ -333,7 +352,7 @@ export function Graph() {
           cy={(cy) => {
             cyRef.current = cy;
             setNumberOfNodes(cy.nodes().length + 1);
-            cy.on("tap", "node", function (event) {
+            cy.on("tap", "node", function(event) {
               var node = event.target;
               let clickedElement = node._private.data;
               if (node._private.nodeKey === null) {
@@ -348,7 +367,7 @@ export function Graph() {
                 setIsNodeSelected(true);
               }
             });
-            cy.on("tap", function (event) {
+            cy.on("tap", function(event) {
               var evtTarget = event.target;
 
               //clicked on canvas
@@ -518,6 +537,25 @@ export function Graph() {
           )}
         </div>
       </div>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onAfterOpen={() => console.log("entrei")}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      >
+        <h2>Hello</h2>
+        <button onClick={closeModal}>close</button>
+        <div>I am a modal</div>
+        <form>
+          <input />
+          <button>tab navigation</button>
+          <button>stays</button>
+          <button>inside</button>
+          <button>the modal</button>
+        </form>
+      </Modal>
     </div>
   );
 }
