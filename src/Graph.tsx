@@ -330,7 +330,7 @@ export function Graph() {
                 shape: "ellipse",
                 "text-wrap": "wrap",
                 "text-max-width": "200px",
-                label: function(node: any) {
+                label: function (node: any) {
                   const nodeAtribute = node.data();
                   // let labelFinal = "";
                   // Object.keys(nodeAtribute).map(function (key, index) {
@@ -352,7 +352,7 @@ export function Graph() {
           cy={(cy) => {
             cyRef.current = cy;
             setNumberOfNodes(cy.nodes().length + 1);
-            cy.on("tap", "node", function(event) {
+            cy.on("tap", "node", function (event) {
               var node = event.target;
               let clickedElement = node._private.data;
               if (node._private.nodeKey === null) {
@@ -367,7 +367,7 @@ export function Graph() {
                 setIsNodeSelected(true);
               }
             });
-            cy.on("tap", function(event) {
+            cy.on("tap", function (event) {
               var evtTarget = event.target;
 
               //clicked on canvas
@@ -392,7 +392,11 @@ export function Graph() {
             <div className="header">
               <h1>Data</h1>
 
-              <GrEdit onClick={() => setIsEditing(!isEditing)} />
+              <GrEdit
+                onClick={() => {
+                  openModal();
+                }}
+              />
               <button onClick={() => deleteNode(primaryNode)}>
                 Delete Node
               </button>
@@ -428,92 +432,7 @@ export function Graph() {
             )}
           </>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <input
-                {...register("label")}
-                defaultValue={primaryNode?.label}
-                placeholder="Label"
-              />
-
-              <input
-                type="number"
-                {...register("difficulty", {
-                  valueAsNumber: true,
-                  required: true,
-                })}
-                defaultValue={primaryNode?.difficulty}
-              />
-
-              <input
-                type="checkbox"
-                {...register("isVisited")} // send value to hook form
-              />
-              {/* {primaryNode?.newAttributes?.map((field, index) => {
-                return (
-                  <div key={field.id}>
-                    <section className={"section"} key={field.id}>
-                      <input
-                        {...register("label")}
-                        defaultValue={primaryNode?.label}
-                        placeholder="Label"
-                      />
-                    </section>
-                  </div>
-                );
-              })} */}
-              {fields.map((field, index) => {
-                return (
-                  <div key={field.id}>
-                    <section className={"section"} key={field.id}>
-                      <input
-                        placeholder="attribute"
-                        {...register(
-                          `newAttributes.${index}.attribute` as const,
-                          {
-                            required: true,
-                          }
-                        )}
-                        className={
-                          errors?.newAttributes?.[index]?.attribute
-                            ? "error"
-                            : ""
-                        }
-                        defaultValue={field.attribute}
-                      />
-                      <input
-                        placeholder="name"
-                        {...register(`newAttributes.${index}.value` as const, {
-                          required: true,
-                        })}
-                        className={
-                          errors?.newAttributes?.[index]?.value ? "error" : ""
-                        }
-                        defaultValue={field.value}
-                      />
-
-                      <button type="button" onClick={() => remove(index)}>
-                        DELETE
-                      </button>
-                    </section>
-                  </div>
-                );
-              })}
-
-              <button
-                type="button"
-                onClick={() =>
-                  append({
-                    attribute: "",
-                    value: "tee",
-                  })
-                }
-              >
-                APPEND
-              </button>
-              <input type="submit" />
-            </div>
-          </form>
+         
 
           {!isEditing && (
             <>
@@ -545,15 +464,89 @@ export function Graph() {
         style={customStyles}
         contentLabel="Example Modal"
       >
-        <h2>Hello</h2>
-        <button onClick={closeModal}>close</button>
-        <div>I am a modal</div>
-        <form>
-          <input />
-          <button>tab navigation</button>
-          <button>stays</button>
-          <button>inside</button>
-          <button>the modal</button>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <input
+              {...register("label")}
+              defaultValue={primaryNode?.label}
+              placeholder="Label"
+            />
+
+            <input
+              type="number"
+              {...register("difficulty", {
+                valueAsNumber: true,
+                required: true,
+              })}
+              defaultValue={primaryNode?.difficulty}
+            />
+
+            <input
+              type="checkbox"
+              {...register("isVisited")} // send value to hook form
+            />
+            {/* {primaryNode?.newAttributes?.map((field, index) => {
+                return (
+                  <div key={field.id}>
+                    <section className={"section"} key={field.id}>
+                      <input
+                        {...register("label")}
+                        defaultValue={primaryNode?.label}
+                        placeholder="Label"
+                      />
+                    </section>
+                  </div>
+                );
+              })} */}
+            {fields.map((field, index) => {
+              return (
+                <div key={field.id}>
+                  <section className={"section"} key={field.id}>
+                    <input
+                      placeholder="attribute"
+                      {...register(
+                        `newAttributes.${index}.attribute` as const,
+                        {
+                          required: true,
+                        }
+                      )}
+                      className={
+                        errors?.newAttributes?.[index]?.attribute ? "error" : ""
+                      }
+                      defaultValue={field.attribute}
+                    />
+                    <input
+                      placeholder="name"
+                      {...register(`newAttributes.${index}.value` as const, {
+                        required: true,
+                      })}
+                      className={
+                        errors?.newAttributes?.[index]?.value ? "error" : ""
+                      }
+                      defaultValue={field.value}
+                    />
+
+                    <button type="button" onClick={() => remove(index)}>
+                      DELETE
+                    </button>
+                  </section>
+                </div>
+              );
+            })}
+
+            <button
+              type="button"
+              onClick={() =>
+                append({
+                  attribute: "",
+                  value: "tee",
+                })
+              }
+            >
+              APPEND
+            </button>
+            <input type="submit" />
+          </div>
         </form>
       </Modal>
     </div>
