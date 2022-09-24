@@ -48,9 +48,7 @@ export function Graph() {
   const [primaryNode, setPrimaryNode] = useState<INode | null>(null);
   const [relationship, setRelationship] = useState<INode[] | []>([]);
   const [numberOfNodes, setNumberOfNodes] = useState<number>(7);
-  const [secondaryNode, setSecondaryNode] = useState<INode | null>(null);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
-  const [numberOfAtributes, setNumberOfAtributes] = useState<any>({});
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
 
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -110,135 +108,138 @@ export function Graph() {
       data: { id: "1", label: "Node 1", difficulty: 5, isVisited: false },
       position: { x: 600, y: 150 },
     },
-
-    {
-      data: { id: "66", label: "Node 88", difficulty: 5, isVisited: false },
-      position: { x: 1000, y: 150 },
-    },
-
     {
       data: { id: "2", label: "Node 2", difficulty: 5, isVisited: false },
-      position: { x: 500, y: 300 },
+      position: { x: 550, y: 300 },
     },
     {
       data: { id: "3", label: "Node 3", difficulty: 5, isVisited: false },
-      position: { x: 100, y: 200 },
+      position: { x: 650, y: 300 },
     },
     {
       data: { id: "4", label: "Node 4", difficulty: 5, isVisited: false },
-      position: { x: 300, y: 100 },
+      position: { x: 750, y: 300 },
     },
     {
       data: { id: "5", label: "Node 5", difficulty: 5, isVisited: false },
-      position: { x: 400, y: 50 },
+      position: { x: 830, y: 300 },
     },
     {
       data: { id: "6", label: "Node 6", difficulty: 5, isVisited: false },
-      position: { x: 400, y: 200 },
+      position: { x: 570, y: 440 },
+    },
+    {
+      data: { id: "7", label: "Node 7", difficulty: 5, isVisited: false },
+      position: { x: 700, y: 440 },
+    },
+    {
+      data: { id: "8", label: "Node 8", difficulty: 5, isVisited: false },
+      position: { x: 800, y: 440 },
+    },
+    {
+      data: { id: "9", label: "Node 8", difficulty: 5, isVisited: false },
+      position: { x: 550, y: 570 },
+    },
+    {
+      data: { id: "10", label: "Node 10", difficulty: 5, isVisited: false },
+      position: { x: 740, y: 600 },
     },
     {
       data: {
         source: "1",
         target: "2",
-        label: "Edge from Node1 to Node2",
+        weight: 15,
+      },
+    },
+    {
+      data: {
+        source: "1",
+        target: "3",
+        weight: 15,
+      },
+    },
+    {
+      data: {
+        source: "1",
+        target: "4",
+        weight: 15,
+      },
+    },
+    {
+      data: {
+        source: "1",
+        target: "5",
+        weight: 15,
+      },
+    },
+    {
+      data: {
+        source: "2",
+        target: "3",
+        weight: 15,
+      },
+    },
+    {
+      data: {
+        source: "2",
+        target: "6",
+        weight: 15,
       },
     },
     {
       data: {
         source: "3",
-        target: "4",
-        label: "Edge from Node3 to Node4",
+        target: "7",
+        weight: 15,
       },
     },
     {
       data: {
         source: "4",
         target: "5",
-        label: "Edge from Node4 to Node5",
+        weight: 15,
       },
     },
     {
       data: {
         source: "6",
-        target: "2",
-        label: "Edge from Node5 to Node2",
+        target: "9",
+        weight: 15,
       },
     },
     {
       data: {
-        source: "1",
-        target: "3",
-        label: "Edge from Node5 to Node2",
-      },
-    },
-    {
-      data: {
-        source: "1",
-        target: "4",
-        label: "Edge from Node1 to Node4",
-      },
-    },
-    {
-      data: {
-        source: "2",
-        target: "5",
-        label: "Edge from Node5 to Node2",
-      },
-    },
-    {
-      data: {
-        source: "3",
-        target: "6",
-        label: "Edge from Node3 to Node6",
-      },
-    },
-    {
-      data: {
-        source: "2",
-        target: "4",
-        label: "Edge from Node2 to Node4",
+        source: "7",
+        target: "10",
+        weight: 15,
       },
     },
     {
       data: {
         source: "5",
-        target: "6",
-        label: "Edge from Node5 to Node6",
+        target: "8",
+        weight: 15,
       },
     },
     {
       data: {
-        source: "2",
-        target: "3",
-        label: "Edge from Node2 to Node3",
+        source: "4",
+        target: "8",
+        weight: 15,
       },
     },
     {
       data: {
-        source: "6",
-        target: "1",
-        label: "Edge from Node6 to Node1",
+        source: "8",
+        target: "10",
+        weight: 15,
       },
     },
     {
       data: {
-        source: "5",
-        target: "3",
-        label: "Edge from Node5 to Node3",
-      },
-    },
-    {
-      data: {
-        source: "5",
-        target: "1",
-        label: "Edge from Node5 to Node1",
-      },
-    },
-    {
-      data: {
-        source: "6",
-        target: "4",
-        label: "Edge from Node6 to Node4",
+        source: "9",
+        target: "10",
+        weight: 15,
       },
     },
   ];
@@ -272,6 +273,7 @@ export function Graph() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickedPosition]);
+
   useEffect(() => {
     if (relationship.length === 2) {
       setElements((oldState) => [
@@ -280,7 +282,7 @@ export function Graph() {
           data: {
             source: relationship[0] ? relationship[0]?.id : "",
             target: relationship[1] ? relationship[1]?.id : "",
-            label: `Edge from ${relationship[0]?.id} to ${relationship[1]?.id}`,
+            weight: 15,
           },
         },
       ]);
@@ -348,10 +350,29 @@ export function Graph() {
                 color: "red",
               },
             },
+            {
+              selector: ".highlighted",
+              style: {
+                "background-color": "#61bffc",
+                "line-color": "#61bffc",
+                "target-arrow-color": "#61bffc",
+                "transition-property":
+                  "background-color, line-color, target-arrow-color",
+              },
+            },
+            {
+              selector: "edge",
+              style: {
+                "curve-style": "bezier",
+                "target-arrow-shape": "triangle",
+                width: 4,
+              },
+            },
           ]}
           cy={(cy) => {
             cyRef.current = cy;
-            setNumberOfNodes(cy.nodes().length + 1);
+            console.log("entrei");
+            window.localStorage.setItem("elements", JSON.stringify(elements));
             cy.on("tap", "node", function (event) {
               var node = event.target;
               let clickedElement = node._private.data;
@@ -367,9 +388,44 @@ export function Graph() {
                 setIsNodeSelected(true);
               }
             });
+            cy.on("drag tap", function (event) {});
             cy.on("tap", function (event) {
+              // var bfs = cy.elements().bfs({
+              //   roots: "#1",
+              //   visit: function (v, e, u, i, depth) {
+              //     console.log("visit " + v.id());
+
+              //     // example of finding desired node
+              //     if (v.data("weight") > 70) {
+              //       return true;
+              //     }
+
+              //     // example of exiting search early
+              //     if (v.data("weight") < 0) {
+              //       return false;
+              //     }
+              //   },
+              //   directed: false,
+              // });
+
+              // var path = bfs.path; // path to found node
+              // console.log("🚀 ~ file: Graph.tsx ~ line 410 ~ path", path);
+              // var found = bfs.found; // found node
+              // console.log("🚀 ~ file: Graph.tsx ~ line 411 ~ found", found);
               var evtTarget = event.target;
 
+              // var i = 0;
+              // var highlightNextEle = function () {
+              //   if (i < bfs.path.length) {
+              //     bfs.path[i].addClass("highlighted");
+
+              //     i++;
+              //     setTimeout(highlightNextEle, 1000);
+              //   }
+              // };
+
+              // // kick off first highlight
+              // highlightNextEle();
               //clicked on canvas
               if (evtTarget === cy) {
                 if (isCreatingNode) setClickedPosition(event.position);
@@ -401,7 +457,8 @@ export function Graph() {
                 Delete Node
               </button>
             </div>
-            {!isEditing && (
+
+            {primaryNode && (
               <>
                 <div className="subtitle">
                   <h2>Node ID</h2>
@@ -432,9 +489,7 @@ export function Graph() {
             )}
           </>
 
-         
-
-          {!isEditing && (
+          {selectedEdge && (
             <>
               <div className="header">
                 <h1>Edge Data</h1>
@@ -485,19 +540,7 @@ export function Graph() {
               type="checkbox"
               {...register("isVisited")} // send value to hook form
             />
-            {/* {primaryNode?.newAttributes?.map((field, index) => {
-                return (
-                  <div key={field.id}>
-                    <section className={"section"} key={field.id}>
-                      <input
-                        {...register("label")}
-                        defaultValue={primaryNode?.label}
-                        placeholder="Label"
-                      />
-                    </section>
-                  </div>
-                );
-              })} */}
+
             {fields.map((field, index) => {
               return (
                 <div key={field.id}>
@@ -506,9 +549,7 @@ export function Graph() {
                       placeholder="attribute"
                       {...register(
                         `newAttributes.${index}.attribute` as const,
-                        {
-                          required: true,
-                        }
+                        {}
                       )}
                       className={
                         errors?.newAttributes?.[index]?.attribute ? "error" : ""
@@ -517,9 +558,7 @@ export function Graph() {
                     />
                     <input
                       placeholder="name"
-                      {...register(`newAttributes.${index}.value` as const, {
-                        required: true,
-                      })}
+                      {...register(`newAttributes.${index}.value` as const, {})}
                       className={
                         errors?.newAttributes?.[index]?.value ? "error" : ""
                       }

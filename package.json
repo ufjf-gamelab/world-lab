@@ -10,6 +10,7 @@
     "@types/node": "^16.11.44",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
+    "@types/react-icons": "^3.0.0",
     "cytoscape": "3.22",
     "react": "^18.2.0",
     "react-cytoscapejs": "^1.2.1",
