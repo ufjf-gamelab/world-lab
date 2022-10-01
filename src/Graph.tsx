@@ -22,7 +22,8 @@ interface IAttribute {
 interface IEdge {
   target: string;
   source: string;
-  label: number;
+  weight: number;
+  label?: string;
 }
 
 interface IClickedPosition {
@@ -101,6 +102,7 @@ export function Graph() {
     };
 
     cyRef.current?.$(`#${primaryNode?.id}`).data(data);
+    closeModal();
   };
 
   const defaultGraph = [
@@ -155,7 +157,7 @@ export function Graph() {
       data: {
         source: "1",
         target: "3",
-        weight: 15,
+        weight: 30,
       },
     },
     {
@@ -169,7 +171,7 @@ export function Graph() {
       data: {
         source: "1",
         target: "5",
-        weight: 15,
+        weight: 5,
       },
     },
     {
@@ -197,7 +199,7 @@ export function Graph() {
       data: {
         source: "4",
         target: "5",
-        weight: 15,
+        weight: 5,
       },
     },
     {
@@ -218,14 +220,14 @@ export function Graph() {
       data: {
         source: "5",
         target: "8",
-        weight: 15,
+        weight: 20,
       },
     },
     {
       data: {
         source: "4",
         target: "8",
-        weight: 15,
+        weight: 2,
       },
     },
     {
@@ -306,9 +308,38 @@ export function Graph() {
     if (selectedNode === undefined) return;
     cyRef.current?.remove(`#${selectedNode?.id}`);
   };
+
+  const searchDijkstra = () => {
+    if (cyRef.current) {
+      const rm = (ele: any) => ele.removeClass("highlighted");
+      cyRef.current.elements().forEach(rm);
+
+      var dijkstra = cyRef.current.elements().dijkstra({
+        root: "#1",
+        weight: function (edge: any) {
+          return edge._private.data.weight;
+        },
+      });
+      var pathToJ = dijkstra.pathTo(cyRef.current.$("#7"));
+    
+      var i = 0;
+      var highlightNextEle = function () {
+        if (i < pathToJ.length) {
+          pathToJ[i].addClass("highlighted");
+
+          i++;
+          setTimeout(highlightNextEle, 1000);
+        }
+      };
+
+      // kick off first highlight
+      highlightNextEle();
+    }
+  };
   return (
     <div className="wrapper">
       <div className="buttonContainer">
+        <button onClick={() => searchDijkstra()}>Dijkstra</button>
         <button onClick={() => setLayout(layouts.random)}>Random layout</button>
         <button onClick={() => setElements(defaultGraph)}>Reset Nodes</button>
         <button onClick={() => setLayout(layouts.grid)}>Grid layout</button>
@@ -388,44 +419,10 @@ export function Graph() {
                 setIsNodeSelected(true);
               }
             });
-            cy.on("drag tap", function (event) {});
+
             cy.on("tap", function (event) {
-              // var bfs = cy.elements().bfs({
-              //   roots: "#1",
-              //   visit: function (v, e, u, i, depth) {
-              //     console.log("visit " + v.id());
-
-              //     // example of finding desired node
-              //     if (v.data("weight") > 70) {
-              //       return true;
-              //     }
-
-              //     // example of exiting search early
-              //     if (v.data("weight") < 0) {
-              //       return false;
-              //     }
-              //   },
-              //   directed: false,
-              // });
-
-              // var path = bfs.path; // path to found node
-              // console.log("🚀 ~ file: Graph.tsx ~ line 410 ~ path", path);
-              // var found = bfs.found; // found node
-              // console.log("🚀 ~ file: Graph.tsx ~ line 411 ~ found", found);
               var evtTarget = event.target;
 
-              // var i = 0;
-              // var highlightNextEle = function () {
-              //   if (i < bfs.path.length) {
-              //     bfs.path[i].addClass("highlighted");
-
-              //     i++;
-              //     setTimeout(highlightNextEle, 1000);
-              //   }
-              // };
-
-              // // kick off first highlight
-              // highlightNextEle();
               //clicked on canvas
               if (evtTarget === cy) {
                 if (isCreatingNode) setClickedPosition(event.position);
@@ -505,7 +502,7 @@ export function Graph() {
 
               <div className="subtitle">
                 <h2>Label</h2>
-                <h3>{selectedEdge?.label}</h3>
+                <h3>{selectedEdge?.weight}</h3>
               </div>
             </>
           )}
@@ -578,7 +575,7 @@ export function Graph() {
               onClick={() =>
                 append({
                   attribute: "",
-                  value: "tee",
+                  value: "",
                 })
               }
             >
