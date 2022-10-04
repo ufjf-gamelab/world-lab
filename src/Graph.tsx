@@ -340,49 +340,100 @@ export function Graph() {
   };
 
   const customSearch = () => {
-    if (cyRef.current) {
-      const rm = (ele: any) => ele.removeClass("highlighted");
-      cyRef.current.elements().forEach(rm);
+    if (cyRef.current === undefined) return "";
+    const rm = (ele: any) => ele.removeClass("highlighted");
+    cyRef.current.elements().forEach(rm);
 
-      setRandomNumber(Math.floor(Math.random() * 20));
-      let nodes = cyRef.current.nodes().map(function (ele, i, eles) {
-        let edges = ele.connectedEdges();
-        if (i > 0) {
-          let oldNodeID = ele[i - 1].id();
-          console.log(`entrei OLd node`, oldNodeID, i);
-          edges = ele.connectedEdges().filter(`edge[source != "${oldNodeID}"]`);
+    let nodesSearch = [];
+    let edgesSearch = [];
+    var col = cyRef.current.collection();
+    col.merge("#1");
+    let nodes = cyRef.current.nodes().map(function (ele, i, eles) {
+      let edges = ele.connectedEdges();
+      if (i > 0) {
+        let oldNodeID = eles[i - 1].id();
+        console.log(`entrei OLd node`, oldNodeID, i);
+        edges = ele.connectedEdges().filter(`edge[source != "${oldNodeID}"]`);
+      }
+
+      const randomEdge = edges[Math.floor(Math.random() * edges.length)];
+      const randomEdgeDifficulty = randomEdge.data("weight");
+      const randomEdgeTarget = randomEdge.data("target");
+      var highlightNextEle = function () {
+        ele.addClass("highlighted");
+        randomEdge.addClass("highlighted");
+        setTimeout(highlightNextEle, 1000);
+      };
+
+      for (let i = 0; i < 3; i++) {
+        const randomNumber = Math.floor(Math.random() * 30);
+        if (randomNumber > randomEdgeDifficulty) {
+          // highlightNextEle();
+          col.merge(`#${randomEdgeTarget}`);
+          col.merge(randomEdge);
+          return randomEdge;
         }
+      }
 
-        const randomEdge = edges[Math.floor(Math.random() * edges.length)];
-        console.log(
-          "🚀 ~ file: Graph.tsx ~ line 353 ~ nodes ~ randomEdge",
-          randomEdge
-        );
-        const randomEdgeDifficulty = randomEdge.data("weight");
-        console.log(
-          "🚀 ~ file: Graph.tsx ~ line 355 ~ nodes ~ randomEdgeDifficulty",
-          randomEdgeDifficulty
-        );
-        for (let i = 0; i < 3; i++) {
-          const randomNumber = Math.floor(Math.random() * 30);
-          console.log(
-            "🚀 ~ file: Graph.tsx ~ line 358 ~ nodes ~ randomNumber",
-            randomNumber
-          );
-          if (randomNumber > randomEdgeDifficulty) {
-            return ele;
-          }
-        }
+      return false;
+    });
+    console.log("col", col);
+    col.addClass("highlighted");
+  };
 
-        return false;
-      });
-      console.log("🚀 ~ file: Graph.tsx ~ line 364 ~ nodes ~ nodes", nodes);
+  const challengeEdgeDifficulty = (col: any, randomEdge: any) => {
+    console.log(`edege`, randomEdge);
+    let randomEdgeDifficulty = randomEdge.data("weight");
+    let randomEdgeTarget = randomEdge.data("target");
+    for (let i = 0; i < 3; i++) {
+      const randomNumber = Math.floor(Math.random() * 30);
+      if (randomNumber > randomEdgeDifficulty) {
+        col.merge(randomEdge);
+        col.merge(`#${randomEdgeTarget}`);
+        return randomEdgeTarget;
+      }
     }
+    return "fail";
+  };
+  const customSearchNeighbour = () => {
+    if (cyRef.current === undefined) return "";
+    const rm = (ele: any) => ele.removeClass("highlighted");
+    cyRef.current.elements().forEach(rm);
+
+    var col = cyRef.current.collection();
+    col.merge("#1");
+    let inicialEdges = cyRef.current
+      .$(`#1`)
+      .neighborhood()
+      .filter(function (ele) {
+        return ele.isEdge();
+      });
+
+    let randomEdge =
+      inicialEdges[Math.floor(Math.random() * inicialEdges.length)];
+    console.log(`randomEdge`, randomEdge);
+    let nextNode = challengeEdgeDifficulty(col, randomEdge);
+
+    while (nextNode !== "fail" && nextNode !== "10") {
+      inicialEdges = cyRef.current
+        .$(`#${nextNode}`)
+        .neighborhood()
+        .filter(function (ele) {
+          return ele.isEdge();
+        });
+
+      randomEdge =
+        inicialEdges[Math.floor(Math.random() * inicialEdges.length)];
+
+      nextNode = challengeEdgeDifficulty(col, randomEdge);
+    }
+
+    col.addClass("highlighted");
   };
   return (
     <div className="wrapper">
       <div className="buttonContainer">
-        <button onClick={() => customSearch()}>Custom search</button>
+        <button onClick={() => customSearchNeighbour()}>Custom search</button>
         <button onClick={() => searchDijkstra()}>Dijkstra</button>
         <h1>{randomNumber}</h1>
         <button onClick={() => setElements(defaultGraph)}>Reset Nodes</button>
