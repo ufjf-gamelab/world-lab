@@ -504,20 +504,9 @@ export function Graph() {
         })
         .filter(function (ele) {
           const nodeTarget = ele.data(`target`);
-          console.log(
-            "🚀 ~ file: Graph.tsx ~ line 508 ~ nodeTarget",
-            nodeTarget
-          );
-          console.log(
-            "🚀 ~ file: Graph.tsx ~ line 508 ~ nodeTarget",
-            nodeIDArray
-          );
-
           const nodeAlreadyInCollection = nodeIDArray.includes(nodeTarget);
           return !nodeAlreadyInCollection;
         });
-
-      console.log("initialEdgeFiltrado", inicialEdges);
       randomEdge =
         inicialEdges[Math.floor(Math.random() * inicialEdges.length)];
 
