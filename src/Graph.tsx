@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { layouts } from "./layouts";
+import { graphStyles } from "./graphConst";
 import { GrEdit } from "react-icons/gr";
 import CytoscapeComponent from "react-cytoscapejs";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
@@ -20,9 +21,12 @@ interface IAttribute {
   value: string;
 }
 interface IEdge {
+  id?: string;
   target: string;
   source: string;
   weight: number;
+  tentativas: number;
+  falhas: number;
   label?: string;
 }
 
@@ -34,6 +38,9 @@ type FormValues = {
   label: string;
   difficulty: number;
   isVisited: boolean;
+  tentativas?: string;
+  weight?: number;
+  falhas?: string;
   newAttributes: {
     attribute: string;
     value: string;
@@ -44,16 +51,13 @@ export function Graph() {
   const cyRef = useRef<cytoscape.Core | undefined>();
   const [layout, setLayout] = useState(layouts.klay);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
-  const [isNodeSelected, setIsNodeSelected] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [monteCarlo, setMonteCarlo] = useState(false);
   const [primaryNode, setPrimaryNode] = useState<INode | null>(null);
   const [relationship, setRelationship] = useState<INode[] | []>([]);
   const [numberOfNodes, setNumberOfNodes] = useState<number>(7);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
-  const [randomNumber, setRandomNumber] = useState(
-    Math.floor(Math.random() * 20)
-  );
+
   const [modalIsOpen, setIsOpen] = useState(false);
 
   function openModal() {
@@ -64,7 +68,7 @@ export function Graph() {
     setIsOpen(false);
   }
 
-  const customStyles = {
+  const modalStyles = {
     content: {
       top: "50%",
       left: "50%",
@@ -104,6 +108,19 @@ export function Graph() {
     };
 
     cyRef.current?.$(`#${primaryNode?.id}`).data(data);
+    closeModal();
+  };
+  const onSubmitEdge: SubmitHandler<FormValues> = (edgeData: FormValues) => {
+    edgeData.newAttributes.map((value) => {});
+    const data = {
+      label: edgeData.label,
+      weight: edgeData.weight,
+      tentativas: edgeData.tentativas,
+      falhas: edgeData.falhas,
+      newAttributes: [...edgeData.newAttributes],
+    };
+
+    cyRef.current?.$(`#${selectedEdge?.id}`).data(data);
     closeModal();
   };
 
@@ -152,6 +169,8 @@ export function Graph() {
       data: {
         source: "1",
         target: "2",
+        tentativas: 0,
+        falhas: 0,
         weight: 15,
       },
     },
@@ -159,6 +178,8 @@ export function Graph() {
       data: {
         source: "1",
         target: "3",
+        tentativas: 0,
+        falhas: 0,
         weight: 30,
       },
     },
@@ -166,6 +187,8 @@ export function Graph() {
       data: {
         source: "1",
         target: "4",
+        tentativas: 0,
+        falhas: 0,
         weight: 15,
       },
     },
@@ -173,6 +196,8 @@ export function Graph() {
       data: {
         source: "1",
         target: "5",
+        tentativas: 0,
+        falhas: 0,
         weight: 5,
       },
     },
@@ -180,6 +205,8 @@ export function Graph() {
       data: {
         source: "2",
         target: "3",
+        tentativas: 0,
+        falhas: 0,
         weight: 15,
       },
     },
@@ -187,6 +214,8 @@ export function Graph() {
       data: {
         source: "2",
         target: "6",
+        tentativas: 0,
+        falhas: 0,
         weight: 15,
       },
     },
@@ -194,6 +223,8 @@ export function Graph() {
       data: {
         source: "3",
         target: "7",
+        tentativas: 0,
+        falhas: 0,
         weight: 15,
       },
     },
@@ -201,6 +232,8 @@ export function Graph() {
       data: {
         source: "4",
         target: "5",
+        tentativas: 0,
+        falhas: 0,
         weight: 5,
       },
     },
@@ -208,6 +241,8 @@ export function Graph() {
       data: {
         source: "6",
         target: "9",
+        tentativas: 0,
+        falhas: 0,
         weight: 15,
       },
     },
@@ -215,6 +250,8 @@ export function Graph() {
       data: {
         source: "7",
         target: "10",
+        tentativas: 0,
+        falhas: 0,
         weight: 15,
       },
     },
@@ -222,6 +259,8 @@ export function Graph() {
       data: {
         source: "5",
         target: "8",
+        tentativas: 0,
+        falhas: 0,
         weight: 20,
       },
     },
@@ -229,6 +268,8 @@ export function Graph() {
       data: {
         source: "4",
         target: "8",
+        tentativas: 0,
+        falhas: 0,
         weight: 2,
       },
     },
@@ -236,6 +277,8 @@ export function Graph() {
       data: {
         source: "8",
         target: "10",
+        tentativas: 0,
+        falhas: 0,
         weight: 15,
       },
     },
@@ -243,6 +286,8 @@ export function Graph() {
       data: {
         source: "9",
         target: "10",
+        tentativas: 0,
+        falhas: 0,
         weight: 15,
       },
     },
@@ -286,6 +331,8 @@ export function Graph() {
           data: {
             source: relationship[0] ? relationship[0]?.id : "",
             target: relationship[1] ? relationship[1]?.id : "",
+            tentativas: 0,
+            falhas: 0,
             weight: 15,
           },
         },
@@ -294,6 +341,16 @@ export function Graph() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [relationship]);
+
+  useEffect(() => {
+    if (monteCarlo) {
+      for (let i = 0; i < 30; i++) {
+        customSearchNeighbour();
+      }
+      setMonteCarlo(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [monteCarlo]);
 
   const createRelationship = (node: INode) => {
     if (relationship.length < 2) {
@@ -381,38 +438,62 @@ export function Graph() {
     col.addClass("highlighted");
   };
 
-  const challengeEdgeDifficulty = (col: any, randomEdge: any) => {
-    console.log(`edege`, randomEdge);
+  const challengeEdgeDifficulty = (
+    col: any,
+    randomEdge: any,
+    nodeIDArray: string[]
+  ) => {
     let randomEdgeDifficulty = randomEdge.data("weight");
     let randomEdgeTarget = randomEdge.data("target");
+
+    let randomEdgeID = randomEdge.data("id");
+    let randomEdgeTentativas = parseInt(randomEdge.data("tentativas"));
+    let randomEdgeFalhas = parseInt(randomEdge.data("falhas"));
+
     for (let i = 0; i < 3; i++) {
       const randomNumber = Math.floor(Math.random() * 30);
+      cyRef.current
+        ?.$(`#${randomEdgeID}`)
+        .data({ tentativas: randomEdgeTentativas + 1 });
       if (randomNumber > randomEdgeDifficulty) {
         col.merge(randomEdge);
+        cyRef.current?.$(`#${randomEdgeID}`);
+        console.log(
+          "🚀 ~ file: Graph.tsx ~ line 448 ~ Graph ~ randomEdgeTarget",
+          randomEdgeTarget
+        );
         col.merge(`#${randomEdgeTarget}`);
+        nodeIDArray.push(randomEdgeTarget);
         return randomEdgeTarget;
       }
     }
+    cyRef.current?.$(`#${randomEdgeID}`).data({ falhas: randomEdgeFalhas + 1 });
     return "fail";
   };
+
+  const resetStyles = () => {
+    if (cyRef.current === undefined) return "";
+    cyRef.current.elements().removeClass("highlighted");
+  };
+
   const customSearchNeighbour = () => {
     if (cyRef.current === undefined) return "";
-    const rm = (ele: any) => ele.removeClass("highlighted");
-    cyRef.current.elements().forEach(rm);
+    resetStyles();
+    let nodeIDArray: string[] = [];
+    let col = cyRef.current.collection();
 
-    var col = cyRef.current.collection();
     col.merge("#1");
+    nodeIDArray.push("1");
     let inicialEdges = cyRef.current
       .$(`#1`)
       .neighborhood()
       .filter(function (ele) {
         return ele.isEdge();
       });
-
     let randomEdge =
       inicialEdges[Math.floor(Math.random() * inicialEdges.length)];
-    console.log(`randomEdge`, randomEdge);
-    let nextNode = challengeEdgeDifficulty(col, randomEdge);
+
+    let nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
 
     while (nextNode !== "fail" && nextNode !== "10") {
       inicialEdges = cyRef.current
@@ -420,12 +501,27 @@ export function Graph() {
         .neighborhood()
         .filter(function (ele) {
           return ele.isEdge();
+        })
+        .filter(function (ele) {
+          const nodeTarget = ele.data(`target`);
+          console.log(
+            "🚀 ~ file: Graph.tsx ~ line 508 ~ nodeTarget",
+            nodeTarget
+          );
+          console.log(
+            "🚀 ~ file: Graph.tsx ~ line 508 ~ nodeTarget",
+            nodeIDArray
+          );
+
+          const nodeAlreadyInCollection = nodeIDArray.includes(nodeTarget);
+          return !nodeAlreadyInCollection;
         });
 
+      console.log("initialEdgeFiltrado", inicialEdges);
       randomEdge =
         inicialEdges[Math.floor(Math.random() * inicialEdges.length)];
 
-      nextNode = challengeEdgeDifficulty(col, randomEdge);
+      nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
     }
 
     col.addClass("highlighted");
@@ -434,11 +530,13 @@ export function Graph() {
     <div className="wrapper">
       <div className="buttonContainer">
         <button onClick={() => customSearchNeighbour()}>Custom search</button>
+        <button onClick={() => setMonteCarlo(true)}>
+          Custom search 30 vezes
+        </button>
         <button onClick={() => searchDijkstra()}>Dijkstra</button>
-        <h1>{randomNumber}</h1>
+        <button onClick={() => resetStyles()}>Reset styles</button>
         <button onClick={() => setElements(defaultGraph)}>Reset Nodes</button>
         <button onClick={() => setLayout(layouts.grid)}>Grid layout</button>
-        <button onClick={() => setLayout(layouts.circle)}>Circle layout</button>
         <button onClick={() => setIsCreatingNode(!isCreatingNode)}>
           Create Node
         </button>
@@ -450,50 +548,10 @@ export function Graph() {
           style={containerStyle}
           layout={layout}
           stylesheet={[
-            {
-              selector: "node",
-              style: {
-                width: 20,
-                height: 20,
-                shape: "ellipse",
-                "text-wrap": "wrap",
-                "text-max-width": "200px",
-                label: function (node: any) {
-                  const nodeAtribute = node.data();
-                  // let labelFinal = "";
-                  // Object.keys(nodeAtribute).map(function (key, index) {
-                  //   return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
-                  // });
-                  // return labelFinal;
-                  return `id = ${nodeAtribute.id}`;
-                },
-              },
-            },
-            {
-              selector: "node#1",
-              style: {
-                "background-color": "red",
-                color: "red",
-              },
-            },
-            {
-              selector: ".highlighted",
-              style: {
-                "background-color": "#61bffc",
-                "line-color": "#61bffc",
-                "target-arrow-color": "#61bffc",
-                "transition-property":
-                  "background-color, line-color, target-arrow-color",
-              },
-            },
-            {
-              selector: "edge",
-              style: {
-                "curve-style": "bezier",
-                "target-arrow-shape": "triangle",
-                width: 4,
-              },
-            },
+            graphStyles.nodeLabel,
+            graphStyles.firstNode,
+            graphStyles.edgeTentativas,
+            graphStyles.customPath,
           ]}
           cy={(cy) => {
             cyRef.current = cy;
@@ -505,13 +563,11 @@ export function Graph() {
               if (node._private.nodeKey === null) {
                 setSelectedEdge(clickedElement);
                 setPrimaryNode(null);
-                setIsNodeSelected(false);
               } else if (node._private.nodeKey !== null) {
                 setPrimaryNode(clickedElement);
 
                 createRelationship(clickedElement);
                 setSelectedEdge(null);
-                setIsNodeSelected(true);
               }
             });
 
@@ -529,7 +585,6 @@ export function Graph() {
                 if (node._private.nodeKey === null) {
                   setSelectedEdge(clickedElement);
                   setPrimaryNode(null);
-                  setIsNodeSelected(false);
                 }
               }
             });
@@ -542,7 +597,7 @@ export function Graph() {
 
               <GrEdit
                 onClick={() => {
-                  openModal();
+                  primaryNode || (selectedEdge && openModal());
                 }}
               />
               <button onClick={() => deleteNode(primaryNode)}>
@@ -596,12 +651,16 @@ export function Graph() {
               </div>
 
               <div className="subtitle">
-                <h2>Label</h2>
-                <h3>{selectedEdge?.label}</h3>
+                <h2>Weight</h2>
+                <h3>{selectedEdge?.weight}</h3>
               </div>
               <div className="subtitle">
-                <h2>Difficulty</h2>
-                <h3>{selectedEdge?.weight}</h3>
+                <h2>tentativas</h2>
+                <h3>{selectedEdge?.tentativas}</h3>
+              </div>
+              <div className="subtitle">
+                <h2>Falhas</h2>
+                <h3>{selectedEdge?.falhas}</h3>
               </div>
             </>
           )}
@@ -612,77 +671,184 @@ export function Graph() {
         isOpen={modalIsOpen}
         onAfterOpen={() => console.log("entrei")}
         onRequestClose={closeModal}
-        style={customStyles}
+        style={modalStyles}
         contentLabel="Example Modal"
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <input
-              {...register("label")}
-              defaultValue={primaryNode?.label}
-              placeholder="Label"
-            />
+        {primaryNode && (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="formContainer">
+              <div className="formInput">
+                <h3>Label</h3>
+                <input
+                  {...register("label")}
+                  defaultValue={primaryNode?.label}
+                  placeholder="Label"
+                />
+              </div>
 
-            <input
-              type="number"
-              {...register("difficulty", {
-                valueAsNumber: true,
-                required: true,
+              <div className="formInput">
+                <h3>Difficulty</h3>
+                <input
+                  type="number"
+                  {...register("difficulty", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
+                  defaultValue={primaryNode?.difficulty}
+                  value={primaryNode?.difficulty}
+                />
+              </div>
+              <div className="formInput">
+                <h3>isVisited</h3>
+                <input
+                  type="checkbox"
+                  {...register("isVisited")} // send value to hook form
+                />
+              </div>
+              {fields.map((field, index) => {
+                return (
+                  <div key={field.id}>
+                    <section className={"section"} key={field.id}>
+                      <input
+                        placeholder="attribute"
+                        {...register(
+                          `newAttributes.${index}.attribute` as const,
+                          {}
+                        )}
+                        className={
+                          errors?.newAttributes?.[index]?.attribute
+                            ? "error"
+                            : ""
+                        }
+                        defaultValue={field.attribute}
+                      />
+                      <input
+                        placeholder="name"
+                        {...register(
+                          `newAttributes.${index}.value` as const,
+                          {}
+                        )}
+                        className={
+                          errors?.newAttributes?.[index]?.value ? "error" : ""
+                        }
+                        defaultValue={field.value}
+                      />
+
+                      <button type="button" onClick={() => remove(index)}>
+                        DELETE
+                      </button>
+                    </section>
+                  </div>
+                );
               })}
-              defaultValue={primaryNode?.difficulty}
-            />
 
-            <input
-              type="checkbox"
-              {...register("isVisited")} // send value to hook form
-            />
+              <button
+                type="button"
+                onClick={() =>
+                  append({
+                    attribute: "",
+                    value: "",
+                  })
+                }
+              >
+                APPEND
+              </button>
+              <input type="submit" />
+            </div>
+          </form>
+        )}
 
-            {fields.map((field, index) => {
-              return (
-                <div key={field.id}>
-                  <section className={"section"} key={field.id}>
-                    <input
-                      placeholder="attribute"
-                      {...register(
-                        `newAttributes.${index}.attribute` as const,
-                        {}
-                      )}
-                      className={
-                        errors?.newAttributes?.[index]?.attribute ? "error" : ""
-                      }
-                      defaultValue={field.attribute}
-                    />
-                    <input
-                      placeholder="name"
-                      {...register(`newAttributes.${index}.value` as const, {})}
-                      className={
-                        errors?.newAttributes?.[index]?.value ? "error" : ""
-                      }
-                      defaultValue={field.value}
-                    />
+        {selectedEdge && (
+          <form onSubmit={handleSubmit(onSubmitEdge)}>
+            <div className="formContainer">
+              <div className="formInput">
+                <h3>Label</h3>
+                <input
+                  {...register("label")}
+                  defaultValue={selectedEdge?.label}
+                  placeholder="Label"
+                />
+              </div>
 
-                    <button type="button" onClick={() => remove(index)}>
-                      DELETE
-                    </button>
-                  </section>
-                </div>
-              );
-            })}
+              <div className="formInput">
+                <h3>Weight</h3>
+                <input
+                  type="number"
+                  {...register("weight", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
+                  defaultValue={selectedEdge?.weight}
+                />
+              </div>
+              <div className="formInput">
+                <h3>tentativas</h3>
+                <input
+                  type="number"
+                  {...register("tentativas")}
+                  defaultValue={selectedEdge?.tentativas}
+                />
+              </div>
+              <div className="formInput">
+                <h3>falhas</h3>
+                <input
+                  type="number"
+                  {...register("falhas")} // send value to hook form
+                  defaultValue={selectedEdge?.falhas}
+                />
+              </div>
+              {fields.map((field, index) => {
+                return (
+                  <div key={field.id}>
+                    <section className={"section"} key={field.id}>
+                      <input
+                        placeholder="attribute"
+                        {...register(
+                          `newAttributes.${index}.attribute` as const,
+                          {}
+                        )}
+                        className={
+                          errors?.newAttributes?.[index]?.attribute
+                            ? "error"
+                            : ""
+                        }
+                        defaultValue={field.attribute}
+                      />
+                      <input
+                        placeholder="name"
+                        {...register(
+                          `newAttributes.${index}.value` as const,
+                          {}
+                        )}
+                        className={
+                          errors?.newAttributes?.[index]?.value ? "error" : ""
+                        }
+                        defaultValue={field.value}
+                      />
 
-            <button
-              type="button"
-              onClick={() =>
-                append({
-                  attribute: "",
-                  value: "",
-                })
-              }
-            >
-              APPEND
-            </button>
-            <input type="submit" />
-          </div>
-        </form>
+                      <button type="button" onClick={() => remove(index)}>
+                        DELETE
+                      </button>
+                    </section>
+                  </div>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() =>
+                  append({
+                    attribute: "",
+                    value: "",
+                  })
+                }
+              >
+                APPEND
+              </button>
+              <input type="submit" />
+            </div>
+          </form>
+        )}
       </Modal>
     </div>
   );
