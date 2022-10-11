@@ -520,7 +520,7 @@ export function Graph() {
       <div className="buttonContainer">
         <button onClick={() => customSearchNeighbour()}>Custom search</button>
         <button onClick={() => setMonteCarlo(true)}>
-          Custom search 30 vezes
+          Custom search 30x
         </button>
         <button onClick={() => searchDijkstra()}>Dijkstra</button>
         <button onClick={() => resetStyles()}>Reset styles</button>

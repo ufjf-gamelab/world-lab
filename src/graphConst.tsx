@@ -3,7 +3,7 @@ export const graphStyles: Record<string, any> = {
     selector: "edge",
     style: {
       width: function (ele: any) {
-        return 4 + ele.data("tentativas") *0.75;
+        return 4 + ele.data("tentativas") *0.50;
       },
     },
   },
