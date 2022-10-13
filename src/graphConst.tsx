@@ -1,9 +1,40 @@
 export const graphStyles: Record<string, any> = {
   edgeTentativas: {
-    selector: "edge",
+    selector: ".tentativas",
     style: {
       width: function (ele: any) {
-        return 4 + ele.data("tentativas") *0.50;
+        return 4 + ele.data("tentativas") * 0.5;
+      },
+    },
+  },
+  edgeTentativasColor: {
+    selector: ".tentativasColor",
+    style: {
+      backgroundColor: function (ele: any) {
+        console.log("entrei");
+        const numTentativas = ele.data("tentativas");
+
+        if (numTentativas < 10) return "blue";
+        else if (numTentativas < 50) {
+          return "yellow";
+        } else if (numTentativas > 50) {
+          return "red";
+        } else {
+          return "#grey";
+        }
+      },
+      lineColor: function (ele: any) {
+        console.log("entrei");
+        const numTentativas = ele.data("tentativas");
+
+        if (numTentativas < 10) return "blue";
+        else if (numTentativas < 50) {
+          return "yellow";
+        } else if (numTentativas > 50) {
+          return "red";
+        } else {
+          return "#grey";
+        }
       },
     },
   },

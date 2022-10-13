@@ -158,7 +158,7 @@ export function Graph() {
       position: { x: 800, y: 440 },
     },
     {
-      data: { id: "9", label: "Node 8", difficulty: 5, isVisited: false },
+      data: { id: "9", label: "Node 9", difficulty: 5, isVisited: false },
       position: { x: 550, y: 570 },
     },
     {
@@ -303,7 +303,10 @@ export function Graph() {
 
   useEffect(() => {
     if (clickedPosition && isCreatingNode) {
-      const newId = numberOfNodes + 1;
+      var lastID = cyRef.current!.nodes().last();
+
+      console.log("🚀 ~ file: Graph.tsx ~ line 309 ~ lastID ~ lastID", lastID);
+      const newId = parseInt(lastID.data("id")) + 1;
       setElements((oldState) => [
         ...oldState,
         {
@@ -379,7 +382,7 @@ export function Graph() {
           return edge._private.data.weight;
         },
       });
-      var pathToJ = dijkstra.pathTo(cyRef.current.$("#7"));
+      var pathToJ = dijkstra.pathTo(cyRef.current.$("#10"));
 
       var i = 0;
       var highlightNextEle = function () {
@@ -474,6 +477,8 @@ export function Graph() {
   const resetStyles = () => {
     if (cyRef.current === undefined) return "";
     cyRef.current.elements().removeClass("highlighted");
+    cyRef.current.elements().removeClass("tentativas");
+    cyRef.current.elements().removeClass("tentativasColor");
   };
 
   const customSearchNeighbour = () => {
@@ -515,17 +520,31 @@ export function Graph() {
 
     col.addClass("highlighted");
   };
+
+  const showTentativasStyles = () => {
+    cyRef.current?.elements().addClass("tentativas");
+  };
+  const showTentativasColorStyles = () => {
+    cyRef.current
+      ?.elements()
+      .filter(function (ele) {
+        return ele.isEdge();
+      })
+      .addClass("tentativasColor");
+  };
   return (
     <div className="wrapper">
       <div className="buttonContainer">
         <button onClick={() => customSearchNeighbour()}>Custom search</button>
-        <button onClick={() => setMonteCarlo(true)}>
-          Custom search 30x
-        </button>
+        <button onClick={() => setMonteCarlo(true)}>Custom search 30x</button>
         <button onClick={() => searchDijkstra()}>Dijkstra</button>
+        <button onClick={() => showTentativasStyles()}>
+          MostrarTentativas Width
+        </button>
+        <button onClick={() => showTentativasColorStyles()}>
+          MostrarTentativas Color
+        </button>
         <button onClick={() => resetStyles()}>Reset styles</button>
-        <button onClick={() => setElements(defaultGraph)}>Reset Nodes</button>
-        <button onClick={() => setLayout(layouts.grid)}>Grid layout</button>
         <button onClick={() => setIsCreatingNode(!isCreatingNode)}>
           Create Node
         </button>
@@ -540,6 +559,7 @@ export function Graph() {
             graphStyles.nodeLabel,
             graphStyles.firstNode,
             graphStyles.edgeTentativas,
+            graphStyles.edgeTentativasColor,
             graphStyles.customPath,
           ]}
           cy={(cy) => {
