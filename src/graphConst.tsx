@@ -3,7 +3,19 @@ export const graphStyles: Record<string, any> = {
     selector: ".tentativas",
     style: {
       width: function (ele: any) {
-        return 4 + ele.data("tentativas") * 0.5;
+        let core = ele.cy();
+
+        let max = core.elements().max(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let min = core.elements().min(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let numTentativas = ele.data("tentativas");
+        if (numTentativas > max) numTentativas = max;
+        var v = (numTentativas - min) / (max - min) +3;
+
+        return 4 +v;
       },
     },
   },
@@ -11,30 +23,36 @@ export const graphStyles: Record<string, any> = {
     selector: ".tentativasColor",
     style: {
       backgroundColor: function (ele: any) {
-        console.log("entrei");
-        const numTentativas = ele.data("tentativas");
+   
 
-        if (numTentativas < 10) return "blue";
-        else if (numTentativas < 50) {
-          return "yellow";
-        } else if (numTentativas > 50) {
-          return "red";
-        } else {
-          return "#grey";
-        }
+        let core = ele.cy();
+
+        let max = core.elements().max(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let min = core.elements().min(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let numTentativas = ele.data("tentativas");
+        if (numTentativas > max) numTentativas = max;
+        var v = (numTentativas - min) / (max - min);
+        var hue = ((1 - v) * 120).toString(10);
+        return ["hsl(", hue, ",100%,50%)"].join("");
       },
       lineColor: function (ele: any) {
-        console.log("entrei");
-        const numTentativas = ele.data("tentativas");
+        let core = ele.cy();
 
-        if (numTentativas < 10) return "blue";
-        else if (numTentativas < 50) {
-          return "yellow";
-        } else if (numTentativas > 50) {
-          return "red";
-        } else {
-          return "#grey";
-        }
+        let max = core.elements().max(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let min = core.elements().min(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let numTentativas = ele.data("tentativas");
+        if (numTentativas > max) numTentativas = max;
+        var v = (numTentativas - min) / (max - min);
+        var hue = ((1 - v) * 120).toString(10);
+        return ["hsl(", hue, ",100%,50%)"].join("");
       },
     },
   },

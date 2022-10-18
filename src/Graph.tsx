@@ -97,8 +97,6 @@ export function Graph() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (nodeData: FormValues) => {
-    console.log("nodeData", nodeData);
-
     nodeData.newAttributes.map((value) => {});
     const data = {
       label: nodeData.label,
@@ -305,7 +303,6 @@ export function Graph() {
     if (clickedPosition && isCreatingNode) {
       var lastID = cyRef.current!.nodes().last();
 
-      console.log("🚀 ~ file: Graph.tsx ~ line 309 ~ lastID ~ lastID", lastID);
       const newId = parseInt(lastID.data("id")) + 1;
       setElements((oldState) => [
         ...oldState,
@@ -399,48 +396,6 @@ export function Graph() {
     }
   };
 
-  const customSearch = () => {
-    if (cyRef.current === undefined) return "";
-    const rm = (ele: any) => ele.removeClass("highlighted");
-    cyRef.current.elements().forEach(rm);
-
-    let nodesSearch = [];
-    let edgesSearch = [];
-    var col = cyRef.current.collection();
-    col.merge("#1");
-    let nodes = cyRef.current.nodes().map(function (ele, i, eles) {
-      let edges = ele.connectedEdges();
-      if (i > 0) {
-        let oldNodeID = eles[i - 1].id();
-        console.log(`entrei OLd node`, oldNodeID, i);
-        edges = ele.connectedEdges().filter(`edge[source != "${oldNodeID}"]`);
-      }
-
-      const randomEdge = edges[Math.floor(Math.random() * edges.length)];
-      const randomEdgeDifficulty = randomEdge.data("weight");
-      const randomEdgeTarget = randomEdge.data("target");
-      var highlightNextEle = function () {
-        ele.addClass("highlighted");
-        randomEdge.addClass("highlighted");
-        setTimeout(highlightNextEle, 1000);
-      };
-
-      for (let i = 0; i < 3; i++) {
-        const randomNumber = Math.floor(Math.random() * 30);
-        if (randomNumber > randomEdgeDifficulty) {
-          // highlightNextEle();
-          col.merge(`#${randomEdgeTarget}`);
-          col.merge(randomEdge);
-          return randomEdge;
-        }
-      }
-
-      return false;
-    });
-    console.log("col", col);
-    col.addClass("highlighted");
-  };
-
   const challengeEdgeDifficulty = (
     col: any,
     randomEdge: any,
@@ -461,10 +416,7 @@ export function Graph() {
       if (randomNumber > randomEdgeDifficulty) {
         col.merge(randomEdge);
         cyRef.current?.$(`#${randomEdgeID}`);
-        console.log(
-          "🚀 ~ file: Graph.tsx ~ line 448 ~ Graph ~ randomEdgeTarget",
-          randomEdgeTarget
-        );
+
         col.merge(`#${randomEdgeTarget}`);
         nodeIDArray.push(randomEdgeTarget);
         return randomEdgeTarget;
@@ -479,6 +431,12 @@ export function Graph() {
     cyRef.current.elements().removeClass("highlighted");
     cyRef.current.elements().removeClass("tentativas");
     cyRef.current.elements().removeClass("tentativasColor");
+  };
+  const resetNodes = () => {
+    if (cyRef.current === undefined) return "";
+    cyRef.current.elements().data("tentativas", 0);
+    cyRef.current.elements().data("falhas", 0);
+    resetStyles();
   };
 
   const customSearchNeighbour = () => {
@@ -545,6 +503,7 @@ export function Graph() {
           MostrarTentativas Color
         </button>
         <button onClick={() => resetStyles()}>Reset styles</button>
+        <button onClick={() => resetNodes()}>Reset Nodes</button>
         <button onClick={() => setIsCreatingNode(!isCreatingNode)}>
           Create Node
         </button>
