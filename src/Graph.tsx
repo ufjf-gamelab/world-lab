@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { layouts } from "./layouts";
 import { graphStyles } from "./graphConst";
 import { GrEdit } from "react-icons/gr";
@@ -48,15 +48,14 @@ type FormValues = {
 };
 
 export function Graph() {
-  const cyRef = useRef<cytoscape.Core | undefined>();
+  const cyRef = useRef<cytoscape.Core>();
   const [layout, setLayout] = useState(layouts.klay);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
   const [monteCarlo, setMonteCarlo] = useState(false);
-  const [primaryNode, setPrimaryNode] = useState<INode | null>(null);
-  const [relationship, setRelationship] = useState<INode[] | []>([]);
-  const [numberOfNodes, setNumberOfNodes] = useState<number>(7);
+  const [primaryNode, setPrimaryNode] = useState<INode>();
+  const [relationship, setRelationship] = useState<INode[]>([]);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
-  const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<IEdge>();
 
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -82,7 +81,6 @@ export function Graph() {
   const {
     register,
     control,
-    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
@@ -97,7 +95,7 @@ export function Graph() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (nodeData: FormValues) => {
-    nodeData.newAttributes.map((value) => {});
+    console.log("entrei");
     const data = {
       label: nodeData.label,
       difficulty: nodeData.difficulty,
@@ -109,7 +107,6 @@ export function Graph() {
     closeModal();
   };
   const onSubmitEdge: SubmitHandler<FormValues> = (edgeData: FormValues) => {
-    edgeData.newAttributes.map((value) => {});
     const data = {
       label: edgeData.label,
       weight: edgeData.weight,
@@ -317,7 +314,8 @@ export function Graph() {
         },
       ]);
 
-      setNumberOfNodes(newId + 1);
+      const teste = cyRef.current?.elements().jsons();
+      console.log("json1", teste);
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -337,6 +335,8 @@ export function Graph() {
           },
         },
       ]);
+      const teste = cyRef.current?.elements().jsons();
+      console.log("json2", teste);
       setRelationship([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -524,18 +524,17 @@ export function Graph() {
           cy={(cy) => {
             cyRef.current = cy;
 
-            window.localStorage.setItem("elements", JSON.stringify(elements));
             cy.on("tap", "node", function (event) {
               var node = event.target;
               let clickedElement = node._private.data;
               if (node._private.nodeKey === null) {
                 setSelectedEdge(clickedElement);
-                setPrimaryNode(null);
+                setPrimaryNode(undefined);
               } else if (node._private.nodeKey !== null) {
                 setPrimaryNode(clickedElement);
 
                 createRelationship(clickedElement);
-                setSelectedEdge(null);
+                setSelectedEdge(undefined);
               }
             });
 
@@ -545,14 +544,14 @@ export function Graph() {
               //clicked on canvas
               if (evtTarget === cy) {
                 if (isCreatingNode) setClickedPosition(event.position);
-                setPrimaryNode(null);
+                setPrimaryNode(undefined);
                 //clicked on node or edge
               } else {
                 var node = event.target;
                 let clickedElement = node._private.data;
                 if (node._private.nodeKey === null) {
                   setSelectedEdge(clickedElement);
-                  setPrimaryNode(null);
+                  setPrimaryNode(undefined);
                 }
               }
             });
@@ -565,7 +564,7 @@ export function Graph() {
 
               <GrEdit
                 onClick={() => {
-                  primaryNode || (selectedEdge && openModal());
+                  if (primaryNode || selectedEdge) openModal();
                 }}
               />
               <button onClick={() => deleteNode(primaryNode)}>
@@ -637,8 +636,8 @@ export function Graph() {
 
       <Modal
         isOpen={modalIsOpen}
-        onAfterOpen={() => console.log("entrei")}
         onRequestClose={closeModal}
+        ariaHideApp={false}
         style={modalStyles}
         contentLabel="Example Modal"
       >
