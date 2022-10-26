@@ -6,12 +6,12 @@ export const graphStyles: Record<string, any> = {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("falhas");
         }).value;
         let min = core.elements().min(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("falhas");
         }).value;
-        let numTentativas = ele.data("tentativas");
+        let numTentativas = ele.data("falhas");
         if (numTentativas > max) numTentativas = max;
         var v = (numTentativas - min) / (max - min) +5;
 
@@ -28,12 +28,12 @@ export const graphStyles: Record<string, any> = {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("falhas");
         }).value;
         let min = core.elements().min(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("falhas");
         }).value;
-        let numTentativas = ele.data("tentativas");
+        let numTentativas = ele.data("falhas");
         if (numTentativas > max) numTentativas = max;
         var v = (numTentativas - min) / (max - min);
         var hue = ((1 - v) * 120).toString(10);
@@ -43,12 +43,12 @@ export const graphStyles: Record<string, any> = {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("falhas");
         }).value;
         let min = core.elements().min(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("falhas");
         }).value;
-        let numTentativas = ele.data("tentativas");
+        let numTentativas = ele.data("falhas");
         if (numTentativas > max) numTentativas = max;
         var v = (numTentativas - min) / (max - min);
         var hue = ((1 - v) * 120).toString(10);

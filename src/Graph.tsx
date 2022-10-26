@@ -353,6 +353,8 @@ export function Graph() {
       for (let i = 0; i < 30; i++) {
         customSearchNeighbour();
       }
+      const newNodes = cyRef.current?.elements().jsons();
+      setElements(newNodes);
       setMonteCarlo(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -373,6 +375,8 @@ export function Graph() {
   const deleteElement = (selectedNode: any) => {
     if (selectedNode === undefined) return;
     cyRef.current?.remove(`#${selectedNode?.id}`);
+    const newNodes = cyRef.current?.elements().jsons();
+    setElements(newNodes);
   };
 
   const searchDijkstra = () => {
@@ -508,7 +512,15 @@ export function Graph() {
   return (
     <div className="wrapper">
       <div className="buttonContainer">
-        <button onClick={() => customSearchNeighbour()}>Custom search</button>
+        <button
+          onClick={() => {
+            customSearchNeighbour();
+            const newNodes = cyRef.current?.elements().jsons();
+            setElements(newNodes);
+          }}
+        >
+          Custom search
+        </button>
         <button onClick={() => setMonteCarlo(true)}>Custom search 30x</button>
         <button onClick={() => searchDijkstra()}>Dijkstra</button>
         <button onClick={() => showTentativasStyles()}>
