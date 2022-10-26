@@ -13,7 +13,7 @@ export const graphStyles: Record<string, any> = {
         }).value;
         let numTentativas = ele.data("tentativas");
         if (numTentativas > max) numTentativas = max;
-        var v = (numTentativas - min) / (max - min) +3;
+        var v = (numTentativas - min) / (max - min) +5;
 
         return 4 +v;
       },

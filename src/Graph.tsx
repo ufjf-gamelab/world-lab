@@ -364,9 +364,10 @@ export function Graph() {
     }
   };
   const containerStyle = {
-    width: "1400px",
-    height: "800px",
+    width: "1200px",
+    height: "700px",
     border: "1px solid black",
+    borderRadius: "17px",
   };
 
   const deleteElement = (selectedNode: any) => {
@@ -446,6 +447,12 @@ export function Graph() {
     setElements(defaultGraph);
     resetStyles();
   };
+  const resetNodesAtributes = () => {
+    if (cyRef.current === undefined) return "";
+    resetStyles();
+    cyRef.current.elements().data("tentativas", 0);
+    cyRef.current.elements().data("falhas", 0);
+  };
 
   const customSearchNeighbour = () => {
     if (cyRef.current === undefined) return "";
@@ -511,6 +518,9 @@ export function Graph() {
           MostrarTentativas Color
         </button>
         <button onClick={() => resetStyles()}>Reset styles</button>
+        <button onClick={() => resetNodesAtributes()}>
+          Reset Node atributes
+        </button>
         <button onClick={() => resetNodes()}>Reset Nodes</button>
         <button onClick={() => setIsCreatingNode(!isCreatingNode)}>
           Create Node
