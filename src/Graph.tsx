@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { layouts } from "./layouts";
 import { graphStyles } from "./graphConst";
 import { GrEdit } from "react-icons/gr";
@@ -51,9 +51,10 @@ export function Graph() {
   const cyRef = useRef<cytoscape.Core>();
   const [layout, setLayout] = useState(layouts.klay);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
+  const [isInitialNodes, setisInitialNodes] = useState(true);
   const [monteCarlo, setMonteCarlo] = useState(false);
   const [primaryNode, setPrimaryNode] = useState<INode>();
-  const [relationship, setRelationship] = useState<INode[]>([]);
+  const [relationship, setRelationship] = useState<INode[] | []>([]);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
 
@@ -81,6 +82,7 @@ export function Graph() {
   const {
     register,
     control,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
@@ -95,7 +97,9 @@ export function Graph() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (nodeData: FormValues) => {
-    console.log("entrei");
+    console.log("nodeData", nodeData);
+
+    nodeData.newAttributes.map((value) => {});
     const data = {
       label: nodeData.label,
       difficulty: nodeData.difficulty,
@@ -107,6 +111,7 @@ export function Graph() {
     closeModal();
   };
   const onSubmitEdge: SubmitHandler<FormValues> = (edgeData: FormValues) => {
+    edgeData.newAttributes.map((value) => {});
     const data = {
       label: edgeData.label,
       weight: edgeData.weight,
@@ -288,55 +293,56 @@ export function Graph() {
     },
   ];
 
-  const [elements, setElements] = useState(defaultGraph);
+  const [elements, setElements] = useState<any>(defaultGraph);
 
   useEffect(() => {
-    window.localStorage.setItem("elements", JSON.stringify(elements));
     const localElements = JSON.parse(window.localStorage.getItem("elements")!);
+    console.log("localEleemnets firstLoad", localElements);
     setElements(localElements);
+    setisInitialNodes(false);
   }, []);
 
   useEffect(() => {
-    if (clickedPosition && isCreatingNode) {
-      var lastID = cyRef.current!.nodes().last();
-
-      const newId = parseInt(lastID.data("id")) + 1;
-      setElements((oldState) => [
-        ...oldState,
-        {
-          data: {
-            id: newId.toString(),
-            label: "Teste",
-            difficulty: 5,
-            isVisited: false,
-          },
-          position: { x: clickedPosition.x, y: clickedPosition.y },
-        },
-      ]);
-
-      const teste = cyRef.current?.elements().jsons();
-      console.log("json1", teste);
+    if (!isInitialNodes) {
+      console.log("alterei cyref");
       window.localStorage.setItem("elements", JSON.stringify(elements));
+    }
+  }, [elements, cyRef]);
+
+  useEffect(() => {
+    if (clickedPosition && isCreatingNode) {
+      const newId = cyRef.current?.elements().length;
+      cyRef.current?.add({
+        group: "nodes",
+        data: {
+          id: newId?.toString(),
+          label: `Node${newId}`,
+          difficulty: 5,
+          isVisited: false,
+        },
+        position: { x: clickedPosition.x, y: clickedPosition.y },
+      });
+
+      const newNodes = cyRef.current?.elements().jsons();
+      setElements(newNodes);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickedPosition]);
 
   useEffect(() => {
     if (relationship.length === 2) {
-      setElements((oldState) => [
-        ...oldState,
-        {
-          data: {
-            source: relationship[0] ? relationship[0]?.id : "",
-            target: relationship[1] ? relationship[1]?.id : "",
-            tentativas: 0,
-            falhas: 0,
-            weight: 15,
-          },
+      cyRef.current!.add({
+        data: {
+          source: relationship[0] ? relationship[0]?.id : "",
+          target: relationship[1] ? relationship[1]?.id : "",
+          tentativas: 0,
+          falhas: 0,
+          weight: 15,
         },
-      ]);
-      const teste = cyRef.current?.elements().jsons();
-      console.log("json2", teste);
+      });
+      const newNodes = cyRef.current?.elements().jsons();
+      setElements(newNodes);
+
       setRelationship([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -358,12 +364,12 @@ export function Graph() {
     }
   };
   const containerStyle = {
-    width: "1200px",
-    height: "700px",
+    width: "1400px",
+    height: "800px",
     border: "1px solid black",
   };
 
-  const deleteNode = (selectedNode: any) => {
+  const deleteElement = (selectedNode: any) => {
     if (selectedNode === undefined) return;
     cyRef.current?.remove(`#${selectedNode?.id}`);
   };
@@ -396,6 +402,7 @@ export function Graph() {
     }
   };
 
+  const handleCy = () => {};
   const challengeEdgeDifficulty = (
     col: any,
     randomEdge: any,
@@ -436,6 +443,7 @@ export function Graph() {
     if (cyRef.current === undefined) return "";
     cyRef.current.elements().data("tentativas", 0);
     cyRef.current.elements().data("falhas", 0);
+    setElements(defaultGraph);
     resetStyles();
   };
 
@@ -511,7 +519,7 @@ export function Graph() {
       </div>
       <div className="mainContainer">
         <CytoscapeComponent
-          elements={elements}
+          elements={[...elements]}
           style={containerStyle}
           layout={layout}
           stylesheet={[
@@ -523,9 +531,14 @@ export function Graph() {
           ]}
           cy={(cy) => {
             cyRef.current = cy;
+            cy.on("drag ", function (evt) {
+              const newNodes = cyRef.current?.elements().jsons();
+              setElements(newNodes);
+            });
 
             cy.on("tap", "node", function (event) {
               var node = event.target;
+              console.log("cliquei tap1");
               let clickedElement = node._private.data;
               if (node._private.nodeKey === null) {
                 setSelectedEdge(clickedElement);
@@ -538,40 +551,54 @@ export function Graph() {
               }
             });
 
+            cy.on("tap", "edge", function (event) {
+              var node = event.target;
+              let clickedElement = node._private.data;
+              console.log("ClickedElement", clickedElement);
+
+              setSelectedEdge(clickedElement);
+              setPrimaryNode(undefined);
+            });
             cy.on("tap", function (event) {
               var evtTarget = event.target;
-
+              console.log("cliquei tap2");
               //clicked on canvas
               if (evtTarget === cy) {
                 if (isCreatingNode) setClickedPosition(event.position);
                 setPrimaryNode(undefined);
+                setSelectedEdge(undefined);
                 //clicked on node or edge
-              } else {
-                var node = event.target;
-                let clickedElement = node._private.data;
-                if (node._private.nodeKey === null) {
-                  setSelectedEdge(clickedElement);
-                  setPrimaryNode(undefined);
-                }
               }
             });
           }}
         />
         <div className="container">
           <>
-            <div className="header">
-              <h1>Data</h1>
+            {(primaryNode || selectedEdge) && (
+              <div className="header">
+                <h1>Data</h1>
 
-              <GrEdit
-                onClick={() => {
-                  if (primaryNode || selectedEdge) openModal();
-                }}
-              />
-              <button onClick={() => deleteNode(primaryNode)}>
-                Delete Node
-              </button>
-            </div>
+                <div
+                  className="editButton"
+                  onClick={() => {
+                    primaryNode || (selectedEdge && openModal());
+                  }}
+                >
+                  <h3>edit</h3>
+                  <GrEdit />
+                </div>
+                <button
+                  onClick={() => {
+                    if (primaryNode) return deleteElement(primaryNode);
 
+                    return deleteElement(selectedEdge);
+                  }}
+                >
+                  {primaryNode && "Delete Node"}
+                  {selectedEdge && "Delete Edge"}
+                </button>
+              </div>
+            )}
             {primaryNode && (
               <>
                 <div className="subtitle">
@@ -636,8 +663,8 @@ export function Graph() {
 
       <Modal
         isOpen={modalIsOpen}
+        onAfterOpen={() => console.log("entrei")}
         onRequestClose={closeModal}
-        ariaHideApp={false}
         style={modalStyles}
         contentLabel="Example Modal"
       >

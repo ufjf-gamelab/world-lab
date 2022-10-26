@@ -7,6 +7,8 @@
 
 body {
   margin: 0;
+  height: 100vh;
+  width: 100vw;
   font-family: "Poppins", sans-serif;
 
   -webkit-font-smoothing: antialiased;
@@ -15,7 +17,7 @@ body {
 
 .wrapper {
   display: grid;
-  place-items: center;
+  height: 100vh;
 }
 
 button {
@@ -35,33 +37,37 @@ button {
 .mainContainer {
   display: flex;
   gap: 100px;
+  margin-top: 30px;
   width: 100%;
-  justify-content: center;
 }
 
 .header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   margin-bottom: 30px;
+  justify-content: space-around;
+  align-items: center;
 }
 .subtitle {
   display: inline-flex;
-  margin-inline: 20px;
+  margin: 20px;
   align-items: center;
   flex-direction: column;
 }
 .buttonContainer {
   display: flex;
-  width: 100%;
-  margin-inline: 200px;
   gap: 20px;
+  margin-top: 15px;
   padding: 20px;
   border: 1px solid rgba(54, 54, 54, 0.6);
-  border-radius: 10%;
   border-radius: 50px;
   align-items: center;
   justify-content: center;
+}
+
+.editButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 p {
@@ -85,6 +91,9 @@ input {
 }
 
 .container {
+  border: 1px solid black;
+  padding: 13px;
+  border-radius: 17px;
   width: 560px;
 }
 
@@ -170,15 +179,4 @@ button[type="submit"],
 input[type="button"],
 input[type="submit"] {
   -webkit-appearance: none;
-}
-
-
-button {
-  display: block;
-  appearance: none;
-  margin-top: 40px;
-  border: 1px solid #333;
-  margin-bottom: 20px;
-  padding: 10px 20px;
-  border-radius: 4px;
 }
