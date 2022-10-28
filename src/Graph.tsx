@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { layouts } from "./layouts";
-import { graphStyles } from "./graphConst";
+import { graphConsts } from "./graphConst";
 import { GrEdit } from "react-icons/gr";
 import CytoscapeComponent from "react-cytoscapejs";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
@@ -124,176 +124,7 @@ export function Graph() {
     closeModal();
   };
 
-  const defaultGraph = [
-    {
-      data: { id: "1", label: "Node 1", difficulty: 5, isVisited: false },
-      position: { x: 600, y: 150 },
-    },
-    {
-      data: { id: "2", label: "Node 2", difficulty: 5, isVisited: false },
-      position: { x: 550, y: 300 },
-    },
-    {
-      data: { id: "3", label: "Node 3", difficulty: 5, isVisited: false },
-      position: { x: 650, y: 300 },
-    },
-    {
-      data: { id: "4", label: "Node 4", difficulty: 5, isVisited: false },
-      position: { x: 750, y: 300 },
-    },
-    {
-      data: { id: "5", label: "Node 5", difficulty: 5, isVisited: false },
-      position: { x: 830, y: 300 },
-    },
-    {
-      data: { id: "6", label: "Node 6", difficulty: 5, isVisited: false },
-      position: { x: 570, y: 440 },
-    },
-    {
-      data: { id: "7", label: "Node 7", difficulty: 5, isVisited: false },
-      position: { x: 700, y: 440 },
-    },
-    {
-      data: { id: "8", label: "Node 8", difficulty: 5, isVisited: false },
-      position: { x: 800, y: 440 },
-    },
-    {
-      data: { id: "9", label: "Node 9", difficulty: 5, isVisited: false },
-      position: { x: 550, y: 570 },
-    },
-    {
-      data: { id: "10", label: "Node 10", difficulty: 5, isVisited: false },
-      position: { x: 740, y: 600 },
-    },
-    {
-      data: {
-        source: "1",
-        target: "2",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
-      },
-    },
-    {
-      data: {
-        source: "1",
-        target: "3",
-        tentativas: 0,
-        falhas: 0,
-        weight: 30,
-      },
-    },
-    {
-      data: {
-        source: "1",
-        target: "4",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
-      },
-    },
-    {
-      data: {
-        source: "1",
-        target: "5",
-        tentativas: 0,
-        falhas: 0,
-        weight: 5,
-      },
-    },
-    {
-      data: {
-        source: "2",
-        target: "3",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
-      },
-    },
-    {
-      data: {
-        source: "2",
-        target: "6",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
-      },
-    },
-    {
-      data: {
-        source: "3",
-        target: "7",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
-      },
-    },
-    {
-      data: {
-        source: "4",
-        target: "5",
-        tentativas: 0,
-        falhas: 0,
-        weight: 5,
-      },
-    },
-    {
-      data: {
-        source: "6",
-        target: "9",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
-      },
-    },
-    {
-      data: {
-        source: "7",
-        target: "10",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
-      },
-    },
-    {
-      data: {
-        source: "5",
-        target: "8",
-        tentativas: 0,
-        falhas: 0,
-        weight: 20,
-      },
-    },
-    {
-      data: {
-        source: "4",
-        target: "8",
-        tentativas: 0,
-        falhas: 0,
-        weight: 2,
-      },
-    },
-    {
-      data: {
-        source: "8",
-        target: "10",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
-      },
-    },
-    {
-      data: {
-        source: "9",
-        target: "10",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
-      },
-    },
-  ];
-
-  const [elements, setElements] = useState<any>(defaultGraph);
+  const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
 
   useEffect(() => {
     const localElements = JSON.parse(window.localStorage.getItem("elements")!);
@@ -407,7 +238,6 @@ export function Graph() {
     }
   };
 
-  const handleCy = () => {};
   const challengeEdgeDifficulty = (
     col: any,
     randomEdge: any,
@@ -444,13 +274,7 @@ export function Graph() {
     cyRef.current.elements().removeClass("tentativas");
     cyRef.current.elements().removeClass("tentativasColor");
   };
-  const resetNodes = () => {
-    if (cyRef.current === undefined) return "";
-    cyRef.current.elements().data("tentativas", 0);
-    cyRef.current.elements().data("falhas", 0);
-    setElements(defaultGraph);
-    resetStyles();
-  };
+
   const resetNodesAtributes = () => {
     if (cyRef.current === undefined) return "";
     resetStyles();
@@ -486,9 +310,20 @@ export function Graph() {
         })
         .filter(function (ele) {
           const nodeTarget = ele.data(`target`);
-          const nodeAlreadyInCollection = nodeIDArray.includes(nodeTarget);
-          return !nodeAlreadyInCollection;
+          const nodeSource = ele.data(`target`);
+
+          const nodeTargetAlreadyInCollection =
+            nodeIDArray.includes(nodeTarget);
+          const nodeSourceAlreadyInCollection =
+            nodeIDArray.includes(nodeSource);
+          if (nodeTargetAlreadyInCollection || nodeSourceAlreadyInCollection) {
+            return false;
+          }
+          return true;
         });
+
+      if (inicialEdges.length === 0) break;
+
       randomEdge =
         inicialEdges[Math.floor(Math.random() * inicialEdges.length)];
 
@@ -533,11 +368,20 @@ export function Graph() {
         <button onClick={() => resetNodesAtributes()}>
           Reset Node atributes
         </button>
-        <button onClick={() => resetNodes()}>Reset Nodes</button>
         <button onClick={() => setIsCreatingNode(!isCreatingNode)}>
           Create Node
         </button>
         <h4>creating node = {isCreatingNode ? "true" : "false"}</h4>
+        <button>
+          <a
+            href={`data:text/json;charset=utf-8,${encodeURIComponent(
+              JSON.stringify(elements)
+            )}`}
+            download="filename.json"
+          >
+            {`Download Json`}
+          </a>
+        </button>
       </div>
       <div className="mainContainer">
         <CytoscapeComponent
@@ -545,11 +389,11 @@ export function Graph() {
           style={containerStyle}
           layout={layout}
           stylesheet={[
-            graphStyles.nodeLabel,
-            graphStyles.firstNode,
-            graphStyles.edgeTentativas,
-            graphStyles.edgeTentativasColor,
-            graphStyles.customPath,
+            graphConsts.nodeLabel,
+            graphConsts.firstNode,
+            graphConsts.edgeTentativas,
+            graphConsts.edgeTentativasColor,
+            graphConsts.customPath,
           ]}
           cy={(cy) => {
             cyRef.current = cy;
@@ -611,7 +455,12 @@ export function Graph() {
                 </div>
                 <button
                   onClick={() => {
-                    if (primaryNode) return deleteElement(primaryNode);
+                    if (primaryNode) {
+                      deleteElement(primaryNode);
+                      setPrimaryNode(undefined);
+                      return;
+                    }
+                    setSelectedEdge(undefined);
 
                     return deleteElement(selectedEdge);
                   }}

@@ -34,6 +34,10 @@ button {
   opacity: 1;
 }
 
+a {
+  text-decoration: none;
+  color: white;
+}
 .mainContainer {
   display: flex;
   gap: 100px;
