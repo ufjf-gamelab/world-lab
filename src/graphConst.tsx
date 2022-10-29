@@ -31,8 +31,8 @@ export const graphConsts: Record<string, any> = {
         let min = core.elements().min(function (ele: any) {
           return ele.data("tentativas");
         }).value;
-        let numTentativas = ele.data("falhas");
-        var v = (numTentativas - min) / (max - min);
+        let numTentativas = ele.data("tentativas");
+        var v = (numTentativas) / (max - min);
         var hue = ((1 - v) * 120).toString(10);
         return ["hsl(", hue, ",100%,50%)"].join("");
       },

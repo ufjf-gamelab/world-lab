@@ -333,6 +333,20 @@ export function Graph() {
     col.addClass("highlighted");
   };
 
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    var file = e.target.files && e.target?.files?.[0];
+
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      var content: any = reader.result;
+      //Here the content has been read successfuly
+      setElements(JSON.parse(content));
+    };
+
+    reader.readAsText(file!);
+  };
+
   const showTentativasStyles = () => {
     cyRef.current?.elements().addClass("tentativas");
   };
@@ -382,6 +396,8 @@ export function Graph() {
             {`Download Json`}
           </a>
         </button>
+
+        <input onChange={handleFileSelected} type="file" />
       </div>
       <div className="mainContainer">
         <CytoscapeComponent
