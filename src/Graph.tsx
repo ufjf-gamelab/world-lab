@@ -49,16 +49,19 @@ type FormValues = {
 
 export function Graph() {
   const cyRef = useRef<cytoscape.Core>();
-  const [layout, setLayout] = useState(layouts.klay);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
   const [isInitialNodes, setisInitialNodes] = useState(true);
   const [monteCarlo, setMonteCarlo] = useState(false);
   const [primaryNode, setPrimaryNode] = useState<INode>();
   const [relationship, setRelationship] = useState<INode[] | []>([]);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
+  const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
-
   const [modalIsOpen, setIsOpen] = useState(false);
+
+  const { register: registerValue, handleSubmit: handleSubmitSearch } =
+    useForm();
+  const [data, setData] = useState("");
 
   function openModal() {
     setIsOpen(true);
@@ -124,8 +127,6 @@ export function Graph() {
     closeModal();
   };
 
-  const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
-
   useEffect(() => {
     const localElements = JSON.parse(window.localStorage.getItem("elements")!);
     console.log("localEleemnets firstLoad", localElements);
@@ -135,7 +136,6 @@ export function Graph() {
 
   useEffect(() => {
     if (!isInitialNodes) {
-      console.log("alterei cyref");
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
   }, [elements, cyRef]);
@@ -204,7 +204,6 @@ export function Graph() {
   };
 
   const deleteElement = (selectedNode: any) => {
-    if (selectedNode === undefined) return;
     cyRef.current?.remove(`#${selectedNode?.id}`);
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
@@ -269,29 +268,26 @@ export function Graph() {
   };
 
   const resetStyles = () => {
-    if (cyRef.current === undefined) return "";
-    cyRef.current.elements().removeClass("highlighted");
-    cyRef.current.elements().removeClass("tentativas");
-    cyRef.current.elements().removeClass("tentativasColor");
+    cyRef.current?.elements().removeClass("highlighted");
+    cyRef.current?.elements().removeClass("tentativas");
+    cyRef.current?.elements().removeClass("tentativasColor");
   };
 
   const resetNodesAtributes = () => {
-    if (cyRef.current === undefined) return "";
     resetStyles();
-    cyRef.current.elements().data("tentativas", 0);
-    cyRef.current.elements().data("falhas", 0);
+    cyRef.current?.elements().data("tentativas", 0);
+    cyRef.current?.elements().data("falhas", 0);
   };
 
   const customSearchNeighbour = () => {
-    if (cyRef.current === undefined) return "";
     resetStyles();
     let nodeIDArray: string[] = [];
-    let col = cyRef.current.collection();
+    let col = cyRef.current?.collection();
 
-    col.merge("#1");
+    col?.merge("#1");
     nodeIDArray.push("1");
-    let inicialEdges = cyRef.current
-      .$(`#1`)
+    let inicialEdges: any = cyRef.current
+      ?.$(`#1`)
       .neighborhood()
       .filter(function (ele) {
         return ele.isEdge();
@@ -303,12 +299,12 @@ export function Graph() {
 
     while (nextNode !== "fail" && nextNode !== "10") {
       inicialEdges = cyRef.current
-        .$(`#${nextNode}`)
+        ?.$(`#${nextNode}`)
         .neighborhood()
-        .filter(function (ele) {
+        .filter(function (ele: any) {
           return ele.isEdge();
         })
-        .filter(function (ele) {
+        .filter(function (ele: any) {
           const nodeTarget = ele.data(`target`);
           const nodeSource = ele.data(`target`);
 
@@ -330,7 +326,7 @@ export function Graph() {
       nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
     }
 
-    col.addClass("highlighted");
+    col?.addClass("highlighted");
   };
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -361,6 +357,29 @@ export function Graph() {
   return (
     <div className="wrapper">
       <div className="buttonContainer">
+        <form
+          onSubmit={handleSubmitSearch((data: any) =>
+            setData(JSON.stringify(data))
+          )}
+        >
+          <input
+            {...registerValue("firstNode")}
+            type={"number"}
+            placeholder="First node"
+          />
+          <input
+            {...registerValue("lastNode")}
+            placeholder="Last node"
+            type={"number"}
+          />
+          <input
+            {...registerValue("numberOfTries")}
+            placeholder="Number of runs"
+            type={"number"}
+          />
+          <p>{data}</p>
+          <input type="submit" />
+        </form>
         <button
           onClick={() => {
             customSearchNeighbour();
@@ -403,7 +422,7 @@ export function Graph() {
         <CytoscapeComponent
           elements={[...elements]}
           style={containerStyle}
-          layout={layout}
+          layout={layouts.klay}
           stylesheet={[
             graphConsts.nodeLabel,
             graphConsts.firstNode,
@@ -550,7 +569,6 @@ export function Graph() {
 
       <Modal
         isOpen={modalIsOpen}
-        onAfterOpen={() => console.log("entrei")}
         onRequestClose={closeModal}
         style={modalStyles}
         contentLabel="Example Modal"
