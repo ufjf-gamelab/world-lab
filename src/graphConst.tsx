@@ -12,10 +12,10 @@ export const graphConsts: Record<string, any> = {
           return ele.data("tentativas");
         }).value;
         let numTentativas = ele.data("tentativas");
-        if (numTentativas > max) numTentativas = max;
-        var v = (numTentativas ) / (max - min) + 5;
 
-        return 4 + v;
+        let v = ((numTentativas - min) * (10 - 1)) / (max - min) + 1;
+
+        return v;
       },
     },
   },
@@ -32,8 +32,9 @@ export const graphConsts: Record<string, any> = {
           return ele.data("tentativas");
         }).value;
         let numTentativas = ele.data("tentativas");
-        var v = (numTentativas) / (max - min);
-        var hue = ((1 - v) * 120).toString(10);
+
+        let v = numTentativas / max - min;
+        let hue = ((1 - v) * 120).toString(10);
         return ["hsl(", hue, ",100%,50%)"].join("");
       },
     },
