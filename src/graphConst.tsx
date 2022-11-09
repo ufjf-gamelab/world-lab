@@ -19,6 +19,14 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
+  customPath: {
+    selector: ".highlighted",
+    style: {
+      "background-color": "#61bffc",
+      "line-color": "#61bffc",
+    },
+  },
+
   edgeTentativasColor: {
     selector: ".tentativasColor",
     style: {
@@ -26,12 +34,12 @@ export const graphConsts: Record<string, any> = {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("falhas");
         }).value;
         let min = core.elements().min(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("falhas");
         }).value;
-        let numTentativas = ele.data("tentativas");
+        let numTentativas = ele.data("falhas");
 
         let v = numTentativas / max - min;
         let hue = ((1 - v) * 120).toString(10);
@@ -40,7 +48,14 @@ export const graphConsts: Record<string, any> = {
     },
   },
   firstNode: {
-    selector: "node#1",
+    selector: ".firstNode",
+    style: {
+      "background-color": "red",
+      color: "red",
+    },
+  },
+  lastNode: {
+    selector: ".lastNode",
     style: {
       "background-color": "red",
       color: "red",
@@ -49,11 +64,14 @@ export const graphConsts: Record<string, any> = {
   nodeLabel: {
     selector: "node",
     style: {
-      width: 20,
-      height: 20,
+      width: 40,
+      height: 40,
       shape: "ellipse",
       "text-wrap": "wrap",
       "text-max-width": "200px",
+      "font-size": "16px",
+      "text-valign": "center",
+      "text-halign": "center",
       label: function (node: any) {
         const nodeAtribute = node.data();
         // let labelFinal = "";
@@ -61,15 +79,8 @@ export const graphConsts: Record<string, any> = {
         //   return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
         // });
         // return labelFinal;
-        return `id = ${nodeAtribute.id}`;
+        return nodeAtribute.id;
       },
-    },
-  },
-  customPath: {
-    selector: ".highlighted",
-    style: {
-      "background-color": "#61bffc",
-      "line-color": "#61bffc",
     },
   },
 

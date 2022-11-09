@@ -56,23 +56,28 @@ interface ICustomSearchFormValues {
 export function Graph() {
   const cyRef = useRef<cytoscape.Core>();
   const [isCreatingNode, setIsCreatingNode] = useState(false);
+  const [isCreatingRelationship, setIsCreatingRelationship] = useState(false);
   const [isInitialNodes, setisInitialNodes] = useState(true);
   const [primaryNode, setPrimaryNode] = useState<INode>();
   const [relationship, setRelationship] = useState<INode[] | []>([]);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [isShowingTriesWidth, setIsShowingTriesWidth] = useState(false);
+  const [isShowingTriesColor, setIsShowingTriesColor] = useState(false);
+  const [isShowingFailsWidth, setIsShowingFailsWidth] = useState(false);
+  const [isShowingFailsColor, setIsShowingFailsColor] = useState(false);
+  const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
 
   const { register: registerValue, handleSubmit: handleSubmitSearch } =
     useForm<ICustomSearchFormValues>();
 
   function openModal() {
-    setIsOpen(true);
+    setIsModalFormOpen(true);
   }
 
   function closeModal() {
-    setIsOpen(false);
+    setIsModalFormOpen(false);
   }
 
   const modalStyles = {
@@ -147,6 +152,7 @@ export function Graph() {
     if (!isInitialNodes) {
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
+    console.log("elements", elements);
   }, [elements, cyRef]);
 
   useEffect(() => {
@@ -211,23 +217,31 @@ export function Graph() {
     randomEdge: any,
     nodeIDArray: string[]
   ) => {
-    let randomEdgeDifficulty = randomEdge.data("weight");
+    let randomEdgeDifficulty = parseInt(randomEdge.data("weight"));
+    let chosenNode;
     let randomEdgeTarget = randomEdge.data("target");
-
+    let randomEdgeSource = randomEdge.data("source");
+    if (col.includes(randomEdgeTarget)) {
+      chosenNode = randomEdgeSource;
+    } else {
+      chosenNode = randomEdgeTarget;
+    }
     let randomEdgeID = randomEdge.data("id");
     let randomEdgeTentativas = parseInt(randomEdge.data("tentativas"));
     let randomEdgeFalhas = parseInt(randomEdge.data("falhas"));
 
-    for (let i = 0; i < 3; i++) {
-      const randomNumber = Math.floor(Math.random() * 30);
+    for (let i = 0; i < 5; i++) {
+      const randomNumber = Math.floor(Math.random() * 35);
       cyRef.current
         ?.$(`#${randomEdgeID}`)
         .data({ tentativas: randomEdgeTentativas + 1 });
       if (randomNumber > randomEdgeDifficulty) {
+        console.log("randomEdge", randomEdge.data("id"));
+        console.log("chosenNode", chosenNode);
         col.merge(randomEdge);
-        col.merge(`#${randomEdgeTarget}`);
-        nodeIDArray.push(randomEdgeTarget);
-        return randomEdgeTarget;
+        col.merge(`#${chosenNode}`);
+        nodeIDArray.push(chosenNode);
+        return chosenNode;
       }
     }
     cyRef.current?.$(`#${randomEdgeID}`).data({ falhas: randomEdgeFalhas + 1 });
@@ -237,8 +251,9 @@ export function Graph() {
   const resetStyles = () => {
     cyRef.current?.elements().removeClass("highlighted");
     cyRef.current?.elements().removeClass("tentativas");
+    cyRef.current?.elements().removeClass("firstNode");
+    cyRef.current?.elements().removeClass("lastNode");
     cyRef.current?.elements().removeClass("tentativasColor");
-
   };
 
   const resetNodesAtributes = () => {
@@ -253,6 +268,7 @@ export function Graph() {
     let col = cyRef.current?.collection();
 
     col?.merge(`#${firstNode}`);
+    cyRef.current?.$(`#${firstNode}`).addClass("firstNode");
     nodeIDArray.push(`${firstNode}`);
     let neighborhoodEdges: any = cyRef.current
       ?.$(`#${firstNode}`)
@@ -273,9 +289,22 @@ export function Graph() {
           return ele.isEdge();
         });
 
-      console.log("nextNode", nextNode);
-      console.log("nextNodesEdges", neighborhoodEdges);
+      // eslint-disable-next-line no-loop-func
+      neighborhoodEdges.filter(function (ele: any) {
+        const nodeSource = ele.data(`source`); //2
+        const nodeTarget = ele.data(`target`); //3
 
+        const nodeSourceAlreadyInCollection = nodeIDArray.includes(nodeSource); //true
+        const nodeTargetAlreadyInCollection = nodeIDArray.includes(nodeTarget); //false
+        if (
+          nodeTarget === nodeSource ||
+          (nodeTargetAlreadyInCollection && nodeSourceAlreadyInCollection)
+        ) {
+          return false;
+        }
+
+        return true;
+      });
       if (neighborhoodEdges.length === 0) break;
 
       randomEdge =
@@ -285,6 +314,7 @@ export function Graph() {
     }
 
     col?.addClass("highlighted");
+    cyRef.current?.$(`#${lastNode}`).addClass("lastNode");
   };
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -318,7 +348,7 @@ export function Graph() {
       <div className="buttonContainer">
         <form onSubmit={handleSubmitSearch(onSubmitCustomSearch)}>
           <div className="formPathContainer">
-            <>
+            <div className="formInput">
               <h3>First node</h3>
               <input
                 {...registerValue("firstNode")}
@@ -326,8 +356,8 @@ export function Graph() {
                 required
                 placeholder="First node"
               />
-            </>
-            <>
+            </div>
+            <div className="formInput">
               <h3>Last node</h3>
               <input
                 {...registerValue("lastNode")}
@@ -335,8 +365,8 @@ export function Graph() {
                 placeholder="Last node"
                 type={"number"}
               />
-            </>
-            <>
+            </div>
+            <div className="formInput">
               <h3>Number of runs </h3>
               <input
                 {...registerValue("numberOfRuns")}
@@ -344,7 +374,7 @@ export function Graph() {
                 placeholder="Number of runs"
                 type={"number"}
               />
-            </>
+            </div>
             <input type="submit" />
           </div>
         </form>
@@ -361,6 +391,11 @@ export function Graph() {
         </button>
         <button onClick={() => setIsCreatingNode(!isCreatingNode)}>
           Create Node
+        </button>
+        <button
+          onClick={() => setIsCreatingRelationship(!isCreatingRelationship)}
+        >
+          Create Relationship
         </button>
         <h4>creating node = {isCreatingNode ? "true" : "false"}</h4>
         <button>
@@ -384,6 +419,7 @@ export function Graph() {
           stylesheet={[
             graphConsts.nodeLabel,
             graphConsts.firstNode,
+            graphConsts.lastNode,
             graphConsts.edgeTentativas,
             graphConsts.edgeTentativasColor,
             graphConsts.customPath,
@@ -429,38 +465,67 @@ export function Graph() {
             });
           }}
         />
-        <div className="container">
-          <>
-            {(primaryNode || selectedEdge) && (
-              <div className="header">
-                <h1>Data</h1>
-
-                <div
-                  className="editButton"
-                  onClick={() => {
-                    if (primaryNode || selectedEdge) openModal();
-                  }}
-                >
-                  <h3>edit</h3>
-                  <GrEdit />
-                </div>
+        {isCreatingRelationship ? (
+          <div className="container">
+            <>
+          
+              <div className="subtitle">
+              <h2>Select the source Node</h2>
+                <h3>{primaryNode?.id}</h3>
+              </div>
+              <div className="subtitle">
+                <h2>Target Node ID</h2>
+                <h3>{primaryNode?.difficulty}</h3>
+              </div>
+              <div className="subtitle">
                 <button
                   onClick={() => {
-                    if (primaryNode) {
-                      deleteElement(primaryNode);
-                      setPrimaryNode(undefined);
-                      return;
-                    }
-                    setSelectedEdge(undefined);
-
-                    return deleteElement(selectedEdge);
+                    setIsCreatingRelationship(false);
                   }}
                 >
-                  {primaryNode && "Delete Node"}
-                  {selectedEdge && "Delete Edge"}
+                  Cancel
                 </button>
               </div>
-            )}
+              <div className="subtitle">
+                <h2>Create relationship?</h2>
+                <button>Confirm</button>
+              </div>
+            </>
+          </div>
+        ) : (
+          <div className="container">
+            <>
+              {(primaryNode || selectedEdge) && (
+                <div className="header">
+                  <h1>Data</h1>
+
+                  <div
+                    className="editButton"
+                    onClick={() => {
+                      if (primaryNode || selectedEdge) openModal();
+                    }}
+                  >
+                    <h3>edit</h3>
+                    <GrEdit />
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (primaryNode) {
+                        deleteElement(primaryNode);
+                        setPrimaryNode(undefined);
+                        return;
+                      }
+                      setSelectedEdge(undefined);
+
+                      return deleteElement(selectedEdge);
+                    }}
+                  >
+                    {primaryNode && "Delete Node"}
+                    {selectedEdge && "Delete Edge"}
+                  </button>
+                </div>
+              )}
+            </>
             {primaryNode && (
               <>
                 <div className="subtitle">
@@ -490,41 +555,41 @@ export function Graph() {
                 })}
               </>
             )}
-          </>
 
-          {selectedEdge && (
-            <>
-              <div className="header">
-                <h1>Edge Data</h1>
-              </div>
-              <div className="subtitle">
-                <h2>Source</h2>
-                <h3>{selectedEdge?.source}</h3>
-              </div>
-              <div className="subtitle">
-                <h2>Target</h2>
-                <h3>{selectedEdge?.target}</h3>
-              </div>
+            {selectedEdge && (
+              <>
+                <div className="header">
+                  <h1>Edge Data</h1>
+                </div>
+                <div className="subtitle">
+                  <h2>Source</h2>
+                  <h3>{selectedEdge?.source}</h3>
+                </div>
+                <div className="subtitle">
+                  <h2>Target</h2>
+                  <h3>{selectedEdge?.target}</h3>
+                </div>
 
-              <div className="subtitle">
-                <h2>Weight</h2>
-                <h3>{selectedEdge?.weight}</h3>
-              </div>
-              <div className="subtitle">
-                <h2>tentativas</h2>
-                <h3>{selectedEdge?.tentativas}</h3>
-              </div>
-              <div className="subtitle">
-                <h2>Falhas</h2>
-                <h3>{selectedEdge?.falhas}</h3>
-              </div>
-            </>
-          )}
-        </div>
+                <div className="subtitle">
+                  <h2>Weight</h2>
+                  <h3>{selectedEdge?.weight}</h3>
+                </div>
+                <div className="subtitle">
+                  <h2>tentativas</h2>
+                  <h3>{selectedEdge?.tentativas}</h3>
+                </div>
+                <div className="subtitle">
+                  <h2>Falhas</h2>
+                  <h3>{selectedEdge?.falhas}</h3>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       <Modal
-        isOpen={modalIsOpen}
+        isOpen={modalFormIsOpen}
         onRequestClose={closeModal}
         style={modalStyles}
         contentLabel="Example Modal"

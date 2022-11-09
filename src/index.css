@@ -106,6 +106,7 @@ input {
   display: flex;
   gap: 20px;
   align-items: center;
+
 }
 label {
   line-height: 2;
