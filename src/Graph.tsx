@@ -63,10 +63,6 @@ export function Graph() {
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
-  const [isShowingTriesWidth, setIsShowingTriesWidth] = useState(false);
-  const [isShowingTriesColor, setIsShowingTriesColor] = useState(false);
-  const [isShowingFailsWidth, setIsShowingFailsWidth] = useState(false);
-  const [isShowingFailsColor, setIsShowingFailsColor] = useState(false);
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
 
   const { register: registerValue, handleSubmit: handleSubmitSearch } =
@@ -152,12 +148,15 @@ export function Graph() {
     if (!isInitialNodes) {
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
-    console.log("elements", elements);
   }, [elements, cyRef]);
 
   useEffect(() => {
     if (clickedPosition && isCreatingNode) {
-      const newId = cyRef.current?.elements().length;
+  
+      let newId = cyRef.current?.nodes().max(function (ele: any) {
+        return parseInt(ele.data("id"));
+      }).ele.id();
+      
       cyRef.current?.add({
         group: "nodes",
         data: {
@@ -175,8 +174,8 @@ export function Graph() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickedPosition]);
 
-  useEffect(() => {
-    if (relationship.length === 2) {
+  const createRelationship = () => {
+    if (relationship.length === 2 && isCreatingRelationship) {
       cyRef.current!.add({
         data: {
           source: relationship[0] ? relationship[0]?.id : "",
@@ -190,13 +189,6 @@ export function Graph() {
       setElements(newNodes);
 
       setRelationship([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [relationship]);
-
-  const createRelationship = (node: INode) => {
-    if (relationship.length < 2) {
-      setRelationship([...relationship, node]);
     }
   };
   const containerStyle = {
@@ -221,7 +213,7 @@ export function Graph() {
     let chosenNode;
     let randomEdgeTarget = randomEdge.data("target");
     let randomEdgeSource = randomEdge.data("source");
-    if (col.includes(randomEdgeTarget)) {
+    if (nodeIDArray.includes(randomEdgeTarget)) {
       chosenNode = randomEdgeSource;
     } else {
       chosenNode = randomEdgeTarget;
@@ -231,7 +223,7 @@ export function Graph() {
     let randomEdgeFalhas = parseInt(randomEdge.data("falhas"));
 
     for (let i = 0; i < 5; i++) {
-      const randomNumber = Math.floor(Math.random() * 35);
+      const randomNumber = Math.floor(Math.random() * 18);
       cyRef.current
         ?.$(`#${randomEdgeID}`)
         .data({ tentativas: randomEdgeTentativas + 1 });
@@ -324,7 +316,7 @@ export function Graph() {
 
     reader.onload = function (e) {
       let content: any = reader.result;
-      //Here the content has been read successfuly
+
       setElements(JSON.parse(content));
     };
 
@@ -389,11 +381,19 @@ export function Graph() {
         <button onClick={() => resetNodesAtributes()}>
           Reset Node atributes
         </button>
-        <button onClick={() => setIsCreatingNode(!isCreatingNode)}>
+        <button
+          onClick={() => {
+            setIsCreatingNode(!isCreatingNode);
+            setRelationship([]);
+          }}
+        >
           Create Node
         </button>
         <button
-          onClick={() => setIsCreatingRelationship(!isCreatingRelationship)}
+          onClick={() => {
+            setIsCreatingRelationship(!isCreatingRelationship);
+            setRelationship([]);
+          }}
         >
           Create Relationship
         </button>
@@ -440,8 +440,8 @@ export function Graph() {
                 setPrimaryNode(undefined);
               } else if (node._private.nodeKey !== null) {
                 setPrimaryNode(clickedElement);
+                setRelationship([...relationship, clickedElement]);
 
-                createRelationship(clickedElement);
                 setSelectedEdge(undefined);
               }
             });
@@ -465,29 +465,43 @@ export function Graph() {
             });
           }}
         />
+
         {isCreatingRelationship ? (
-          <div className="container">
+          <div className="containerRelationship">
             <>
-          
+              <h2 className="titleRelationship">Create relationship?</h2>
               <div className="subtitle">
-              <h2>Select the source Node</h2>
-                <h3>{primaryNode?.id}</h3>
+                <h2>
+                  {relationship[0]?.id
+                    ? "Source Node ID"
+                    : "Select the Source Node"}
+                </h2>
+                <h3>{relationship[0]?.id}</h3>
               </div>
               <div className="subtitle">
-                <h2>Target Node ID</h2>
-                <h3>{primaryNode?.difficulty}</h3>
+                <h2>
+                  {relationship[1]?.id
+                    ? "Target Node ID"
+                    : "Select the Target Node"}
+                </h2>
+                <h3>{relationship[1]?.id}</h3>
               </div>
               <div className="subtitle">
                 <button
                   onClick={() => {
                     setIsCreatingRelationship(false);
+                    setRelationship([]);
                   }}
                 >
                   Cancel
                 </button>
               </div>
-              <div className="subtitle">
-                <h2>Create relationship?</h2>
+              <div
+                className="subtitle"
+                onClick={() => {
+                  createRelationship();
+                }}
+              >
                 <button>Confirm</button>
               </div>
             </>
@@ -558,9 +572,6 @@ export function Graph() {
 
             {selectedEdge && (
               <>
-                <div className="header">
-                  <h1>Edge Data</h1>
-                </div>
                 <div className="subtitle">
                   <h2>Source</h2>
                   <h3>{selectedEdge?.source}</h3>
@@ -582,6 +593,22 @@ export function Graph() {
                   <h2>Falhas</h2>
                   <h3>{selectedEdge?.falhas}</h3>
                 </div>
+              </>
+            )}
+
+            {isCreatingNode && (
+              <>
+                <h2 className="titleRelationship">
+                  Click on screen to create node
+                </h2>
+
+                <button
+                  onClick={() => {
+                    setIsCreatingNode(false);
+                  }}
+                >
+                  Cancel
+                </button>
               </>
             )}
           </div>

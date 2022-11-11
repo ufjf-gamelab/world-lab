@@ -39,11 +39,15 @@ export const graphConsts: Record<string, any> = {
         let min = core.elements().min(function (ele: any) {
           return ele.data("falhas");
         }).value;
-        let numTentativas = ele.data("falhas");
+        let falhasTentativas = ele.data("falhas");
+        let hue;
+        if (falhasTentativas === 0) {
+           hue = 0;
+        } else {
+           hue = ((falhasTentativas - min) * (100 - 0)) / (max - min) + 1;
+        }
 
-        let v = numTentativas / max - min;
-        let hue = ((1 - v) * 120).toString(10);
-        return ["hsl(", hue, ",100%,50%)"].join("");
+        return ["hsl(", 100 -hue, ",100%,50%)"].join("");
       },
     },
   },
