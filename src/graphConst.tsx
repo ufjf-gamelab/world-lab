@@ -1,6 +1,6 @@
 export const graphConsts: Record<string, any> = {
   edgeTentativas: {
-    selector: ".tentativas",
+    selector: ".tentativasWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
@@ -19,6 +19,47 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
+  edgeFalhas: {
+    selector: ".falhasWidth",
+    style: {
+      width: function (ele: any) {
+        let core = ele.cy();
+
+        let max = core.elements().max(function (ele: any) {
+          return ele.data("falhas");
+        }).value;
+        let min = core.elements().min(function (ele: any) {
+          return ele.data("falhas");
+        }).value;
+        let numTentativas = ele.data("falhas");
+
+        let v = ((numTentativas - min) * (10 - 1)) / (max - min) + 1;
+
+        return v;
+      },
+    },
+  },
+  edgeFalhasTentativas: {
+    selector: ".falhasTentativasWidth",
+    style: {
+      width: function (ele: any) {
+        let core = ele.cy();
+
+        let max = core.elements().max(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let min = core.elements().min(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let numTentativas = ele.data("tentativas");
+
+        let v = ((numTentativas - min) * (10 - 1)) / (max - min) + 1;
+
+        return v;
+      },
+    },
+  },
+
   customPath: {
     selector: ".highlighted",
     style: {
@@ -34,20 +75,68 @@ export const graphConsts: Record<string, any> = {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let min = core.elements().min(function (ele: any) {
+          return ele.data("tentativas");
+        }).value;
+        let tentativas = ele.data("tentativas");
+        let hue;
+        if (tentativas === 0) {
+          hue = 0;
+        } else {
+          hue = ((tentativas - min) * (100 - 0)) / (max - min) + 1;
+        }
+
+        return ["hsl(", 100 - hue, ",100%,50%)"].join("");
+      },
+    },
+  },
+
+  edgeFalhasColor: {
+    selector: ".falhasColor",
+    style: {
+      lineColor: function (ele: any) {
+        let core = ele.cy();
+
+        let max = core.elements().max(function (ele: any) {
           return ele.data("falhas");
         }).value;
         let min = core.elements().min(function (ele: any) {
           return ele.data("falhas");
         }).value;
-        let falhasTentativas = ele.data("falhas");
+        let tentativas = ele.data("falhas");
         let hue;
-        if (falhasTentativas === 0) {
-           hue = 0;
+        if (tentativas === 0) {
+          hue = 0;
         } else {
-           hue = ((falhasTentativas - min) * (100 - 0)) / (max - min) + 1;
+          hue = ((tentativas - min) * (100 - 0)) / (max - min) + 1;
         }
 
-        return ["hsl(", 100 -hue, ",100%,50%)"].join("");
+        return ["hsl(", 100 - hue, ",100%,50%)"].join("");
+      },
+    },
+  },
+  edgeFalhasTentativasColor: {
+    selector: ".falhasTentativasColor",
+    style: {
+      lineColor: function (ele: any) {
+        let numTentativas = ele.data("tentativas");
+        console.log("🚀 ~ file: graphConst.tsx ~ line 125 ~ numTentativas", numTentativas)
+
+        let falhas = ele.data("falhas");
+        console.log("🚀 ~ file: graphConst.tsx ~ line 128 ~ falhas", falhas)
+        let hue;
+
+        
+        if (falhas === 0 || numTentativas === 0) {
+          hue = 0;
+        } else {
+          hue = falhas / numTentativas * 100;
+          console.log("🚀 ~ file: graphConst.tsx ~ line 136 ~ hue", hue)
+        }
+
+        return ["hsl(", 100 - hue, ",100%,50%)"].join("");
       },
     },
   },
@@ -84,6 +173,27 @@ export const graphConsts: Record<string, any> = {
         // });
         // return labelFinal;
         return nodeAtribute.id;
+      },
+    },
+  },
+  edgeLabel: {
+    selector: "edge",
+    style: {
+      shape: "ellipse",
+      "text-wrap": "wrap",
+      "text-max-width": "200px",
+      "font-size": "16px",
+
+      label: function (edge: any) {
+        const edgeAtribute = edge.data();
+        if (edgeAtribute.falhas > 0 && edgeAtribute.tentativas > 0)
+          return (
+            Math.trunc((edgeAtribute.falhas / edgeAtribute.tentativas) * 100) +
+            "%"
+          );
+        else {
+          return 0;
+        }
       },
     },
   },

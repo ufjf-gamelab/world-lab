@@ -152,15 +152,17 @@ export function Graph() {
 
   useEffect(() => {
     if (clickedPosition && isCreatingNode) {
-  
-      let newId = cyRef.current?.nodes().max(function (ele: any) {
-        return parseInt(ele.data("id"));
-      }).ele.id();
-      
+      let newId = cyRef.current
+        ?.nodes()
+        .max(function (ele: any) {
+          return parseInt(ele.data("id"));
+        })
+        .ele.id();
+
       cyRef.current?.add({
         group: "nodes",
         data: {
-          id: newId?.toString(),
+          id: newId?.toString()! + 1,
           label: `Node${newId}`,
           difficulty: 5,
           isVisited: false,
@@ -228,8 +230,6 @@ export function Graph() {
         ?.$(`#${randomEdgeID}`)
         .data({ tentativas: randomEdgeTentativas + 1 });
       if (randomNumber > randomEdgeDifficulty) {
-        console.log("randomEdge", randomEdge.data("id"));
-        console.log("chosenNode", chosenNode);
         col.merge(randomEdge);
         col.merge(`#${chosenNode}`);
         nodeIDArray.push(chosenNode);
@@ -242,10 +242,14 @@ export function Graph() {
 
   const resetStyles = () => {
     cyRef.current?.elements().removeClass("highlighted");
-    cyRef.current?.elements().removeClass("tentativas");
     cyRef.current?.elements().removeClass("firstNode");
     cyRef.current?.elements().removeClass("lastNode");
     cyRef.current?.elements().removeClass("tentativasColor");
+    cyRef.current?.elements().removeClass("tentativasWidth");
+    cyRef.current?.elements().removeClass("falhasWidth");
+    cyRef.current?.elements().removeClass("falhasColor");
+    cyRef.current?.elements().removeClass("falhasTentativasWidth");
+    cyRef.current?.elements().removeClass("falhasTentativasColor");
   };
 
   const resetNodesAtributes = () => {
@@ -323,16 +327,9 @@ export function Graph() {
     reader.readAsText(file!);
   };
 
-  const showTentativasStyles = () => {
-    cyRef.current?.elements().edges().addClass("tentativas");
-  };
-  const showTentativasColorStyles = () => {
-    cyRef.current
-      ?.elements()
-      .filter(function (ele) {
-        return ele.isEdge();
-      })
-      .addClass("tentativasColor");
+  const showStyles = (style: string) => {
+    console.log("entrei", style);
+    cyRef.current?.elements().edges().addClass(style);
   };
 
   return (
@@ -371,12 +368,6 @@ export function Graph() {
           </div>
         </form>
 
-        <button onClick={() => showTentativasStyles()}>
-          MostrarTentativas Width
-        </button>
-        <button onClick={() => showTentativasColorStyles()}>
-          MostrarTentativas Color
-        </button>
         <button onClick={() => resetStyles()}>Reset styles</button>
         <button onClick={() => resetNodesAtributes()}>
           Reset Node atributes
@@ -385,6 +376,7 @@ export function Graph() {
           onClick={() => {
             setIsCreatingNode(!isCreatingNode);
             setRelationship([]);
+            setIsCreatingRelationship(false);
           }}
         >
           Create Node
@@ -397,7 +389,6 @@ export function Graph() {
         >
           Create Relationship
         </button>
-        <h4>creating node = {isCreatingNode ? "true" : "false"}</h4>
         <button>
           <a
             href={`data:text/json;charset=utf-8,${encodeURIComponent(
@@ -418,10 +409,15 @@ export function Graph() {
           layout={layouts.klay}
           stylesheet={[
             graphConsts.nodeLabel,
+            graphConsts.edgeLabel,
             graphConsts.firstNode,
             graphConsts.lastNode,
             graphConsts.edgeTentativas,
             graphConsts.edgeTentativasColor,
+            graphConsts.edgeFalhas,
+            graphConsts.edgeFalhasTentativas,
+            graphConsts.edgeFalhasColor,
+            graphConsts.edgeFalhasTentativasColor,
             graphConsts.customPath,
           ]}
           cy={(cy) => {
@@ -509,7 +505,7 @@ export function Graph() {
         ) : (
           <div className="container">
             <>
-              {(primaryNode || selectedEdge) && (
+              {(primaryNode || selectedEdge) && !isCreatingNode && (
                 <div className="header">
                   <h1>Data</h1>
 
@@ -540,7 +536,7 @@ export function Graph() {
                 </div>
               )}
             </>
-            {primaryNode && (
+            {primaryNode && !isCreatingNode && (
               <>
                 <div className="subtitle">
                   <h2>Node ID</h2>
@@ -570,7 +566,7 @@ export function Graph() {
               </>
             )}
 
-            {selectedEdge && (
+            {selectedEdge && !isCreatingNode && (
               <>
                 <div className="subtitle">
                   <h2>Source</h2>
@@ -611,6 +607,28 @@ export function Graph() {
                 </button>
               </>
             )}
+
+            <div className="configuracao">
+              <h2>Configurações</h2>
+              <div className="configuracoesButtons">
+                <button onClick={() => showStyles("tentativasWidth")}>
+                  Tentativas Width
+                </button>
+                <button onClick={() => showStyles("tentativasColor")}>
+                  Tentativas Color
+                </button>
+                <button onClick={() => showStyles("falhasTentativasColor")}>
+                  % falhas/tentativas Color
+                </button>
+  
+                <button onClick={() => showStyles("falhasWidth")}>
+                  Falhas width
+                </button>
+                <button onClick={() => showStyles("falhasColor")}>
+                  Falhas color
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -619,7 +637,7 @@ export function Graph() {
         isOpen={modalFormIsOpen}
         onRequestClose={closeModal}
         style={modalStyles}
-        contentLabel="Example Modal"
+        contentLabel="modal-form"
       >
         {primaryNode && (
           <form onSubmit={handleSubmit(onSubmit)}>
