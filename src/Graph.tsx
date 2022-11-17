@@ -8,8 +8,7 @@ import Modal from "react-modal";
 interface INode {
   id: string;
   label: string;
-  difficulty: number;
-  isVisited: boolean;
+  churnCount: number;
   newAttributes?: {
     attribute: string;
     value: string;
@@ -36,8 +35,7 @@ interface IClickedPosition {
 }
 type FormValues = {
   label: string;
-  difficulty: number;
-  isVisited: boolean;
+  churnCount: number;
   tentativas?: string;
   weight?: number;
   falhas?: string;
@@ -107,8 +105,7 @@ export function Graph() {
   const onSubmit: SubmitHandler<FormValues> = (nodeData: FormValues) => {
     const data = {
       label: nodeData.label,
-      difficulty: nodeData.difficulty,
-      isVisited: nodeData.isVisited,
+      churnCount: nodeData.churnCount,
       newAttributes: [...nodeData.newAttributes],
     };
 
@@ -164,8 +161,7 @@ export function Graph() {
         data: {
           id: newId?.toString()! + 1,
           label: `Node${newId}`,
-          difficulty: 5,
-          isVisited: false,
+          churnCount: 0,
         },
         position: { x: clickedPosition.x, y: clickedPosition.y },
       });
@@ -213,12 +209,15 @@ export function Graph() {
   ) => {
     let randomEdgeDifficulty = parseInt(randomEdge.data("weight"));
     let chosenNode;
+    let churnNode;
     let randomEdgeTarget = randomEdge.data("target");
     let randomEdgeSource = randomEdge.data("source");
     if (nodeIDArray.includes(randomEdgeTarget)) {
       chosenNode = randomEdgeSource;
+      churnNode = randomEdgeTarget;
     } else {
       chosenNode = randomEdgeTarget;
+      churnNode = randomEdgeSource;
     }
     let randomEdgeID = randomEdge.data("id");
     let randomEdgeTentativas = parseInt(randomEdge.data("tentativas"));
@@ -236,6 +235,9 @@ export function Graph() {
         return chosenNode;
       }
     }
+
+    let oldChurnCount = cyRef.current?.$(`#${churnNode}`).data("churnCOunt");
+    cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
     cyRef.current?.$(`#${randomEdgeID}`).data({ falhas: randomEdgeFalhas + 1 });
     return "fail";
   };
@@ -547,12 +549,8 @@ export function Graph() {
                   <h3>{primaryNode?.label}</h3>
                 </div>
                 <div className="subtitle">
-                  <h2>Difficulty</h2>
-                  <h3>{primaryNode?.difficulty}</h3>
-                </div>
-                <div className="subtitle">
-                  <h2>Visited</h2>
-                  <h3>{primaryNode?.isVisited ? "true" : "false"}</h3>
+                  <h2>Churn count</h2>
+                  <h3>{primaryNode?.churnCount}</h3>
                 </div>
 
                 {primaryNode?.newAttributes?.map((a: IAttribute) => {
@@ -594,11 +592,12 @@ export function Graph() {
 
             {isCreatingNode && (
               <>
-                <h2 className="titleRelationship">
+                <h2 className="titleCreateNode">
                   Click on screen to create node
                 </h2>
 
                 <button
+                  className="buttonCreateNode"
                   onClick={() => {
                     setIsCreatingNode(false);
                   }}
@@ -620,7 +619,7 @@ export function Graph() {
                 <button onClick={() => showStyles("falhasTentativasColor")}>
                   % falhas/tentativas Color
                 </button>
-  
+
                 <button onClick={() => showStyles("falhasWidth")}>
                   Falhas width
                 </button>
@@ -655,21 +654,15 @@ export function Graph() {
                 <h3>Difficulty</h3>
                 <input
                   type="number"
-                  {...register("difficulty", {
+                  {...register("churnCount", {
                     valueAsNumber: true,
                     required: true,
                   })}
-                  defaultValue={primaryNode?.difficulty}
-                  value={primaryNode?.difficulty}
+                  defaultValue={primaryNode?.churnCount}
+                  value={primaryNode?.churnCount}
                 />
               </div>
-              <div className="formInput">
-                <h3>isVisited</h3>
-                <input
-                  type="checkbox"
-                  {...register("isVisited")} // send value to hook form
-                />
-              </div>
+
               {fields.map((field, index) => {
                 return (
                   <div key={field.id}>

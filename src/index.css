@@ -106,6 +106,16 @@ input {
   height: 675px;
 }
 
+.titleCreateNode {
+  text-align: center;
+  margin: 10px auto;
+}
+
+.buttonCreateNode{
+  text-align: center;
+    margin: 18px auto 50px;
+}
+
 .formContainer {
   display: flex;
   flex-direction: row;
