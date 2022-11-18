@@ -136,7 +136,11 @@ export function Graph() {
     data: ICustomSearchFormValues
   ) => {
     for (let i = 0; i < data.numberOfRuns; i++) {
-      customSearchNeighbour(data.firstNode, data.lastNode, data.randomNumberRange);
+      customSearchNeighbour(
+        data.firstNode,
+        data.lastNode,
+        data.randomNumberRange
+      );
     }
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
@@ -213,7 +217,7 @@ export function Graph() {
     col: any,
     randomEdge: any,
     nodeIDArray: string[],
-    randomNumberRange: number,
+    randomNumberRange: number
   ) => {
     let randomEdgeDifficulty = parseInt(randomEdge.data("weight"));
     let chosenNode;
@@ -267,6 +271,8 @@ export function Graph() {
     cyRef.current?.elements().removeClass("falhasTentativasWidth");
     cyRef.current?.elements().removeClass("falhasTentativasColor");
     cyRef.current?.elements().removeClass("falhasTentativasLabel");
+    cyRef.current?.elements().removeClass("nodeChurnCountColor");
+    cyRef.current?.elements().removeClass("nodeChurnCountWidth");
   };
 
   const resetNodesAtributes = () => {
@@ -276,7 +282,11 @@ export function Graph() {
     cyRef.current?.elements().data("churnCount", 0);
   };
 
-  const customSearchNeighbour = (firstNode: string, lastNode: string, randomNumberRange:number) => {
+  const customSearchNeighbour = (
+    firstNode: string,
+    lastNode: string,
+    randomNumberRange: number
+  ) => {
     resetStyles();
     let nodeIDArray: string[] = [];
     let col = cyRef.current?.collection();
@@ -293,7 +303,12 @@ export function Graph() {
     let randomEdge =
       neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
 
-    let nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray,randomNumberRange);
+    let nextNode = challengeEdgeDifficulty(
+      col,
+      randomEdge,
+      nodeIDArray,
+      randomNumberRange
+    );
 
     while (nextNode !== "fail" && nextNode !== lastNode) {
       neighborhoodEdges = cyRef.current
@@ -303,8 +318,8 @@ export function Graph() {
           return ele.isEdge();
         })
         .filter(function (ele: any) {
-          const nodeSource = ele.data(`source`); 
-          const nodeTarget = ele.data(`target`); 
+          const nodeSource = ele.data(`source`);
+          const nodeTarget = ele.data(`target`);
 
           const nodeSourceAlreadyInCollection =
             nodeIDArray.includes(nodeSource);
@@ -327,7 +342,12 @@ export function Graph() {
       randomEdge =
         neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
 
-      nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray, randomNumberRange);
+      nextNode = challengeEdgeDifficulty(
+        col,
+        randomEdge,
+        nodeIDArray,
+        randomNumberRange
+      );
     }
 
     col?.addClass("highlighted");
@@ -348,9 +368,12 @@ export function Graph() {
     reader.readAsText(file!);
   };
 
-  const showStyles = (style: string) => {
+  const showStyles = (style: string, isEdge = true) => {
     console.log("entrei", style);
-    cyRef.current?.elements().edges().addClass(style);
+    if (isEdge) cyRef.current?.elements().edges().addClass(style);
+    else {
+      cyRef.current?.elements().nodes().addClass(style);
+    }
   };
 
   return (
@@ -679,6 +702,12 @@ export function Graph() {
                 </button>
                 <button onClick={() => showStyles("falhasColor")}>
                   Falhas color
+                </button>
+                <button onClick={() => showStyles("churnCountWidth", false)}>
+                  Node Churn Count width
+                </button>
+                <button onClick={() => showStyles("nodeChurnCountColor", false)}>
+                  Node Churn Count color
                 </button>
                 <button onClick={() => showStyles("falhasTentativasLabel")}>
                   Falhas / Tentativas label
