@@ -55,6 +55,7 @@ interface ICustomSearchFormValues {
   firstNode: string;
   lastNode: string;
   numberOfRuns: number;
+  randomNumberRange: number;
 }
 
 export function Graph() {
@@ -135,7 +136,7 @@ export function Graph() {
     data: ICustomSearchFormValues
   ) => {
     for (let i = 0; i < data.numberOfRuns; i++) {
-      customSearchNeighbour(data.firstNode, data.lastNode);
+      customSearchNeighbour(data.firstNode, data.lastNode, data.randomNumberRange);
     }
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
@@ -211,7 +212,8 @@ export function Graph() {
   const challengeEdgeDifficulty = (
     col: any,
     randomEdge: any,
-    nodeIDArray: string[]
+    nodeIDArray: string[],
+    randomNumberRange: number,
   ) => {
     let randomEdgeDifficulty = parseInt(randomEdge.data("weight"));
     let chosenNode;
@@ -230,7 +232,7 @@ export function Graph() {
     let randomEdgeFalhas = parseInt(randomEdge.data("falhas"));
 
     for (let i = 0; i < 5; i++) {
-      const randomNumber = Math.floor(Math.random() * 18);
+      const randomNumber = Math.floor(Math.random() * randomNumberRange);
       cyRef.current
         ?.$(`#${randomEdgeID}`)
         .data({ tentativas: randomEdgeTentativas + 1 });
@@ -274,7 +276,7 @@ export function Graph() {
     cyRef.current?.elements().data("churnCount", 0);
   };
 
-  const customSearchNeighbour = (firstNode: string, lastNode: string) => {
+  const customSearchNeighbour = (firstNode: string, lastNode: string, randomNumberRange:number) => {
     resetStyles();
     let nodeIDArray: string[] = [];
     let col = cyRef.current?.collection();
@@ -291,7 +293,7 @@ export function Graph() {
     let randomEdge =
       neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
 
-    let nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
+    let nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray,randomNumberRange);
 
     while (nextNode !== "fail" && nextNode !== lastNode) {
       neighborhoodEdges = cyRef.current
@@ -325,7 +327,7 @@ export function Graph() {
       randomEdge =
         neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
 
-      nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
+      nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray, randomNumberRange);
     }
 
     col?.addClass("highlighted");
@@ -371,6 +373,15 @@ export function Graph() {
                 {...registerValue("lastNode")}
                 required
                 placeholder="Last node"
+                type={"number"}
+              />
+            </div>
+            <div className="formInput">
+              <h3>Random number range</h3>
+              <input
+                {...registerValue("randomNumberRange")}
+                required
+                placeholder="Random number range"
                 type={"number"}
               />
             </div>

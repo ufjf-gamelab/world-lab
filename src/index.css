@@ -132,8 +132,7 @@ input {
 
 .formInput {
   display: flex;
-  flex-direction: column;
-  width: 200px;
+  flex-direction: column;  
 }
 
 .formPathContainer {
