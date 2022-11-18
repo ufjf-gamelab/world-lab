@@ -39,6 +39,26 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
+  nodeChurnCountWidth: {
+    selector: ".churnCountWidth",
+    style: {
+      width: function (ele: any) {
+        let core = ele.cy();
+
+        let max = core.elements().max(function (ele: any) {
+          return ele.data("churnCount");
+        }).value;
+        let min = core.elements().min(function (ele: any) {
+          return ele.data("churnCount");
+        }).value;
+        let churnCount = ele.data("churnCount");
+
+        let v = ((churnCount - min) * (10 - 1)) / (max - min) + 1;
+
+        return v;
+      },
+    },
+  },
   edgeFalhasTentativas: {
     selector: ".falhasTentativasWidth",
     style: {
@@ -117,45 +137,49 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
-  edgeFalhasTentativasColor: {
-    selector: ".falhasTentativasColor",
+  nodeChurnCountColor: {
+    selector: ".nodeChurnCountColor",
     style: {
       lineColor: function (ele: any) {
-        let numTentativas = ele.data("tentativas");
-        console.log(
-          "🚀 ~ file: graphConst.tsx ~ line 125 ~ numTentativas",
-          numTentativas
-        );
+        let core = ele.cy();
 
-        let falhas = ele.data("falhas");
-        console.log("🚀 ~ file: graphConst.tsx ~ line 128 ~ falhas", falhas);
+        let max = core.elements().max(function (ele: any) {
+          return ele.data("churnCount");
+        }).value;
+        let min = core.elements().min(function (ele: any) {
+          return ele.data("churnCount");
+        }).value;
+        let churnCount = ele.data("churnCount");
         let hue;
-
-        if (falhas === 0 || numTentativas === 0) {
+        if (churnCount === 0) {
           hue = 0;
         } else {
-          hue = (falhas / numTentativas) * 100;
-          console.log("🚀 ~ file: graphConst.tsx ~ line 136 ~ hue", hue);
+          hue = ((churnCount - min) * (100 - 0)) / (max - min) + 1;
         }
 
         return ["hsl(", 100 - hue, ",100%,50%)"].join("");
       },
     },
   },
-  firstNode: {
-    selector: ".firstNode",
+  edgeFalhasTentativasColor: {
+    selector: ".falhasTentativasColor",
     style: {
-      "background-color": "red",
-      color: "red",
+      lineColor: function (ele: any) {
+        let numTentativas = ele.data("tentativas");
+        let falhas = ele.data("falhas");
+        let hue;
+
+        if (falhas === 0 || numTentativas === 0) {
+          hue = 0;
+        } else {
+          hue = (falhas / numTentativas) * 100;
+        }
+
+        return ["hsl(", 100 - hue, ",100%,50%)"].join("");
+      },
     },
   },
-  lastNode: {
-    selector: ".lastNode",
-    style: {
-      "background-color": "red",
-      color: "red",
-    },
-  },
+ 
   nodeLabel: {
     selector: "node",
     style: {
@@ -178,15 +202,14 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
-  edgeLabel: {
-    selector: "edge",
+  edgeFalhasTentativasLabel: {
+    selector: ".falhasTentativasLabel",
     style: {
       shape: "ellipse",
       "text-wrap": "wrap",
       "text-max-width": "200px",
       "font-size": "16px",
-      "text-valign": "top",
-      "text-halign": "top",
+
       label: function (edge: any) {
         const edgeAtribute = edge.data();
         if (edgeAtribute.falhas > 0 && edgeAtribute.tentativas > 0)

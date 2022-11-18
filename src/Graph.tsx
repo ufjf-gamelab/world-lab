@@ -1,7 +1,13 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { layouts } from "./layouts";
 import { graphConsts } from "./graphConst";
 import { GrEdit } from "react-icons/gr";
+import { RiDownloadFill } from "react-icons/ri";
+import { CgExport } from "react-icons/cg";
+import { GrPowerReset } from "react-icons/gr";
+import { BsPlusCircle } from "react-icons/bs";
+import { BsEraser } from "react-icons/bs";
+import { VscGitPullRequestCreate } from "react-icons/vsc";
 import CytoscapeComponent from "react-cytoscapejs";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import Modal from "react-modal";
@@ -102,7 +108,8 @@ export function Graph() {
     control,
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (nodeData: FormValues) => {
+  const onSubmitNode: SubmitHandler<FormValues> = (nodeData: FormValues) => {
+    console.log("nodedata", nodeData);
     const data = {
       label: nodeData.label,
       churnCount: nodeData.churnCount,
@@ -113,7 +120,6 @@ export function Graph() {
     closeModal();
   };
   const onSubmitEdge: SubmitHandler<FormValues> = (edgeData: FormValues) => {
-    edgeData.newAttributes.map((value) => {});
     const data = {
       label: edgeData.label,
       weight: edgeData.weight,
@@ -236,7 +242,13 @@ export function Graph() {
       }
     }
 
-    let oldChurnCount = cyRef.current?.$(`#${churnNode}`).data("churnCOunt");
+    let oldChurnCount = parseInt(
+      cyRef.current?.$(`#${churnNode}`).data("churnCount")
+    );
+    console.log(
+      "🚀 ~ file: Graph.tsx ~ line 240 ~ Graph ~ oldChurnCount",
+      oldChurnCount
+    );
     cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
     cyRef.current?.$(`#${randomEdgeID}`).data({ falhas: randomEdgeFalhas + 1 });
     return "fail";
@@ -252,12 +264,14 @@ export function Graph() {
     cyRef.current?.elements().removeClass("falhasColor");
     cyRef.current?.elements().removeClass("falhasTentativasWidth");
     cyRef.current?.elements().removeClass("falhasTentativasColor");
+    cyRef.current?.elements().removeClass("falhasTentativasLabel");
   };
 
   const resetNodesAtributes = () => {
     resetStyles();
     cyRef.current?.elements().data("tentativas", 0);
     cyRef.current?.elements().data("falhas", 0);
+    cyRef.current?.elements().data("churnCount", 0);
   };
 
   const customSearchNeighbour = (firstNode: string, lastNode: string) => {
@@ -285,24 +299,27 @@ export function Graph() {
         .neighborhood()
         .filter(function (ele: any) {
           return ele.isEdge();
+        })
+        .filter(function (ele: any) {
+          const nodeSource = ele.data(`source`); 
+          const nodeTarget = ele.data(`target`); 
+
+          const nodeSourceAlreadyInCollection =
+            nodeIDArray.includes(nodeSource);
+          const nodeTargetAlreadyInCollection =
+            nodeIDArray.includes(nodeTarget);
+          if (
+            nodeTarget === nodeSource ||
+            (nodeTargetAlreadyInCollection && nodeSourceAlreadyInCollection)
+          ) {
+            return false;
+          }
+
+          return true;
         });
 
       // eslint-disable-next-line no-loop-func
-      neighborhoodEdges.filter(function (ele: any) {
-        const nodeSource = ele.data(`source`); //2
-        const nodeTarget = ele.data(`target`); //3
 
-        const nodeSourceAlreadyInCollection = nodeIDArray.includes(nodeSource); //true
-        const nodeTargetAlreadyInCollection = nodeIDArray.includes(nodeTarget); //false
-        if (
-          nodeTarget === nodeSource ||
-          (nodeTargetAlreadyInCollection && nodeSourceAlreadyInCollection)
-        ) {
-          return false;
-        }
-
-        return true;
-      });
       if (neighborhoodEdges.length === 0) break;
 
       randomEdge =
@@ -370,39 +387,64 @@ export function Graph() {
           </div>
         </form>
 
-        <button onClick={() => resetStyles()}>Reset styles</button>
-        <button onClick={() => resetNodesAtributes()}>
-          Reset Node atributes
-        </button>
-        <button
+        <GrPowerReset
+          fontSize={24}
+          color={"black"}
+          title="Reset styles"
+          onClick={() => resetStyles()}
+        />
+
+        <BsEraser
+          fontSize={24}
+          color={"black"}
+          title="  Reset Node atributes"
+          onClick={() => resetNodesAtributes()}
+        />
+        <BsPlusCircle
+          fontSize={24}
+          color={"black"}
+          title="Create node"
           onClick={() => {
             setIsCreatingNode(!isCreatingNode);
             setRelationship([]);
             setIsCreatingRelationship(false);
           }}
-        >
-          Create Node
-        </button>
-        <button
+        />
+
+        <VscGitPullRequestCreate
+          fontSize={24}
+          color={"black"}
+          title="Create Relationship"
           onClick={() => {
             setIsCreatingRelationship(!isCreatingRelationship);
             setRelationship([]);
           }}
-        >
-          Create Relationship
-        </button>
-        <button>
-          <a
-            href={`data:text/json;charset=utf-8,${encodeURIComponent(
-              JSON.stringify(elements)
-            )}`}
-            download="filename.json"
-          >
-            {`Download Json`}
-          </a>
-        </button>
+        />
 
-        <input onChange={handleFileSelected} type="file" />
+        <a
+          className="download-link"
+          href={`data:text/json;charset=utf-8,${encodeURIComponent(
+            JSON.stringify(elements)
+          )}`}
+          download="filename.json"
+        >
+          <RiDownloadFill
+            fontSize={24}
+            color={"black"}
+            title="Download Graph"
+          />
+        </a>
+        <div onChange={handleFileSelected}>
+          <label htmlFor="file-input">
+            <CgExport fontSize={24} color={"black"} title="Insert Graph" />
+          </label>
+
+          <input
+            id="download-input"
+            onChange={handleFileSelected}
+            type="file"
+          ></input>
+        </div>
       </div>
       <div className="mainContainer">
         <CytoscapeComponent
@@ -411,14 +453,15 @@ export function Graph() {
           layout={layouts.klay}
           stylesheet={[
             graphConsts.nodeLabel,
-            graphConsts.edgeLabel,
-            graphConsts.firstNode,
-            graphConsts.lastNode,
+            graphConsts.edgeFalhasTentativasLabel,
             graphConsts.edgeTentativas,
             graphConsts.edgeTentativasColor,
             graphConsts.edgeFalhas,
+            graphConsts.nodeChurnCountWidth,
+            graphConsts.nodeChurnCountColor,
             graphConsts.edgeFalhasTentativas,
             graphConsts.edgeFalhasColor,
+            graphConsts.edgeFalhasTentativasColor,
             graphConsts.edgeFalhasTentativasColor,
             graphConsts.customPath,
           ]}
@@ -626,6 +669,9 @@ export function Graph() {
                 <button onClick={() => showStyles("falhasColor")}>
                   Falhas color
                 </button>
+                <button onClick={() => showStyles("falhasTentativasLabel")}>
+                  Falhas / Tentativas label
+                </button>
               </div>
             </div>
           </div>
@@ -636,10 +682,11 @@ export function Graph() {
         isOpen={modalFormIsOpen}
         onRequestClose={closeModal}
         style={modalStyles}
+        ariaHideApp={false}
         contentLabel="modal-form"
       >
         {primaryNode && (
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmitNode)}>
             <div className="formContainer">
               <div className="formInput">
                 <h3>Label</h3>
@@ -651,7 +698,7 @@ export function Graph() {
               </div>
 
               <div className="formInput">
-                <h3>Difficulty</h3>
+                <h3>Churn Count</h3>
                 <input
                   type="number"
                   {...register("churnCount", {
@@ -659,7 +706,6 @@ export function Graph() {
                     required: true,
                   })}
                   defaultValue={primaryNode?.churnCount}
-                  value={primaryNode?.churnCount}
                 />
               </div>
 
@@ -673,11 +719,6 @@ export function Graph() {
                           `newAttributes.${index}.attribute` as const,
                           {}
                         )}
-                        className={
-                          errors?.newAttributes?.[index]?.attribute
-                            ? "error"
-                            : ""
-                        }
                         defaultValue={field.attribute}
                       />
                       <input
@@ -686,9 +727,6 @@ export function Graph() {
                           `newAttributes.${index}.value` as const,
                           {}
                         )}
-                        className={
-                          errors?.newAttributes?.[index]?.value ? "error" : ""
-                        }
                         defaultValue={field.value}
                       />
 
@@ -765,11 +803,6 @@ export function Graph() {
                           `newAttributes.${index}.attribute` as const,
                           {}
                         )}
-                        className={
-                          errors?.newAttributes?.[index]?.attribute
-                            ? "error"
-                            : ""
-                        }
                         defaultValue={field.attribute}
                       />
                       <input
@@ -778,9 +811,6 @@ export function Graph() {
                           `newAttributes.${index}.value` as const,
                           {}
                         )}
-                        className={
-                          errors?.newAttributes?.[index]?.value ? "error" : ""
-                        }
                         defaultValue={field.value}
                       />
 

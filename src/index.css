@@ -29,7 +29,13 @@ button {
   width: 130px;
   opacity: 1;
 }
+#download-input{
+display: none;
+}
 
+.download-link{
+  height: 24px;
+}
 .containerRelationship {
   display: grid;
   grid-template-rows: 50px 100px 100px;
