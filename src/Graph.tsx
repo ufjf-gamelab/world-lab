@@ -435,7 +435,7 @@ export function Graph() {
           href={`data:text/json;charset=utf-8,${encodeURIComponent(
             JSON.stringify(elements)
           )}`}
-          download="filename.json"
+          download="Graph.json"
         >
           <RiDownloadFill
             fontSize={24}
@@ -443,15 +443,15 @@ export function Graph() {
             title="Download Graph"
           />
         </a>
-        <label>
+     
           <CgExport fontSize={24} color={"black"} title="Insert Graph" />
 
           <input
-            id="download-input"
+            id="download"
             onChange={handleFileSelected}
             type="file"
           ></input>
-        </label>
+      
       </div>
       <div className="mainContainer">
         <CytoscapeComponent
