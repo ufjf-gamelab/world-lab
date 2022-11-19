@@ -1,60 +1,60 @@
 export const graphConsts: Record<string, any> = {
-  edgeTentativas: {
-    selector: ".tentativasWidth",
+  edgeAttempts: {
+    selector: ".attemptsWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("attempts");
         }).value;
         let min = core.elements().min(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("attempts");
         }).value;
-        let numTentativas = ele.data("tentativas");
+        let numAttempts = ele.data("attempts");
 
-        let v = ((numTentativas - min) * (10 - 1)) / (max - min) + 1;
+        let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
 
         return v;
       },
     },
   },
-  edgeFalhas: {
-    selector: ".falhasWidth",
+  edgeFailures: {
+    selector: ".FailuresWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
-          return ele.data("falhas");
+          return ele.data("failures");
         }).value;
         let min = core.elements().min(function (ele: any) {
-          return ele.data("falhas");
+          return ele.data("failures");
         }).value;
-        let numTentativas = ele.data("falhas");
+        let numAttempts = ele.data("failures");
 
-        let v = ((numTentativas - min) * (10 - 1)) / (max - min) + 1;
+        let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
 
         return v;
       },
     },
   },
  
-  edgeFalhasTentativas: {
-    selector: ".falhasTentativasWidth",
+  edgeFailuresAttempts: {
+    selector: ".failuresAttemptsWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("attempts");
         }).value;
         let min = core.elements().min(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("attempts");
         }).value;
-        let numTentativas = ele.data("tentativas");
+        let numAttempts = ele.data("attempts");
 
-        let v = ((numTentativas - min) * (10 - 1)) / (max - min) + 1;
+        let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
 
         return v;
       },
@@ -69,24 +69,24 @@ export const graphConsts: Record<string, any> = {
     },
   },
 
-  edgeTentativasColor: {
-    selector: ".tentativasColor",
+  edgeAttemptsColor: {
+    selector: ".attemptsColor",
     style: {
       lineColor: function (ele: any) {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("attempts");
         }).value;
         let min = core.elements().min(function (ele: any) {
-          return ele.data("tentativas");
+          return ele.data("attempts");
         }).value;
-        let tentativas = ele.data("tentativas");
+        let attempts = ele.data("attempts");
         let hue;
-        if (tentativas === 0) {
+        if (attempts === 0) {
           hue = 0;
         } else {
-          hue = ((tentativas - min) * (100 - 0)) / (max - min) + 1;
+          hue = ((attempts - min) * (100 - 0)) / (max - min) + 1;
         }
 
         return ["hsl(", 100 - hue, ",100%,50%)"].join("");
@@ -94,24 +94,24 @@ export const graphConsts: Record<string, any> = {
     },
   },
 
-  edgeFalhasColor: {
-    selector: ".falhasColor",
+  edgeFailuresColor: {
+    selector: ".FailuresColor",
     style: {
       lineColor: function (ele: any) {
         let core = ele.cy();
 
         let max = core.elements().max(function (ele: any) {
-          return ele.data("falhas");
+          return ele.data("failures");
         }).value;
         let min = core.elements().min(function (ele: any) {
-          return ele.data("falhas");
+          return ele.data("failures");
         }).value;
-        let tentativas = ele.data("falhas");
+        let attempts = ele.data("failures");
         let hue;
-        if (tentativas === 0) {
+        if (attempts === 0) {
           hue = 0;
         } else {
-          hue = ((tentativas - min) * (100 - 0)) / (max - min) + 1;
+          hue = ((attempts - min) * (100 - 0)) / (max - min) + 1;
         }
 
         return ["hsl(", 100 - hue, ",100%,50%)"].join("");
@@ -143,18 +143,18 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
-  edgeFalhasTentativasColor: {
-    selector: ".falhasTentativasColor",
+  edgeFailuresAttemptsColor: {
+    selector: ".FailuresAttemptsColor",
     style: {
       lineColor: function (ele: any) {
-        let numTentativas = ele.data("tentativas");
-        let falhas = ele.data("falhas");
+        let numAttempts = ele.data("attempts");
+        let failures = ele.data("failures");
         let hue;
 
-        if (falhas === 0 || numTentativas === 0) {
+        if (failures === 0 || numAttempts === 0) {
           hue = 0;
         } else {
-          hue = (falhas / numTentativas) * 100;
+          hue = (failures / numAttempts) * 100;
         }
 
         return ["hsl(", 100 - hue, ",100%,50%)"].join("");
@@ -184,8 +184,8 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
-  edgeFalhasTentativasLabel: {
-    selector: ".falhasTentativasLabel",
+  edgeFailuresAttemptsLabel: {
+    selector: ".FailuresAttemptsLabel",
     style: {
       shape: "ellipse",
       "text-wrap": "wrap",
@@ -194,14 +194,14 @@ export const graphConsts: Record<string, any> = {
 
       label: function (edge: any) {
         const edgeAtribute = edge.data();
-        if (edgeAtribute.falhas > 0 && edgeAtribute.tentativas > 0)
+        if (edgeAtribute.failures > 0 && edgeAtribute.attempts > 0)
           return (
-            "Falhas/Tentativas: " +
-            Math.trunc((edgeAtribute.falhas / edgeAtribute.tentativas) * 100) +
+            "Failures/Attempts: " +
+            Math.trunc((edgeAtribute.failures / edgeAtribute.attempts) * 100) +
             " %"
           );
         else {
-          return "Falhas/Tentativas: " + 0;
+          return "Failures/Attempts: " + 0;
         }
       },
     },
@@ -252,126 +252,126 @@ export const graphConsts: Record<string, any> = {
       data: {
         source: "1",
         target: "2",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
+        attempts: 0,
+        failures: 0,
+        difficulty: 15,
       },
     },
     {
       data: {
         source: "1",
         target: "3",
-        tentativas: 0,
-        falhas: 0,
-        weight: 30,
+        attempts: 0,
+        failures: 0,
+        difficulty: 30,
       },
     },
     {
       data: {
         source: "1",
         target: "4",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
+        attempts: 0,
+        failures: 0,
+        difficulty: 15,
       },
     },
     {
       data: {
         source: "1",
         target: "5",
-        tentativas: 0,
-        falhas: 0,
-        weight: 5,
+        attempts: 0,
+        failures: 0,
+        difficulty: 5,
       },
     },
     {
       data: {
         source: "2",
         target: "3",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
+        attempts: 0,
+        failures: 0,
+        difficulty: 15,
       },
     },
     {
       data: {
         source: "2",
         target: "6",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
+        attempts: 0,
+        failures: 0,
+        difficulty: 15,
       },
     },
     {
       data: {
         source: "3",
         target: "7",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
+        attempts: 0,
+        failures: 0,
+        difficulty: 15,
       },
     },
     {
       data: {
         source: "4",
         target: "5",
-        tentativas: 0,
-        falhas: 0,
-        weight: 5,
+        attempts: 0,
+        failures: 0,
+        difficulty: 5,
       },
     },
     {
       data: {
         source: "6",
         target: "9",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
+        attempts: 0,
+        failures: 0,
+        difficulty: 15,
       },
     },
     {
       data: {
         source: "7",
         target: "10",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
+        attempts: 0,
+        failures: 0,
+        difficulty: 15,
       },
     },
     {
       data: {
         source: "5",
         target: "8",
-        tentativas: 0,
-        falhas: 0,
-        weight: 20,
+        attempts: 0,
+        failures: 0,
+        difficulty: 20,
       },
     },
     {
       data: {
         source: "4",
         target: "8",
-        tentativas: 0,
-        falhas: 0,
-        weight: 2,
+        attempts: 0,
+        failures: 0,
+        difficulty: 2,
       },
     },
     {
       data: {
         source: "8",
         target: "10",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
+        attempts: 0,
+        failures: 0,
+        difficulty: 15,
       },
     },
     {
       data: {
         source: "9",
         target: "10",
-        tentativas: 0,
-        falhas: 0,
-        weight: 15,
+        attempts: 0,
+        failures: 0,
+        difficulty: 15,
       },
     },
   ],

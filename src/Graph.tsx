@@ -29,9 +29,9 @@ interface IEdge {
   id?: string;
   target: string;
   source: string;
-  weight: number;
-  tentativas: number;
-  falhas: number;
+  difficulty: number;
+  attempts: number;
+  failures: number;
   label?: string;
 }
 
@@ -42,9 +42,9 @@ interface IClickedPosition {
 type FormValues = {
   label: string;
   churnCount: number;
-  tentativas?: string;
-  weight?: number;
-  falhas?: string;
+  attempts?: string;
+  difficulty?: number;
+  failures?: string;
   newAttributes: {
     attribute: string;
     value: string;
@@ -123,9 +123,9 @@ export function Graph() {
   const onSubmitEdge: SubmitHandler<FormValues> = (edgeData: FormValues) => {
     const data = {
       label: edgeData.label,
-      weight: edgeData.weight,
-      tentativas: edgeData.tentativas,
-      falhas: edgeData.falhas,
+      difficulty: edgeData.difficulty,
+      attempts: edgeData.attempts,
+      failures: edgeData.failures,
       newAttributes: [...edgeData.newAttributes],
     };
 
@@ -188,9 +188,9 @@ export function Graph() {
         data: {
           source: relationship[0] ? relationship[0]?.id : "",
           target: relationship[1] ? relationship[1]?.id : "",
-          tentativas: 0,
-          falhas: 0,
-          weight: 5,
+          attempts: 0,
+          failures: 0,
+          difficulty: 5,
         },
       });
       const newNodes = cyRef.current?.elements().jsons();
@@ -217,7 +217,7 @@ export function Graph() {
     randomEdge: any,
     nodeIDArray: string[]
   ) => {
-    let randomEdgeDifficulty = parseInt(randomEdge.data("weight"));
+    let randomEdgeDifficulty = parseInt(randomEdge.data("difficulty"));
     let chosenNode;
     let churnNode;
     let randomEdgeTarget = randomEdge.data("target");
@@ -230,14 +230,14 @@ export function Graph() {
       churnNode = randomEdgeSource;
     }
     let randomEdgeID = randomEdge.data("id");
-    let randomEdgeTentativas = parseInt(randomEdge.data("tentativas"));
-    let randomEdgeFalhas = parseInt(randomEdge.data("falhas"));
+    let randomEdgeAttempts = parseInt(randomEdge.data("attempts"));
+    let randomEdgeFailures = parseInt(randomEdge.data("failures"));
 
     for (let i = 0; i < 5; i++) {
       const randomNumber = Math.floor(Math.random() * 30);
       cyRef.current
         ?.$(`#${randomEdgeID}`)
-        .data({ tentativas: randomEdgeTentativas + 1 });
+        .data({ attempts: randomEdgeAttempts + 1 });
       if (randomNumber > randomEdgeDifficulty) {
         col.merge(randomEdge);
         col.merge(`#${chosenNode}`);
@@ -254,7 +254,7 @@ export function Graph() {
       oldChurnCount
     );
     cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
-    cyRef.current?.$(`#${randomEdgeID}`).data({ falhas: randomEdgeFalhas + 1 });
+    cyRef.current?.$(`#${randomEdgeID}`).data({ failures: randomEdgeFailures + 1 });
     return "fail";
   };
 
@@ -262,20 +262,20 @@ export function Graph() {
     cyRef.current?.elements().removeClass("highlighted");
     cyRef.current?.elements().removeClass("firstNode");
     cyRef.current?.elements().removeClass("lastNode");
-    cyRef.current?.elements().removeClass("tentativasColor");
-    cyRef.current?.elements().removeClass("tentativasWidth");
-    cyRef.current?.elements().removeClass("falhasWidth");
-    cyRef.current?.elements().removeClass("falhasColor");
-    cyRef.current?.elements().removeClass("falhasTentativasWidth");
-    cyRef.current?.elements().removeClass("falhasTentativasColor");
-    cyRef.current?.elements().removeClass("falhasTentativasLabel");
+    cyRef.current?.elements().removeClass("attemptsColor");
+    cyRef.current?.elements().removeClass("attemptsWidth");
+    cyRef.current?.elements().removeClass("FailuresWidth");
+    cyRef.current?.elements().removeClass("FailuresColor");
+    cyRef.current?.elements().removeClass("FailuresAttemptsWidth");
+    cyRef.current?.elements().removeClass("FailuresAttemptsColor");
+    cyRef.current?.elements().removeClass("FailuresAttemptsLabel");
     cyRef.current?.elements().removeClass("churnCountColor");
   };
 
   const resetNodesAtributes = () => {
     resetStyles();
-    cyRef.current?.elements().data("tentativas", 0);
-    cyRef.current?.elements().data("falhas", 0);
+    cyRef.current?.elements().data("attempts", 0);
+    cyRef.current?.elements().data("failures", 0);
     cyRef.current?.elements().data("churnCount", 0);
   };
 
@@ -460,15 +460,15 @@ export function Graph() {
           layout={layouts.klay}
           stylesheet={[
             graphConsts.nodeLabel,
-            graphConsts.edgeFalhasTentativasLabel,
-            graphConsts.edgeTentativas,
-            graphConsts.edgeTentativasColor,
-            graphConsts.edgeFalhas,
+            graphConsts.edgeFailuresAttemptsLabel,
+            graphConsts.edgeAttempts,
+            graphConsts.edgeAttemptsColor,
+            graphConsts.edgeFailures,
             graphConsts.nodeChurnCountColor,
-            graphConsts.edgeFalhasTentativas,
-            graphConsts.edgeFalhasColor,
-            graphConsts.edgeFalhasTentativasColor,
-            graphConsts.edgeFalhasTentativasColor,
+            graphConsts.edgeFailuresAttempts,
+            graphConsts.edgeFailuresColor,
+            graphConsts.edgeFailuresAttemptsColor,
+            graphConsts.edgeFailuresAttemptsColor,
             graphConsts.customPath,
           ]}
           cy={(cy) => {
@@ -625,16 +625,16 @@ export function Graph() {
                 </div>
 
                 <div className="subtitle">
-                  <h2>Weight</h2>
-                  <h3>{selectedEdge?.weight}</h3>
+                  <h2>Difficulty</h2>
+                  <h3>{selectedEdge?.difficulty}</h3>
                 </div>
                 <div className="subtitle">
-                  <h2>tentativas</h2>
-                  <h3>{selectedEdge?.tentativas}</h3>
+                  <h2>attempts</h2>
+                  <h3>{selectedEdge?.attempts}</h3>
                 </div>
                 <div className="subtitle">
-                  <h2>Falhas</h2>
-                  <h3>{selectedEdge?.falhas}</h3>
+                  <h2>Failures</h2>
+                  <h3>{selectedEdge?.failures}</h3>
                 </div>
               </>
             )}
@@ -659,27 +659,27 @@ export function Graph() {
             <div className="configuracao">
               <h2>Configurações</h2>
               <div className="configuracoesButtons">
-                <button onClick={() => showStyles("tentativasWidth")}>
-                  Tentativas Width
+                <button onClick={() => showStyles("attemptsWidth")}>
+                  Attempts Width
                 </button>
-                <button onClick={() => showStyles("tentativasColor")}>
-                  Tentativas Color
+                <button onClick={() => showStyles("attemptsColor")}>
+                  Attempts Color
                 </button>
-                <button onClick={() => showStyles("falhasTentativasColor")}>
-                  % falhas/tentativas Color
+                <button onClick={() => showStyles("FailuresAttemptsColor")}>
+                  % failures/attempts Color
                 </button>
 
-                <button onClick={() => showStyles("falhasWidth")}>
-                  Falhas width
+                <button onClick={() => showStyles("FailuresWidth")}>
+                  Failures width
                 </button>
-                <button onClick={() => showStyles("falhasColor")}>
-                  Falhas color
+                <button onClick={() => showStyles("FailuresColor")}>
+                  Failures color
                 </button>
                 <button onClick={() => showStyles("churnCountColor", false)}>
                   Node Churn Count color
                 </button>
-                <button onClick={() => showStyles("falhasTentativasLabel")}>
-                  Falhas / Tentativas label
+                <button onClick={() => showStyles("FailuresAttemptsLabel")}>
+                  Failures / Attempts label
                 </button>
               </div>
             </div>
@@ -776,30 +776,30 @@ export function Graph() {
               </div>
 
               <div className="formInput">
-                <h3>Weight</h3>
+                <h3>Difficulty</h3>
                 <input
                   type="number"
-                  {...register("weight", {
+                  {...register("difficulty", {
                     valueAsNumber: true,
                     required: true,
                   })}
-                  defaultValue={selectedEdge?.weight}
+                  defaultValue={selectedEdge?.difficulty}
                 />
               </div>
               <div className="formInput">
-                <h3>tentativas</h3>
+                <h3>attempts</h3>
                 <input
                   type="number"
-                  {...register("tentativas")}
-                  defaultValue={selectedEdge?.tentativas}
+                  {...register("attempts")}
+                  defaultValue={selectedEdge?.attempts}
                 />
               </div>
               <div className="formInput">
-                <h3>falhas</h3>
+                <h3>failures</h3>
                 <input
                   type="number"
-                  {...register("falhas")} // send value to hook form
-                  defaultValue={selectedEdge?.falhas}
+                  {...register("failures")} // send value to hook form
+                  defaultValue={selectedEdge?.failures}
                 />
               </div>
               {fields.map((field, index) => {

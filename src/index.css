@@ -150,7 +150,7 @@ label {
   margin-top: 20px;
   color: black;
   font-size: 14px;
-  font-weight: 200;
+  font-difficulty: 200;
 }
 
 button[type="submit"],
