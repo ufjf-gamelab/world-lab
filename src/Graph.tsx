@@ -136,11 +136,7 @@ export function Graph() {
     data: ICustomSearchFormValues
   ) => {
     for (let i = 0; i < data.numberOfRuns; i++) {
-      customSearchNeighbour(
-        data.firstNode,
-        data.lastNode,
-        data.randomNumberRange
-      );
+      customSearchNeighbour(data.firstNode, data.lastNode);
     }
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
@@ -160,17 +156,20 @@ export function Graph() {
 
   useEffect(() => {
     if (clickedPosition && isCreatingNode) {
-      let newId = cyRef.current
-        ?.nodes()
-        .max(function (ele: any) {
-          return parseInt(ele.data("id"));
-        })
-        .ele.id();
+      let newId =
+        parseInt(
+          cyRef.current
+            ?.nodes()
+            .max(function (ele: any) {
+              return parseInt(ele.data("id"));
+            })
+            .ele.id()!
+        ) + 1;
 
       cyRef.current?.add({
         group: "nodes",
         data: {
-          id: newId?.toString()! + 1,
+          id: newId.toString(),
           label: `Node${newId}`,
           churnCount: 0,
         },
@@ -216,8 +215,7 @@ export function Graph() {
   const challengeEdgeDifficulty = (
     col: any,
     randomEdge: any,
-    nodeIDArray: string[],
-    randomNumberRange: number
+    nodeIDArray: string[]
   ) => {
     let randomEdgeDifficulty = parseInt(randomEdge.data("weight"));
     let chosenNode;
@@ -236,7 +234,7 @@ export function Graph() {
     let randomEdgeFalhas = parseInt(randomEdge.data("falhas"));
 
     for (let i = 0; i < 5; i++) {
-      const randomNumber = Math.floor(Math.random() * randomNumberRange);
+      const randomNumber = Math.floor(Math.random() * 30);
       cyRef.current
         ?.$(`#${randomEdgeID}`)
         .data({ tentativas: randomEdgeTentativas + 1 });
@@ -271,8 +269,7 @@ export function Graph() {
     cyRef.current?.elements().removeClass("falhasTentativasWidth");
     cyRef.current?.elements().removeClass("falhasTentativasColor");
     cyRef.current?.elements().removeClass("falhasTentativasLabel");
-    cyRef.current?.elements().removeClass("nodeChurnCountColor");
-    cyRef.current?.elements().removeClass("nodeChurnCountWidth");
+    cyRef.current?.elements().removeClass("churnCountColor");
   };
 
   const resetNodesAtributes = () => {
@@ -282,11 +279,7 @@ export function Graph() {
     cyRef.current?.elements().data("churnCount", 0);
   };
 
-  const customSearchNeighbour = (
-    firstNode: string,
-    lastNode: string,
-    randomNumberRange: number
-  ) => {
+  const customSearchNeighbour = (firstNode: string, lastNode: string) => {
     resetStyles();
     let nodeIDArray: string[] = [];
     let col = cyRef.current?.collection();
@@ -303,12 +296,7 @@ export function Graph() {
     let randomEdge =
       neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
 
-    let nextNode = challengeEdgeDifficulty(
-      col,
-      randomEdge,
-      nodeIDArray,
-      randomNumberRange
-    );
+    let nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
 
     while (nextNode !== "fail" && nextNode !== lastNode) {
       neighborhoodEdges = cyRef.current
@@ -342,12 +330,7 @@ export function Graph() {
       randomEdge =
         neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
 
-      nextNode = challengeEdgeDifficulty(
-        col,
-        randomEdge,
-        nodeIDArray,
-        randomNumberRange
-      );
+      nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
     }
 
     col?.addClass("highlighted");
@@ -399,15 +382,7 @@ export function Graph() {
                 type={"number"}
               />
             </div>
-            <div className="formInput">
-              <h3>Random number range</h3>
-              <input
-                {...registerValue("randomNumberRange")}
-                required
-                placeholder="Random number range"
-                type={"number"}
-              />
-            </div>
+
             <div className="formInput">
               <h3>Number of runs </h3>
               <input
@@ -468,17 +443,15 @@ export function Graph() {
             title="Download Graph"
           />
         </a>
-        <div onChange={handleFileSelected}>
-          <label htmlFor="file-input">
-            <CgExport fontSize={24} color={"black"} title="Insert Graph" />
-          </label>
+        <label>
+          <CgExport fontSize={24} color={"black"} title="Insert Graph" />
 
           <input
             id="download-input"
             onChange={handleFileSelected}
             type="file"
           ></input>
-        </div>
+        </label>
       </div>
       <div className="mainContainer">
         <CytoscapeComponent
@@ -491,7 +464,6 @@ export function Graph() {
             graphConsts.edgeTentativas,
             graphConsts.edgeTentativasColor,
             graphConsts.edgeFalhas,
-            graphConsts.nodeChurnCountWidth,
             graphConsts.nodeChurnCountColor,
             graphConsts.edgeFalhasTentativas,
             graphConsts.edgeFalhasColor,
@@ -703,10 +675,7 @@ export function Graph() {
                 <button onClick={() => showStyles("falhasColor")}>
                   Falhas color
                 </button>
-                <button onClick={() => showStyles("churnCountWidth", false)}>
-                  Node Churn Count width
-                </button>
-                <button onClick={() => showStyles("nodeChurnCountColor", false)}>
+                <button onClick={() => showStyles("churnCountColor", false)}>
                   Node Churn Count color
                 </button>
                 <button onClick={() => showStyles("falhasTentativasLabel")}>

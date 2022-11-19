@@ -13,8 +13,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.wrapper {
+svg{
+  cursor: pointer;
 }
+
 
 button {
   background-color: #141414;
