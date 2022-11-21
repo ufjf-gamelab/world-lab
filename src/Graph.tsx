@@ -68,6 +68,7 @@ export function Graph() {
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
+  const [churnRate, setChurnRate] = useState<number>(0);
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
 
   const { register: registerValue, handleSubmit: handleSubmitSearch } =
@@ -110,7 +111,6 @@ export function Graph() {
   });
 
   const onSubmitNode: SubmitHandler<FormValues> = (nodeData: FormValues) => {
-    console.log("nodedata", nodeData);
     const data = {
       label: nodeData.label,
       churnCount: nodeData.churnCount,
@@ -152,6 +152,7 @@ export function Graph() {
     if (!isInitialNodes) {
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elements, cyRef]);
 
   useEffect(() => {
