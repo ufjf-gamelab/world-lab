@@ -152,7 +152,7 @@ export function Graph() {
     if (!isInitialNodes) {
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elements, cyRef]);
 
   useEffect(() => {
@@ -218,49 +218,70 @@ export function Graph() {
     randomEdge: any,
     nodeIDArray: string[]
   ) => {
-    let randomEdgeDifficulty = parseInt(randomEdge.data("difficulty"));
+    let edge = randomEdge.data();
+    console.log("edge", edge);
+    console.log("edgeattemps", edge.attempts);
+    console.log("edge taerger", edge.target);
+
     let chosenNode;
     let churnNode;
-    let randomEdgeTarget = randomEdge.data("target");
-    let randomEdgeSource = randomEdge.data("source");
-    if (nodeIDArray.includes(randomEdgeTarget)) {
-      chosenNode = randomEdgeSource;
-      churnNode = randomEdgeTarget;
+    let edgeTarget = edge.target;
+    let edgeSource = edge.source;
+    if (nodeIDArray.includes(edgeTarget)) {
+      chosenNode = edgeSource;
+      churnNode = edgeTarget;
     } else {
-      chosenNode = randomEdgeTarget;
-      churnNode = randomEdgeSource;
+      chosenNode = edgeTarget;
+      churnNode = edgeSource;
     }
-    let randomEdgeID = randomEdge.data("id");
-    let randomEdgeAttempts = parseInt(randomEdge.data("attempts"));
-    let randomEdgeFailures = parseInt(randomEdge.data("failures"));
 
+    let edgeFailures = parseInt(edge.failures);
+
+    const wonBattle = randomAbility(edge, chosenNode, col, nodeIDArray);
+
+    if (wonBattle === "fail") {
+      let oldChurnCount = parseInt(
+        cyRef.current?.$(`#${churnNode}`).data("churnCount")
+      );
+
+      cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
+      cyRef.current?.$(`#${edge.id}`).data({ failures: edgeFailures + 1 });
+      return "fail";
+    }
+
+    return wonBattle;
+  };
+
+  const randomAbility = (
+    edge: any,
+    chosenNode: any,
+    col: any,
+    nodeIDArray: any
+  ) => {
+    let edgeDifficulty = parseInt(edge.difficulty);
+    let edgeAttempts = parseInt(edge.attempts);
     for (let i = 0; i < 5; i++) {
       const randomNumber = Math.floor(Math.random() * 30);
-      cyRef.current
-        ?.$(`#${randomEdgeID}`)
-        .data({ attempts: randomEdgeAttempts + 1 });
-      if (randomNumber > randomEdgeDifficulty) {
-        col.merge(randomEdge);
+      cyRef.current?.$(`#${edge.id}`).data({ attempts: edgeAttempts + 1 });
+      if (randomNumber > edgeDifficulty) {
+        col.merge();
         col.merge(`#${chosenNode}`);
         nodeIDArray.push(chosenNode);
         return chosenNode;
       }
     }
 
-    let oldChurnCount = parseInt(
-      cyRef.current?.$(`#${churnNode}`).data("churnCount")
-    );
-    console.log(
-      "🚀 ~ file: Graph.tsx ~ line 240 ~ Graph ~ oldChurnCount",
-      oldChurnCount
-    );
-    cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
-    cyRef.current?.$(`#${randomEdgeID}`).data({ failures: randomEdgeFailures + 1 });
-    return "fail";
+    return "Fail";
+  };
+
+  const adaptiveDifficulty = () => {
+    
   };
 
   const resetStyles = () => {
+
     cyRef.current?.elements().removeClass("highlighted");
+    cyRef.current?.elements().removeData("tentativas");
     cyRef.current?.elements().removeClass("firstNode");
     cyRef.current?.elements().removeClass("lastNode");
     cyRef.current?.elements().removeClass("attemptsColor");
@@ -444,15 +465,10 @@ export function Graph() {
             title="Download Graph"
           />
         </a>
-     
-          <CgExport fontSize={24} color={"black"} title="Insert Graph" />
 
-          <input
-            id="download"
-            onChange={handleFileSelected}
-            type="file"
-          ></input>
-      
+        <CgExport fontSize={24} color={"black"} title="Insert Graph" />
+
+        <input id="download" onChange={handleFileSelected} type="file"></input>
       </div>
       <div className="mainContainer">
         <CytoscapeComponent
