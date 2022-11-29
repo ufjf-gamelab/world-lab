@@ -20,7 +20,7 @@ export const graphConsts: Record<string, any> = {
     },
   },
   edgeFailures: {
-    selector: ".FailuresWidth",
+    selector: ".failuresWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
@@ -95,7 +95,7 @@ export const graphConsts: Record<string, any> = {
   },
 
   edgeFailuresColor: {
-    selector: ".FailuresColor",
+    selector: ".failuresColor",
     style: {
       lineColor: function (ele: any) {
         let core = ele.cy();
@@ -144,7 +144,7 @@ export const graphConsts: Record<string, any> = {
     },
   },
   edgeFailuresAttemptsColor: {
-    selector: ".FailuresAttemptsColor",
+    selector: ".failuresAttemptsColor",
     style: {
       lineColor: function (ele: any) {
         let numAttempts = ele.data("attempts");
@@ -185,7 +185,7 @@ export const graphConsts: Record<string, any> = {
     },
   },
   edgeFailuresAttemptsLabel: {
-    selector: ".FailuresAttemptsLabel",
+    selector: ".failuresAttemptsLabel",
     style: {
       shape: "ellipse",
       "text-wrap": "wrap",

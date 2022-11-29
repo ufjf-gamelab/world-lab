@@ -6,6 +6,7 @@ import { RiDownloadFill } from "react-icons/ri";
 import { CgExport } from "react-icons/cg";
 import { GrPowerReset } from "react-icons/gr";
 import { BsPlusCircle } from "react-icons/bs";
+import { FiSettings } from "react-icons/fi";
 import { BsEraser } from "react-icons/bs";
 import { VscGitPullRequestCreate } from "react-icons/vsc";
 import CytoscapeComponent from "react-cytoscapejs";
@@ -191,7 +192,7 @@ export function Graph() {
           target: relationship[1] ? relationship[1]?.id : "",
           attempts: 0,
           failures: 0,
-          difficulty: 5,
+          difficulty: 15,
         },
       });
       const newNodes = cyRef.current?.elements().jsons();
@@ -219,10 +220,6 @@ export function Graph() {
     nodeIDArray: string[]
   ) => {
     let edge = randomEdge.data();
-    console.log("edge", edge);
-    console.log("edgeattemps", edge.attempts);
-    console.log("edge taerger", edge.target);
-
     let chosenNode;
     let churnNode;
     let edgeTarget = edge.target;
@@ -270,27 +267,20 @@ export function Graph() {
         return chosenNode;
       }
     }
-
-    return "Fail";
-  };
-
-  const adaptiveDifficulty = () => {
-    
   };
 
   const resetStyles = () => {
-
     cyRef.current?.elements().removeClass("highlighted");
     cyRef.current?.elements().removeData("tentativas");
     cyRef.current?.elements().removeClass("firstNode");
     cyRef.current?.elements().removeClass("lastNode");
     cyRef.current?.elements().removeClass("attemptsColor");
     cyRef.current?.elements().removeClass("attemptsWidth");
-    cyRef.current?.elements().removeClass("FailuresWidth");
-    cyRef.current?.elements().removeClass("FailuresColor");
-    cyRef.current?.elements().removeClass("FailuresAttemptsWidth");
-    cyRef.current?.elements().removeClass("FailuresAttemptsColor");
-    cyRef.current?.elements().removeClass("FailuresAttemptsLabel");
+    cyRef.current?.elements().removeClass("failuresWidth");
+    cyRef.current?.elements().removeClass("failuresColor");
+    cyRef.current?.elements().removeClass("failuresAttemptsWidth");
+    cyRef.current?.elements().removeClass("failuresAttemptsColor");
+    cyRef.current?.elements().removeClass("failuresAttemptsLabel");
     cyRef.current?.elements().removeClass("churnCountColor");
   };
 
@@ -359,6 +349,15 @@ export function Graph() {
     cyRef.current?.$(`#${lastNode}`).addClass("lastNode");
   };
 
+  const setInvariableGraphDifficulty = () => {
+    cyRef.current
+      ?.elements()
+      .filter(function (ele) {
+        return ele.isEdge();
+      })
+      .data({ difficulty: 15 });
+  };
+
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
     let file = e.target.files && e.target?.files?.[0];
 
@@ -374,7 +373,6 @@ export function Graph() {
   };
 
   const showStyles = (style: string, isEdge = true) => {
-    console.log("entrei", style);
     if (isEdge) cyRef.current?.elements().edges().addClass(style);
     else {
       cyRef.current?.elements().nodes().addClass(style);
@@ -441,7 +439,14 @@ export function Graph() {
             setIsCreatingRelationship(false);
           }}
         />
-
+        <FiSettings
+          fontSize={24}
+          color={"black"}
+          title="Change Node Difficulty"
+          onClick={() => {
+            setInvariableGraphDifficulty();
+          }}
+        />
         <VscGitPullRequestCreate
           fontSize={24}
           color={"black"}
