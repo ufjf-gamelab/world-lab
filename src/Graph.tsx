@@ -222,46 +222,47 @@ export function Graph() {
     let edge = randomEdge.data();
     let chosenNode;
     let churnNode;
-    let edgeTarget = edge.target;
-    let edgeSource = edge.source;
-    if (nodeIDArray.includes(edgeTarget)) {
-      chosenNode = edgeSource;
-      churnNode = edgeTarget;
+
+    if (nodeIDArray.includes(edge.target)) {
+      chosenNode = edge.source;
+      churnNode = edge.target;
     } else {
-      chosenNode = edgeTarget;
-      churnNode = edgeSource;
+      chosenNode = edge.target;
+      churnNode = edge.source;
     }
 
     let edgeFailures = parseInt(edge.failures);
 
-    const wonBattle = randomAbility(edge, chosenNode, col, nodeIDArray);
+    const nextNode = randomAbility(randomEdge, chosenNode, col, nodeIDArray);
 
-    if (wonBattle === "fail") {
+    if (nextNode === "fail") {
       let oldChurnCount = parseInt(
         cyRef.current?.$(`#${churnNode}`).data("churnCount")
       );
 
       cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
       cyRef.current?.$(`#${edge.id}`).data({ failures: edgeFailures + 1 });
+      setChurnRate(churnRate + 5);
       return "fail";
     }
 
-    return wonBattle;
+    return nextNode;
   };
 
   const randomAbility = (
     edge: any,
     chosenNode: any,
     col: any,
-    nodeIDArray: any
+    nodeIDArray: string[]
   ) => {
-    let edgeDifficulty = parseInt(edge.difficulty);
-    let edgeAttempts = parseInt(edge.attempts);
+    let edgeData = edge.data();
+    let edgeDifficulty = parseInt(edgeData.difficulty);
+    let edgeAttempts = parseInt(edgeData.attempts);
     for (let i = 0; i < 5; i++) {
       const randomNumber = Math.floor(Math.random() * 30);
-      cyRef.current?.$(`#${edge.id}`).data({ attempts: edgeAttempts + 1 });
+      cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
       if (randomNumber > edgeDifficulty) {
-        col.merge();
+        col.merge(edge);
         col.merge(`#${chosenNode}`);
         nodeIDArray.push(chosenNode);
         return chosenNode;
@@ -293,11 +294,11 @@ export function Graph() {
 
   const customSearchNeighbour = (firstNode: string, lastNode: string) => {
     resetStyles();
+    setChurnRate(0);
     let nodeIDArray: string[] = [];
     let col = cyRef.current?.collection();
 
     col?.merge(`#${firstNode}`);
-    cyRef.current?.$(`#${firstNode}`).addClass("firstNode");
     nodeIDArray.push(`${firstNode}`);
     let neighborhoodEdges: any = cyRef.current
       ?.$(`#${firstNode}`)
@@ -346,16 +347,16 @@ export function Graph() {
     }
 
     col?.addClass("highlighted");
-    cyRef.current?.$(`#${lastNode}`).addClass("lastNode");
   };
 
+  const dynamicDifficultyModel = () => {};
   const setInvariableGraphDifficulty = () => {
     cyRef.current
       ?.elements()
       .filter(function (ele) {
         return ele.isEdge();
       })
-      .data({ difficulty: 15 });
+      .data({ difficulty: 15, attempts: 0, failures: 0 });
   };
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
