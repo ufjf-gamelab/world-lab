@@ -70,6 +70,9 @@ export function Graph() {
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
   const [churnRate, setChurnRate] = useState<number>(0);
+  const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
+  const [estimatedPlayerRating, setEstimatedPlayerRating] =
+    useState<number>(1500);
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
 
   const { register: registerValue, handleSubmit: handleSubmitSearch } =
@@ -192,7 +195,7 @@ export function Graph() {
           target: relationship[1] ? relationship[1]?.id : "",
           attempts: 0,
           failures: 0,
-          difficulty: 15,
+          difficulty: 1600,
         },
       });
       const newNodes = cyRef.current?.elements().jsons();
@@ -233,7 +236,13 @@ export function Graph() {
 
     let edgeFailures = parseInt(edge.failures);
 
-    const nextNode = randomAbility(randomEdge, chosenNode, col, nodeIDArray);
+    //const nextNode = randomAbility(randomEdge, chosenNode, col, nodeIDArray);
+    const nextNode = eloRatingChallenge(
+      randomEdge,
+      chosenNode,
+      col,
+      nodeIDArray
+    );
 
     if (nextNode === "fail") {
       let oldChurnCount = parseInt(
@@ -268,6 +277,62 @@ export function Graph() {
         return chosenNode;
       }
     }
+    return "fail";
+  };
+
+  const probabilityEloRating = (rating1: number, rating2: number) => {
+    return (
+      (1.0 * 1.0) / (1 + 1.0 * Math.pow(10, (1.0 * (rating1 - rating2)) / 400))
+    );
+  };
+
+  const eloRating = (Ra: number, Rb: number, K: number) => {
+    // To calculate the Winning
+    // Probability of Player B
+    let Pb = probabilityEloRating(Ra, Rb);
+
+    // To calculate the Winning
+    // Probability of Player A
+    let Pa = probabilityEloRating(Rb, Ra);
+
+    // Case 1 When Player A wins
+    // Updating the Elo Ratings
+    if (true) {
+      Ra = Ra + K * (1 - Pa);
+      Rb = Rb + K * (0 - Pb);
+    }
+
+    // Case 2 When Player B wins
+    // Updating the Elo Ratings
+    else {
+      Ra = Ra + K * (0 - Pa);
+      Rb = Rb + K * (1 - Pb);
+    }
+  };
+  const eloRatingChallenge = (
+    edge: any,
+    chosenNode: any,
+    col: any,
+    nodeIDArray: string[]
+  ) => {
+    let edgeData = edge.data();
+    let edgeDifficulty = parseInt(edgeData.difficulty);
+    let edgeAttempts = parseInt(edgeData.attempts);
+
+    const Ra = actualPlayerRating;
+    const Rb = edgeDifficulty;
+
+    const K = 32;
+
+    eloRating(Ra, Rb, K);
+
+    // cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
+    // if (randomNumber > edgeDifficulty) {
+    //   col.merge(edge);
+    //   col.merge(`#${chosenNode}`);
+    //   nodeIDArray.push(chosenNode);
+    // }
+    return chosenNode;
   };
 
   const resetStyles = () => {
@@ -349,14 +414,13 @@ export function Graph() {
     col?.addClass("highlighted");
   };
 
-  const dynamicDifficultyModel = () => {};
   const setInvariableGraphDifficulty = () => {
     cyRef.current
       ?.elements()
       .filter(function (ele) {
         return ele.isEdge();
       })
-      .data({ difficulty: 15, attempts: 0, failures: 0 });
+      .data({ difficulty: 1600, attempts: 0, failures: 0 });
   };
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
