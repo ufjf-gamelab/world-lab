@@ -315,7 +315,7 @@ export function Graph() {
     nodeIDArray: string[]
   ) => {
     let edgeData = edge.data();
-    let edgeDifficulty = parseInt(edgeData.difficulty);
+    //let edgeDifficulty = parseInt(edgeData.difficulty);
     let edgeAttempts = parseInt(edgeData.attempts);
 
     const Ra = actualPlayerRating;
@@ -323,14 +323,14 @@ export function Graph() {
 
     //const K = 32;
 
-    let playerWinProbability = probabilityEloRating(Ra, Rb) * 100;
+    let playerWinProbability = probabilityEloRating(Rb, Ra) * 100;
 
-    // To calculate the Winning
-    // Probability of Player A
-    let botWinProbability = probabilityEloRating(Rb, Ra) * 100;
+   
+    let botWinProbability = probabilityEloRating(Ra, Rb) * 100;
+ 
 
-    const playerHability = Math.floor(Math.random() * botWinProbability);
-    const botHability = Math.floor(Math.random() * playerWinProbability);
+    const playerHability = Math.floor(Math.random() * playerWinProbability);
+    const botHability = Math.floor(Math.random() * botWinProbability);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability >= botHability) {
       setEstimatedPlayerRating(estimatedPlayerRating + 32);
