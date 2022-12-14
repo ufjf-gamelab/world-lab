@@ -319,7 +319,7 @@ export function Graph() {
     let edgeAttempts = parseInt(edgeData.attempts);
 
     const Ra = actualPlayerRating;
-    const Rb = edgeDifficulty;
+    const Rb = estimatedPlayerRating + 40;
 
     //const K = 32;
 
