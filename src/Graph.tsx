@@ -56,6 +56,7 @@ interface ICustomSearchFormValues {
   firstNode: string;
   lastNode: string;
   numberOfRuns: number;
+  playerRating: number;
   randomNumberRange: number;
 }
 
@@ -139,6 +140,7 @@ export function Graph() {
   const onSubmitCustomSearch: SubmitHandler<ICustomSearchFormValues> = (
     data: ICustomSearchFormValues
   ) => {
+    setActualPlayerRating(data.playerRating);
     for (let i = 0; i < data.numberOfRuns; i++) {
       customSearchNeighbour(data.firstNode, data.lastNode);
     }
@@ -151,6 +153,10 @@ export function Graph() {
     setElements(localElements);
     setisInitialNodes(false);
   }, []);
+  useEffect(() => {
+    console.log("actualPlayerRating", actualPlayerRating);
+    console.log("estimatedPlayerRating", estimatedPlayerRating);
+  }, [actualPlayerRating, estimatedPlayerRating]);
 
   useEffect(() => {
     if (!isInitialNodes) {
@@ -286,29 +292,22 @@ export function Graph() {
     );
   };
 
-  const eloRating = (Ra: number, Rb: number, K: number) => {
-    // To calculate the Winning
-    // Probability of Player B
-    let Pb = probabilityEloRating(Ra, Rb);
-
-    // To calculate the Winning
-    // Probability of Player A
-    let Pa = probabilityEloRating(Rb, Ra);
-
-    // Case 1 When Player A wins
-    // Updating the Elo Ratings
-    if (true) {
-      Ra = Ra + K * (1 - Pa);
-      Rb = Rb + K * (0 - Pb);
-    }
-
-    // Case 2 When Player B wins
-    // Updating the Elo Ratings
-    else {
-      Ra = Ra + K * (0 - Pa);
-      Rb = Rb + K * (1 - Pb);
-    }
-  };
+  // const eloRating = (Ra: number, Rb: number, K: number) => {
+  // To calculate the Winning
+  // Probability of Player B
+  // Case 1 When Player A wins
+  // Updating the Elo Ratings
+  // if (true) {
+  //   Ra = Ra + K * (1 - Pa);
+  //   Rb = Rb + K * (0 - Pb);
+  // }
+  // // Case 2 When Player B wins
+  // // Updating the Elo Ratings
+  // else {
+  //   Ra = Ra + K * (0 - Pa);
+  //   Rb = Rb + K * (1 - Pb);
+  // }
+  // };
   const eloRatingChallenge = (
     edge: any,
     chosenNode: any,
@@ -322,17 +321,27 @@ export function Graph() {
     const Ra = actualPlayerRating;
     const Rb = edgeDifficulty;
 
-    const K = 32;
+    //const K = 32;
 
-    eloRating(Ra, Rb, K);
+    let playerWinProbability = probabilityEloRating(Ra, Rb) * 100;
 
-    // cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
-    // if (randomNumber > edgeDifficulty) {
-    //   col.merge(edge);
-    //   col.merge(`#${chosenNode}`);
-    //   nodeIDArray.push(chosenNode);
-    // }
-    return chosenNode;
+    // To calculate the Winning
+    // Probability of Player A
+    let botWinProbability = probabilityEloRating(Rb, Ra) * 100;
+
+    const playerHability = Math.floor(Math.random() * botWinProbability);
+    const botHability = Math.floor(Math.random() * playerWinProbability);
+    cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
+    if (playerHability >= botHability) {
+      setEstimatedPlayerRating(estimatedPlayerRating + 32);
+      col.merge(edge);
+      col.merge(`#${chosenNode}`);
+      nodeIDArray.push(chosenNode);
+      return chosenNode;
+    } else {
+      setEstimatedPlayerRating(estimatedPlayerRating - 32);
+      return "fail";
+    }
   };
 
   const resetStyles = () => {
@@ -464,6 +473,15 @@ export function Graph() {
                 {...registerValue("lastNode")}
                 required
                 placeholder="Last node"
+                type={"number"}
+              />
+            </div>
+            <div className="formInput">
+              <h3>Player Rating</h3>
+              <input
+                {...registerValue("playerRating")}
+                required
+                placeholder="Player rating"
                 type={"number"}
               />
             </div>
@@ -752,20 +770,20 @@ export function Graph() {
                 <button onClick={() => showStyles("attemptsColor")}>
                   Attempts Color
                 </button>
-                <button onClick={() => showStyles("FailuresAttemptsColor")}>
+                <button onClick={() => showStyles("failuresAttemptsColor")}>
                   % failures/attempts Color
                 </button>
 
-                <button onClick={() => showStyles("FailuresWidth")}>
+                <button onClick={() => showStyles("failuresWidth")}>
                   Failures width
                 </button>
-                <button onClick={() => showStyles("FailuresColor")}>
+                <button onClick={() => showStyles("failuresColor")}>
                   Failures color
                 </button>
                 <button onClick={() => showStyles("churnCountColor", false)}>
                   Node Churn Count color
                 </button>
-                <button onClick={() => showStyles("FailuresAttemptsLabel")}>
+                <button onClick={() => showStyles("failuresAttemptsLabel")}>
                   Failures / Attempts label
                 </button>
               </div>
