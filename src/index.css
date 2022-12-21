@@ -99,7 +99,7 @@ a {
   cursor: pointer;
 }
 
-input {
+input, select {
   box-sizing: border-box;
   border-radius: 4px;
   border: 1px solid rgb(15, 14, 14);

@@ -55,6 +55,8 @@ type FormValues = {
 interface ICustomSearchFormValues {
   firstNode: string;
   lastNode: string;
+  difficultyModel: string;
+  churnModel: string;
   numberOfRuns: number;
   playerRating: number;
   randomNumberRange: number;
@@ -72,6 +74,7 @@ export function Graph() {
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
   const [churnRate, setChurnRate] = useState<number>(0);
   const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
+  const [simulatorData, setSimulatorData] = useState<any>([]);
   const [estimatedPlayerRating, setEstimatedPlayerRating] =
     useState<number>(1500);
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
@@ -140,9 +143,12 @@ export function Graph() {
   const onSubmitCustomSearch: SubmitHandler<ICustomSearchFormValues> = (
     data: ICustomSearchFormValues
   ) => {
+    console.log("🚀 ~ file: Graph.tsx:145 ~ Graph ~ data", data);
+    setSimulatorData(data);
+
     setActualPlayerRating(data.playerRating);
     for (let i = 0; i < data.numberOfRuns; i++) {
-      customSearchNeighbour(data.firstNode, data.lastNode);
+      customSearchNeighbour();
     }
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
@@ -153,10 +159,7 @@ export function Graph() {
     setElements(localElements);
     setisInitialNodes(false);
   }, []);
-  useEffect(() => {
-    console.log("actualPlayerRating", actualPlayerRating);
-    console.log("estimatedPlayerRating", estimatedPlayerRating);
-  }, [actualPlayerRating, estimatedPlayerRating]);
+  useEffect(() => {}, [actualPlayerRating, estimatedPlayerRating]);
 
   useEffect(() => {
     if (!isInitialNodes) {
@@ -242,13 +245,17 @@ export function Graph() {
 
     let edgeFailures = parseInt(edge.failures);
 
-    //const nextNode = randomAbility(randomEdge, chosenNode, col, nodeIDArray);
-    const nextNode = eloRatingChallenge(
-      randomEdge,
-      chosenNode,
-      col,
-      nodeIDArray
-    );
+    let nextNode;
+
+    switch (simulatorData.difficultyModel) {
+      case "randomMode":
+        nextNode = randomAbility(randomEdge, chosenNode, col, nodeIDArray);
+        break;
+      case "eloRating":
+        nextNode = eloRatingChallenge(randomEdge, chosenNode, col, nodeIDArray);
+        break;
+      default:
+    }
 
     if (nextNode === "fail") {
       let oldChurnCount = parseInt(
@@ -292,22 +299,6 @@ export function Graph() {
     );
   };
 
-  // const eloRating = (Ra: number, Rb: number, K: number) => {
-  // To calculate the Winning
-  // Probability of Player B
-  // Case 1 When Player A wins
-  // Updating the Elo Ratings
-  // if (true) {
-  //   Ra = Ra + K * (1 - Pa);
-  //   Rb = Rb + K * (0 - Pb);
-  // }
-  // // Case 2 When Player B wins
-  // // Updating the Elo Ratings
-  // else {
-  //   Ra = Ra + K * (0 - Pa);
-  //   Rb = Rb + K * (1 - Pb);
-  // }
-  // };
   const eloRatingChallenge = (
     edge: any,
     chosenNode: any,
@@ -325,9 +316,7 @@ export function Graph() {
 
     let playerWinProbability = probabilityEloRating(Rb, Ra) * 100;
 
-   
     let botWinProbability = probabilityEloRating(Ra, Rb) * 100;
- 
 
     const playerHability = Math.floor(Math.random() * playerWinProbability);
     const botHability = Math.floor(Math.random() * botWinProbability);
@@ -366,16 +355,16 @@ export function Graph() {
     cyRef.current?.elements().data("churnCount", 0);
   };
 
-  const customSearchNeighbour = (firstNode: string, lastNode: string) => {
+  const customSearchNeighbour = () => {
     resetStyles();
     setChurnRate(0);
     let nodeIDArray: string[] = [];
     let col = cyRef.current?.collection();
 
-    col?.merge(`#${firstNode}`);
-    nodeIDArray.push(`${firstNode}`);
+    col?.merge(`#${simulatorData.firstNode}`);
+    nodeIDArray.push(`${simulatorData.firstNode}`);
     let neighborhoodEdges: any = cyRef.current
-      ?.$(`#${firstNode}`)
+      ?.$(`#${simulatorData.firstNode}`)
       .neighborhood()
       .filter(function (ele) {
         return ele.isEdge();
@@ -385,7 +374,7 @@ export function Graph() {
 
     let nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
 
-    while (nextNode !== "fail" && nextNode !== lastNode) {
+    while (nextNode !== "fail" && nextNode !== simulatorData.lastNode) {
       neighborhoodEdges = cyRef.current
         ?.$(`#${nextNode}`)
         .neighborhood()
@@ -494,6 +483,23 @@ export function Graph() {
                 placeholder="Number of runs"
                 type={"number"}
               />
+            </div>
+
+            <div className="formInput">
+              <h3>Difficulty model </h3>
+              <select {...registerValue("difficultyModel")}>
+                <option value="randomMode">Random rating</option>
+                <option value="eloRating">Elo rating</option>
+              </select>
+            </div>
+            <div className="formInput">
+              <h3>Churn model </h3>
+              <select {...registerValue("churnModel")}>
+                <option value="threeAndOut">3 and out</option>
+                <option value="tryhard">Tryhard</option>
+                <option value="noChoices">No choices</option>
+                <option value="tiredOfPlaying">Tired of playing</option>
+              </select>
             </div>
             <input type="submit" />
           </div>
