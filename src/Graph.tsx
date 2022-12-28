@@ -74,7 +74,7 @@ export function Graph() {
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
   const [churnRate, setChurnRate] = useState<number>(0);
   const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
-  const [simulatorData, setSimulatorData] = useState<any>([]);
+  const [simulatorData, setSimulatorData] = useState<ICustomSearchFormValues>();
   const [estimatedPlayerRating, setEstimatedPlayerRating] =
     useState<number>(1500);
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
@@ -247,11 +247,17 @@ export function Graph() {
 
     let nextNode;
 
-    switch (simulatorData.difficultyModel) {
+    switch (simulatorData?.difficultyModel) {
       case "randomMode":
+        setInvariableGraphDifficulty(
+          simulatorData?.playerRating + Math.floor(Math.random() * 3)
+        );
         nextNode = randomAbility(randomEdge, chosenNode, col, nodeIDArray);
         break;
       case "eloRating":
+        setInvariableGraphDifficulty(
+          simulatorData?.playerRating + Math.floor(Math.random() * 300)
+        );
         nextNode = eloRatingChallenge(randomEdge, chosenNode, col, nodeIDArray);
         break;
       default:
@@ -280,16 +286,39 @@ export function Graph() {
     let edgeData = edge.data();
     let edgeDifficulty = parseInt(edgeData.difficulty);
     let edgeAttempts = parseInt(edgeData.attempts);
-    for (let i = 0; i < 5; i++) {
-      const randomNumber = Math.floor(Math.random() * 30);
-      cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
-      if (randomNumber > edgeDifficulty) {
-        col.merge(edge);
-        col.merge(`#${chosenNode}`);
-        nodeIDArray.push(chosenNode);
-        return chosenNode;
-      }
+
+    switch (simulatorData?.churnModel) {
+      case "threeAndOut":
+        for (let i = 0; i < 3; i++) {
+          const randomNumber = Math.floor(Math.random() * 30);
+          cyRef.current
+            ?.$(`#${edgeData.id}`)
+            .data({ attempts: edgeAttempts + 1 });
+          if (randomNumber > edgeDifficulty) {
+            col.merge(edge);
+            col.merge(`#${chosenNode}`);
+            nodeIDArray.push(chosenNode);
+            return chosenNode;
+          }
+        }
+        break;
+      case "tryhard":
+        for (let i = 0; i < 99; i++) {
+          const randomNumber = Math.floor(Math.random() * 30);
+          cyRef.current
+            ?.$(`#${edgeData.id}`)
+            .data({ attempts: edgeAttempts + 1 });
+          if (randomNumber > edgeDifficulty) {
+            col.merge(edge);
+            col.merge(`#${chosenNode}`);
+            nodeIDArray.push(chosenNode);
+            return chosenNode;
+          }
+        }
+        break;
+      default:
     }
+
     return "fail";
   };
 
@@ -361,10 +390,10 @@ export function Graph() {
     let nodeIDArray: string[] = [];
     let col = cyRef.current?.collection();
 
-    col?.merge(`#${simulatorData.firstNode}`);
-    nodeIDArray.push(`${simulatorData.firstNode}`);
+    col?.merge(`#${simulatorData?.firstNode}`);
+    nodeIDArray.push(`${simulatorData?.firstNode}`);
     let neighborhoodEdges: any = cyRef.current
-      ?.$(`#${simulatorData.firstNode}`)
+      ?.$(`#${simulatorData?.firstNode}`)
       .neighborhood()
       .filter(function (ele) {
         return ele.isEdge();
@@ -374,7 +403,7 @@ export function Graph() {
 
     let nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
 
-    while (nextNode !== "fail" && nextNode !== simulatorData.lastNode) {
+    while (nextNode !== "fail" && nextNode !== simulatorData?.lastNode) {
       neighborhoodEdges = cyRef.current
         ?.$(`#${nextNode}`)
         .neighborhood()
@@ -412,13 +441,13 @@ export function Graph() {
     col?.addClass("highlighted");
   };
 
-  const setInvariableGraphDifficulty = () => {
+  const setInvariableGraphDifficulty = (difficulty: number = 1600) => {
     cyRef.current
       ?.elements()
       .filter(function (ele) {
         return ele.isEdge();
       })
-      .data({ difficulty: 1600, attempts: 0, failures: 0 });
+      .data({ difficulty: difficulty, attempts: 0, failures: 0 });
   };
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
