@@ -1,11 +1,15 @@
 export const layouts: Record<string, any> = {
   random: {
-    name: "random",
+    name: "preset",
     animate: true,
+    zoom: 0.25,
+    center: true,
   },
   grid: {
-    name: "grid",
+    name: "cose",
     animate: true,
+    zoom: "0.25",
+   
   },
   circle: {
     name: "circle",

@@ -43,7 +43,7 @@ interface IClickedPosition {
 type FormValues = {
   label: string;
   churnCount: number;
-  attempts?: string;
+  attempts?: number;
   difficulty?: number;
   failures?: string;
   newAttributes: {
@@ -59,7 +59,6 @@ interface ICustomSearchFormValues {
   churnModel: string;
   numberOfRuns: number;
   playerRating: number;
-  randomNumberRange: number;
 }
 
 export function Graph() {
@@ -143,15 +142,9 @@ export function Graph() {
   const onSubmitCustomSearch: SubmitHandler<ICustomSearchFormValues> = (
     data: ICustomSearchFormValues
   ) => {
-    console.log("🚀 ~ file: Graph.tsx:145 ~ Graph ~ data", data);
+    console.log("data", data);
     setSimulatorData(data);
-
     setActualPlayerRating(data.playerRating);
-    for (let i = 0; i < data.numberOfRuns; i++) {
-      customSearchNeighbour();
-    }
-    const newNodes = cyRef.current?.elements().jsons();
-    setElements(newNodes);
   };
 
   useEffect(() => {
@@ -159,7 +152,6 @@ export function Graph() {
     setElements(localElements);
     setisInitialNodes(false);
   }, []);
-  useEffect(() => {}, [actualPlayerRating, estimatedPlayerRating]);
 
   useEffect(() => {
     if (!isInitialNodes) {
@@ -195,6 +187,14 @@ export function Graph() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickedPosition]);
+  useEffect(() => {
+    if (!simulatorData) return;
+    for (let i = 0; i < simulatorData.numberOfRuns; i++) {
+      customSearchNeighbour(simulatorData);
+    }
+    const newNodes = cyRef.current?.elements().jsons();
+    setElements(newNodes);
+  }, [simulatorData]);
 
   const createRelationship = () => {
     if (relationship.length === 2 && isCreatingRelationship) {
@@ -226,16 +226,12 @@ export function Graph() {
     setElements(newNodes);
   };
 
-  const challengeEdgeDifficulty = (
-    col: any,
-    randomEdge: any,
-    nodeIDArray: string[]
-  ) => {
+  const challengeEdgeDifficulty = (col: any, randomEdge: any) => {
     let edge = randomEdge.data();
     let chosenNode;
     let churnNode;
 
-    if (nodeIDArray.includes(edge.target)) {
+    if (col?.contains(cyRef?.current!.$(`#${edge.target}`))) {
       chosenNode = edge.source;
       churnNode = edge.target;
     } else {
@@ -244,21 +240,14 @@ export function Graph() {
     }
 
     let edgeFailures = parseInt(edge.failures);
-
     let nextNode;
 
     switch (simulatorData?.difficultyModel) {
       case "randomMode":
-        setInvariableGraphDifficulty(
-          simulatorData?.playerRating + Math.floor(Math.random() * 3)
-        );
-        nextNode = randomAbility(randomEdge, chosenNode, col, nodeIDArray);
+        nextNode = randomAbility(randomEdge, chosenNode, col);
         break;
       case "eloRating":
-        setInvariableGraphDifficulty(
-          simulatorData?.playerRating + Math.floor(Math.random() * 300)
-        );
-        nextNode = eloRatingChallenge(randomEdge, chosenNode, col, nodeIDArray);
+        nextNode = eloRatingChallenge(randomEdge, chosenNode, col);
         break;
       default:
     }
@@ -271,47 +260,39 @@ export function Graph() {
       cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
       cyRef.current?.$(`#${edge.id}`).data({ failures: edgeFailures + 1 });
       setChurnRate(churnRate + 5);
-      return "fail";
     }
 
     return nextNode;
   };
 
-  const randomAbility = (
-    edge: any,
-    chosenNode: any,
-    col: any,
-    nodeIDArray: string[]
-  ) => {
+  const randomAbility = (edge: any, chosenNode: any, col: any) => {
     let edgeData = edge.data();
     let edgeDifficulty = parseInt(edgeData.difficulty);
     let edgeAttempts = parseInt(edgeData.attempts);
+    let randomNumber =
+      Math.floor(Math.random() * 3) + simulatorData?.playerRating!;
 
     switch (simulatorData?.churnModel) {
       case "threeAndOut":
         for (let i = 0; i < 3; i++) {
-          const randomNumber = Math.floor(Math.random() * 30);
           cyRef.current
             ?.$(`#${edgeData.id}`)
             .data({ attempts: edgeAttempts + 1 });
           if (randomNumber > edgeDifficulty) {
             col.merge(edge);
             col.merge(`#${chosenNode}`);
-            nodeIDArray.push(chosenNode);
             return chosenNode;
           }
         }
         break;
       case "tryhard":
         for (let i = 0; i < 99; i++) {
-          const randomNumber = Math.floor(Math.random() * 30);
           cyRef.current
             ?.$(`#${edgeData.id}`)
             .data({ attempts: edgeAttempts + 1 });
           if (randomNumber > edgeDifficulty) {
             col.merge(edge);
             col.merge(`#${chosenNode}`);
-            nodeIDArray.push(chosenNode);
             return chosenNode;
           }
         }
@@ -328,18 +309,14 @@ export function Graph() {
     );
   };
 
-  const eloRatingChallenge = (
-    edge: any,
-    chosenNode: any,
-    col: any,
-    nodeIDArray: string[]
-  ) => {
+  const eloRatingChallenge = (edge: any, chosenNode: any, col: any) => {
+    setInvariableGraphDifficulty(actualPlayerRating + 32);
     let edgeData = edge.data();
-    //let edgeDifficulty = parseInt(edgeData.difficulty);
-    let edgeAttempts = parseInt(edgeData.attempts);
+    let edgeDifficulty = parseInt(edgeData.difficulty);
+    let edgeAttempts = edgeData.attempts;
 
     const Ra = actualPlayerRating;
-    const Rb = estimatedPlayerRating + 40;
+    const Rb = edgeDifficulty;
 
     //const K = 32;
 
@@ -351,13 +328,10 @@ export function Graph() {
     const botHability = Math.floor(Math.random() * botWinProbability);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability >= botHability) {
-      setEstimatedPlayerRating(estimatedPlayerRating + 32);
       col.merge(edge);
       col.merge(`#${chosenNode}`);
-      nodeIDArray.push(chosenNode);
       return chosenNode;
     } else {
-      setEstimatedPlayerRating(estimatedPlayerRating - 32);
       return "fail";
     }
   };
@@ -384,16 +358,13 @@ export function Graph() {
     cyRef.current?.elements().data("churnCount", 0);
   };
 
-  const customSearchNeighbour = () => {
+  const customSearchNeighbour = (data: ICustomSearchFormValues) => {
     resetStyles();
     setChurnRate(0);
-    let nodeIDArray: string[] = [];
     let col = cyRef.current?.collection();
-
-    col?.merge(`#${simulatorData?.firstNode}`);
-    nodeIDArray.push(`${simulatorData?.firstNode}`);
+    col?.merge(`#${data?.firstNode}`);
     let neighborhoodEdges: any = cyRef.current
-      ?.$(`#${simulatorData?.firstNode}`)
+      ?.$(`#${data?.firstNode}`)
       .neighborhood()
       .filter(function (ele) {
         return ele.isEdge();
@@ -401,9 +372,9 @@ export function Graph() {
     let randomEdge =
       neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
 
-    let nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
+    let nextNode = challengeEdgeDifficulty(col, randomEdge);
 
-    while (nextNode !== "fail" && nextNode !== simulatorData?.lastNode) {
+    while (nextNode !== "fail" && nextNode !== data?.lastNode) {
       neighborhoodEdges = cyRef.current
         ?.$(`#${nextNode}`)
         .neighborhood()
@@ -411,16 +382,21 @@ export function Graph() {
           return ele.isEdge();
         })
         .filter(function (ele: any) {
-          const nodeSource = ele.data(`source`);
-          const nodeTarget = ele.data(`target`);
+          const nodeData = ele.data();
+          const nodeSource = nodeData.source;
+          const nodeTarget = nodeData.target;
 
-          const nodeSourceAlreadyInCollection =
-            nodeIDArray.includes(nodeSource);
-          const nodeTargetAlreadyInCollection =
-            nodeIDArray.includes(nodeTarget);
+          const collectionIncludesSource = col?.contains(
+            cyRef?.current!.$(`#${nodeSource}`)
+          );
+
+          const collectionIncludesTarget = col?.contains(
+            cyRef?.current!.$(`#${nodeTarget}`)
+          );
+
           if (
             nodeTarget === nodeSource ||
-            (nodeTargetAlreadyInCollection && nodeSourceAlreadyInCollection)
+            (collectionIncludesSource && collectionIncludesTarget)
           ) {
             return false;
           }
@@ -435,7 +411,7 @@ export function Graph() {
       randomEdge =
         neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
 
-      nextNode = challengeEdgeDifficulty(col, randomEdge, nodeIDArray);
+      nextNode = challengeEdgeDifficulty(col, randomEdge);
     }
 
     col?.addClass("highlighted");
@@ -480,7 +456,7 @@ export function Graph() {
               <h3>First node</h3>
               <input
                 {...registerValue("firstNode")}
-                type={"number"}
+                type={"string"}
                 required
                 placeholder="First node"
               />
@@ -491,29 +467,30 @@ export function Graph() {
                 {...registerValue("lastNode")}
                 required
                 placeholder="Last node"
-                type={"number"}
+                type={"string"}
               />
             </div>
             <div className="formInput">
               <h3>Player Rating</h3>
               <input
-                {...registerValue("playerRating")}
-                required
-                placeholder="Player rating"
-                type={"number"}
+                type="number"
+                {...registerValue("playerRating", {
+                  valueAsNumber: true,
+                  required: true,
+                })}
               />
             </div>
 
             <div className="formInput">
               <h3>Number of runs </h3>
               <input
-                {...registerValue("numberOfRuns")}
-                required
-                placeholder="Number of runs"
-                type={"number"}
+                type="number"
+                {...registerValue("numberOfRuns", {
+                  valueAsNumber: true,
+                  required: true,
+                })}
               />
             </div>
-
             <div className="formInput">
               <h3>Difficulty model </h3>
               <select {...registerValue("difficultyModel")}>
@@ -597,7 +574,7 @@ export function Graph() {
         <CytoscapeComponent
           elements={[...elements]}
           style={containerStyle}
-          layout={layouts.klay}
+          layout={layouts.circle}
           stylesheet={[
             graphConsts.nodeLabel,
             graphConsts.edgeFailuresAttemptsLabel,
@@ -930,7 +907,10 @@ export function Graph() {
                 <h3>attempts</h3>
                 <input
                   type="number"
-                  {...register("attempts")}
+                  {...register("attempts", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
                   defaultValue={selectedEdge?.attempts}
                 />
               </div>
@@ -938,7 +918,10 @@ export function Graph() {
                 <h3>failures</h3>
                 <input
                   type="number"
-                  {...register("failures")} // send value to hook form
+                  {...register("failures", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
                   defaultValue={selectedEdge?.failures}
                 />
               </div>
