@@ -6,6 +6,35 @@
   height: 24px;
 }
 
+
+.submitButton{
+  height: 50px;
+}
+.playerRatingContainer {
+  width: 138px;
+}
+
+.difficultyModelContainer{
+  width: 158px;
+}
+.numberOfRunsContainer{
+  width: 140px;
+}
+.formPathContainer {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+
+}
+
+.playerRatingContainer {
+  width: 113px;
+}
+
+.lastNodeContainer,
+.firstNode {
+  width: 96px;
+}
 .buttonContainer {
   display: flex;
   gap: 20px;
@@ -25,39 +54,4 @@ select {
   padding: 10px 15px;
 }
 
-button[type="submit"],
-input[type="submit"] {
-  background: #ec5990;
-  color: white;
-  border: none;
-  padding: 20px;
-  font-size: 16px;
-}
 
-button[type="submit"]:hover,
-input[type="submit"]:hover {
-  background: #bf1650;
-}
-
-button[type="submit"]:active,
-input[type="button"]:active,
-input[type="submit"]:active {
-  transition: 0.3s all;
-  transform: translateY(3px);
-  border: 1px solid transparent;
-  opacity: 0.8;
-}
-
-input:disabled {
-  opacity: 0.4;
-}
-
-input[type="button"]:hover {
-  transition: 0.3s all;
-}
-
-button[type="submit"],
-input[type="button"],
-input[type="submit"] {
-  -webkit-appearance: none;
-}

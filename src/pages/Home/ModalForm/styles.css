@@ -9,13 +9,15 @@
   .formInput {
     display: flex;
     flex-direction: column;  
-  }
-  
-  .formPathContainer {
-    display: flex;
-    gap: 20px;
 
   }
+
+ 
+  
+  .formInput h3{
+    font-size: 17px;
+  }
+
   label {
     line-height: 2;
     text-align: left;
@@ -24,7 +26,6 @@
     margin-top: 20px;
     color: black;
     font-size: 14px;
-    font-difficulty: 200;
   }
   
 

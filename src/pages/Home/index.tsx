@@ -39,8 +39,9 @@ interface IClickedPosition {
 interface ICustomSearchFormValues {
   firstNode: string;
   lastNode: string;
-  difficultyModel: string;
+  challengeModel: string;
   churnModel: string;
+  difficultyModel: string;
   numberOfRuns: number;
   playerRating: number;
 }
@@ -73,8 +74,7 @@ const Home = () => {
 
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
 
-  const { register: registerValue, handleSubmit: handleSubmitSearch } =
-    useForm<ICustomSearchFormValues>();
+
 
   function openModal() {
     setIsModalFormOpen(true);
@@ -84,22 +84,8 @@ const Home = () => {
     setIsModalFormOpen(false);
   }
 
-  const {
-    register,
-    control,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>({
-    defaultValues: {
-      newAttributes: [{ attribute: "", value: "" }],
-    },
-    mode: "onBlur",
-  });
-  const { fields, append, remove } = useFieldArray({
-    name: "newAttributes",
-    control,
-  });
+ 
+
 
   const onSubmitNode: SubmitHandler<FormValues> = (nodeData: FormValues) => {
     const data = {
@@ -218,19 +204,20 @@ const Home = () => {
     }
 
     let edgeFailures = edge.failures;
-    let nodeOperatingData = { randomEdge, chosenNode, col };
+    let nodeOperatingData = { randomEdge, chosenNode, col, churnNode };
 
-    const difficultyModeValues = {
+    const challengeModelValues = {
       randomMode: randomAbility(nodeOperatingData),
       eloRating: eloRatingChallenge(nodeOperatingData),
     };
-    const chosenDifficultyModel =
-      simulatorData?.difficultyModel as keyof typeof difficultyModeValues;
-    const duelValues = difficultyModeValues[chosenDifficultyModel];
+    const chosenchallengeModel =
+      simulatorData?.challengeModel as keyof typeof challengeModelValues;
+    const duelValues = challengeModelValues[chosenchallengeModel];
 
     const churnModelValues = {
       threeAndOut: threeAndOutModel(duelValues, nodeOperatingData),
       tryhard: tryhardModel(duelValues, nodeOperatingData),
+      noChoices: noChoices(duelValues, nodeOperatingData),
     };
 
     const chosenChurnModel =
@@ -287,6 +274,26 @@ const Home = () => {
     }
     return "fail";
   };
+  const noChoices = (duel: number[], data: any) => {
+    let edgeData = data.randomEdge.data();
+    let edgeAttempts = edgeData.attempts;
+
+    let playerHability;
+    let botHability;
+    for (let i = 0; i < 10; i++) {
+      playerHability = Math.floor(Math.random() * duel[0]);
+      botHability = Math.floor(Math.random() * duel[1]);
+      cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
+      if (playerHability > botHability) {
+        data.col.merge(data.randomEdge);
+        data.col.merge(`#${data.chosenNode}`);
+        return data.chosenNode;
+      }
+    }
+    data.col.merge(data.randomEdge);
+    cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeData.Failures + 1 });
+    return data.churnNode;
+  };
 
   const randomAbility = (data: any) => {
     let edgeData = data.randomEdge.data();
@@ -324,18 +331,9 @@ const Home = () => {
   };
 
   const resetStyles = () => {
-    cyRef.current?.elements().removeClass("highlighted");
-    cyRef.current?.elements().removeData("tentativas");
-    cyRef.current?.elements().removeClass("firstNode");
-    cyRef.current?.elements().removeClass("lastNode");
-    cyRef.current?.elements().removeClass("attemptsColor");
-    cyRef.current?.elements().removeClass("attemptsWidth");
-    cyRef.current?.elements().removeClass("failuresWidth");
-    cyRef.current?.elements().removeClass("failuresColor");
-    cyRef.current?.elements().removeClass("failuresAttemptsWidth");
-    cyRef.current?.elements().removeClass("failuresAttemptsColor");
-    cyRef.current?.elements().removeClass("failuresAttemptsLabel");
-    cyRef.current?.elements().removeClass("churnCountColor");
+  
+
+    cyRef.current?.elements().removeClass(graphConsts.classStylesNames);
   };
 
   const resetNodesAtributes = () => {

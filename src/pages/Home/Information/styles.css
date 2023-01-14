@@ -1,9 +1,4 @@
 .container {
-  border: 1px solid black;
-  padding: 13px;
-  border-radius: 17px;
-  width: 560px;
-  height: 675px;
 }
 
 .containerRelationship {
@@ -44,11 +39,16 @@
   margin: 18px auto 50px;
 }
 
-.configuracoesButtons {
-  display: flex;
+.styleButtonsContainer {
+  display: grid;
+  grid-template-columns: auto auto auto;
   gap: 10px;
   margin-top: 10px;
-  flex-wrap: wrap;
+}
+.dataContainer {
+  border: 1px solid black;
+  padding: 13px;
+  border-radius: 5px;
 }
 
 .editButton {
@@ -57,4 +57,3 @@
   gap: 10px;
   cursor: pointer;
 }
-

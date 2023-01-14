@@ -39,7 +39,7 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
- 
+
   edgeFailuresAttempts: {
     selector: ".failuresAttemptsWidth",
     style: {
@@ -107,7 +107,7 @@ export const graphConsts: Record<string, any> = {
           return ele.data("failures");
         }).value;
         let attempts = ele.data("failures");
-        console.log("🚀 ~ file: graphConst.tsx:110 ~ attempts", attempts)
+        console.log("🚀 ~ file: graphConst.tsx:110 ~ attempts", attempts);
         let hue;
         if (attempts === 0) {
           hue = 0;
@@ -375,5 +375,19 @@ export const graphConsts: Record<string, any> = {
         difficulty: 15,
       },
     },
+  ],
+
+  classStylesNames: [
+    "highlighted",
+    "tentativas",
+    "firstNode",
+    "attemptsColor",
+    "attemptsWidth",
+    "failuresWidth",
+    "failuresColor",
+    "failuresAttemptsWidth",
+    "failuresAttemptsColor",
+    "failuresAttemptsLabel",
+    "churnCountColor",
   ],
 };

@@ -10,6 +10,7 @@ interface ICustomSearchFormValues {
   firstNode: string;
   lastNode: string;
   difficultyModel: string;
+  challengeModel: string;
   churnModel: string;
   numberOfRuns: number;
   playerRating: number;
@@ -58,16 +59,16 @@ const Toolbar = ({
               placeholder="First node"
             />
           </div>
-          <div className="formInput">
+          <div className="formInput lastNodeContainer">
             <h3>Last node</h3>
-            <input
+            <input 
               {...registerValue("lastNode")}
               required
               placeholder="Last node"
               type={"string"}
             />
           </div>
-          <div className="formInput">
+          <div className="formInput playerRatingContainer">
             <h3>Player Rating</h3>
             <input
               type="number"
@@ -78,7 +79,7 @@ const Toolbar = ({
             />
           </div>
 
-          <div className="formInput">
+          <div className="formInput numberOfRunsContainer">
             <h3>Number of runs </h3>
             <input
               type="number"
@@ -89,10 +90,17 @@ const Toolbar = ({
             />
           </div>
           <div className="formInput">
-            <h3>Difficulty model </h3>
-            <select {...registerValue("difficultyModel")}>
+            <h3>Challenge model </h3>
+            <select {...registerValue("challengeModel")}>
               <option value="randomMode">Random rating</option>
               <option value="eloRating">Elo rating</option>
+            </select>
+          </div>
+          <div className="formInput difficultyModelContainer">
+            <h3>Difficulty model </h3>
+            <select {...registerValue("difficultyModel")} >
+              <option value="normalDifficulty">Normal difficulty</option>
+              <option value="adaptiveDifficulty">Adaptive difficulty</option>
             </select>
           </div>
           <div className="formInput">
@@ -104,7 +112,7 @@ const Toolbar = ({
               <option value="tiredOfPlaying">Tired of playing</option>
             </select>
           </div>
-          <input type="submit" />
+          <input type="submit"  className="submitButton"/>
         </div>
       </form>
 
