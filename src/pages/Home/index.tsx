@@ -70,11 +70,11 @@ const Home = () => {
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
   const [churnRate, setChurnRate] = useState<number>(0);
   const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
+  const [estimatedPlayerRating, setEstimatedPlayerRating] =
+    useState<number>(1600);
   const [simulatorData, setSimulatorData] = useState<ICustomSearchFormValues>();
 
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
-
-
 
   function openModal() {
     setIsModalFormOpen(true);
@@ -83,9 +83,6 @@ const Home = () => {
   function closeModal() {
     setIsModalFormOpen(false);
   }
-
- 
-
 
   const onSubmitNode: SubmitHandler<FormValues> = (nodeData: FormValues) => {
     const data = {
@@ -206,8 +203,16 @@ const Home = () => {
     let edgeFailures = edge.failures;
     let nodeOperatingData = { randomEdge, chosenNode, col, churnNode };
 
+    const difficultyModelValues = {
+      randomMode: basicDifficulty(randomEdge),
+      eloRating: adaptativeDificulty(nodeOperatingData),
+    };
+    const chosenDifficultyModel =
+      simulatorData?.challengeModel as keyof typeof difficultyModelValues;
+    const difficulty = difficultyModelValues[chosenDifficultyModel];
+
     const challengeModelValues = {
-      randomMode: randomAbility(nodeOperatingData),
+      randomMode: randomChallenge(nodeOperatingData),
       eloRating: eloRatingChallenge(nodeOperatingData),
     };
     const chosenchallengeModel =
@@ -238,7 +243,6 @@ const Home = () => {
   };
 
   const threeAndOutModel = (duel: number[], data: any) => {
-    if (!duel) return;
     let edgeData = data.randomEdge.data();
     let edgeAttempts = edgeData.attempts;
 
@@ -291,17 +295,33 @@ const Home = () => {
       }
     }
     data.col.merge(data.randomEdge);
-    cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeData.Failures + 1 });
+    cyRef.current
+      ?.$(`#${edgeData.id}`)
+      .data({ failures: edgeData.Failures + 1 });
     return data.churnNode;
   };
 
-  const randomAbility = (data: any) => {
+  const adaptativeDificulty = (edge: any) => {
+    //estimate player difficulty
+    // get the diference between the values
+    //based on the diference dfeine new vaue foe estaimted player difficulty
+  };
+  const basicDifficulty = (edge: any) => {
+    let randomNumber = Math.floor(Math.random() * 3) + simulatorData?.playerRating!;
+    
+    cyRef.current?.$(`#${edge.id}`).data({ difficulty: randomNumber });
+  
+    //estimate player difficulty
+    // get the diference between the values
+    //based on the diference dfeine new vaue foe estaimted player difficulty
+  };
+  const randomChallenge = (data: any) => {
     let edgeData = data.randomEdge.data();
-    let edgeDifficulty = edgeData.difficulty;
-    let randomNumber =
+    let botHability = edgeData.difficulty;
+    let userHability =
       Math.floor(Math.random() * 3) + simulatorData?.playerRating!;
 
-    const duelValues = [randomNumber, edgeDifficulty];
+    const duelValues = [userHability, botHability];
 
     return duelValues;
   };
@@ -331,8 +351,6 @@ const Home = () => {
   };
 
   const resetStyles = () => {
-  
-
     cyRef.current?.elements().removeClass(graphConsts.classStylesNames);
   };
 
