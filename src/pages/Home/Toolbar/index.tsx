@@ -4,7 +4,7 @@ import { CgExport } from "react-icons/cg";
 import { FiSettings } from "react-icons/fi";
 import { GrPowerReset } from "react-icons/gr";
 import { RiDownloadFill } from "react-icons/ri";
-import { VscGitPullRequestCreate } from "react-icons/vsc";
+import { BiGitCompare } from "react-icons/bi";
 import "./styles.css";
 interface ICustomSearchFormValues {
   firstNode: string;
@@ -147,7 +147,7 @@ const Toolbar = ({
           setInvariableGraphDifficulty();
         }}
       />
-      <VscGitPullRequestCreate
+      <BiGitCompare
         fontSize={24}
         color={"black"}
         title="Create Relationship"
