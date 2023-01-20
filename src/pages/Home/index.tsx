@@ -71,7 +71,7 @@ const Home = () => {
   const [churnRate, setChurnRate] = useState<number>(0);
   const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
   const [estimatedPlayerRating, setEstimatedPlayerRating] =
-    useState<number>(1600);
+    useState<number>(1700);
   const [simulatorData, setSimulatorData] = useState<ICustomSearchFormValues>();
 
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
@@ -204,11 +204,11 @@ const Home = () => {
     let nodeOperatingData = { randomEdge, chosenNode, col, churnNode };
 
     const difficultyModelValues = {
-      randomMode: basicDifficulty(randomEdge),
-      eloRating: adaptativeDificulty(nodeOperatingData),
+      normalDifficulty: basicDifficulty(edge),
+      adaptativeDificulty: adaptativeDificulty(nodeOperatingData),
     };
     const chosenDifficultyModel =
-      simulatorData?.challengeModel as keyof typeof difficultyModelValues;
+      simulatorData?.difficultyModel as keyof typeof difficultyModelValues;
     const difficulty = difficultyModelValues[chosenDifficultyModel];
 
     const challengeModelValues = {
@@ -242,6 +242,18 @@ const Home = () => {
     return nextNode;
   };
 
+  const adjustEstimatedUserValue = (userValue: number, botValue: number) => {
+    const ratingDifference = userValue - botValue;
+    if (ratingDifference > 70) {
+      setEstimatedPlayerRating(ratingDifference / 2);
+    } else if (ratingDifference > 50) {
+      setEstimatedPlayerRating(estimatedPlayerRating + 32);
+    } else if (ratingDifference < 20) {
+      setEstimatedPlayerRating(estimatedPlayerRating + 10);
+    } else if (ratingDifference < 0) {
+      setEstimatedPlayerRating(estimatedPlayerRating - 10);
+    }
+  };
   const threeAndOutModel = (duel: number[], data: any) => {
     let edgeData = data.randomEdge.data();
     let edgeAttempts = edgeData.attempts;
@@ -252,6 +264,7 @@ const Home = () => {
     for (let i = 0; i < 3; i++) {
       playerHability = Math.floor(Math.random() * duel[0]);
       botHability = Math.floor(Math.random() * duel[1]);
+      adjustEstimatedUserValue(playerHability, botHability);
       cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
       if (playerHability > botHability) {
         data.col.merge(data.randomEdge);
@@ -281,7 +294,6 @@ const Home = () => {
   const noChoices = (duel: number[], data: any) => {
     let edgeData = data.randomEdge.data();
     let edgeAttempts = edgeData.attempts;
-
     let playerHability;
     let botHability;
     for (let i = 0; i < 10; i++) {
@@ -294,23 +306,25 @@ const Home = () => {
         return data.chosenNode;
       }
     }
-    data.col.merge(data.randomEdge);
+
     cyRef.current
       ?.$(`#${edgeData.id}`)
-      .data({ failures: edgeData.Failures + 1 });
+      .data({ failures: edgeData.failures + 1 });
     return data.churnNode;
   };
 
   const adaptativeDificulty = (edge: any) => {
     //estimate player difficulty
     // get the diference between the values
-    //based on the diference dfeine new vaue foe estaimted player difficulty
+
+    cyRef.current?.$(`#${edge.id}`).data({ difficulty: estimatedPlayerRating });
   };
   const basicDifficulty = (edge: any) => {
-    let randomNumber = Math.floor(Math.random() * 3) + simulatorData?.playerRating!;
-    
+    let randomNumber =
+      Math.floor(Math.random() * 3) + simulatorData?.playerRating!;
+
     cyRef.current?.$(`#${edge.id}`).data({ difficulty: randomNumber });
-  
+
     //estimate player difficulty
     // get the diference between the values
     //based on the diference dfeine new vaue foe estaimted player difficulty
@@ -318,8 +332,9 @@ const Home = () => {
   const randomChallenge = (data: any) => {
     let edgeData = data.randomEdge.data();
     let botHability = edgeData.difficulty;
-    let userHability =
-      Math.floor(Math.random() * 3) + simulatorData?.playerRating!;
+    // let userHability =
+    //   Math.floor(Math.random() * 3) + simulatorData?.playerRating!;
+    let userHability = simulatorData?.playerRating;
 
     const duelValues = [userHability, botHability];
 

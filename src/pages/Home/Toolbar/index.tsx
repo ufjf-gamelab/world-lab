@@ -61,7 +61,7 @@ const Toolbar = ({
           </div>
           <div className="formInput lastNodeContainer">
             <h3>Last node</h3>
-            <input 
+            <input
               {...registerValue("lastNode")}
               required
               placeholder="Last node"
@@ -98,7 +98,7 @@ const Toolbar = ({
           </div>
           <div className="formInput difficultyModelContainer">
             <h3>Difficulty model </h3>
-            <select {...registerValue("difficultyModel")} >
+            <select {...registerValue("difficultyModel")}>
               <option value="normalDifficulty">Normal difficulty</option>
               <option value="adaptiveDifficulty">Adaptive difficulty</option>
             </select>
@@ -112,7 +112,7 @@ const Toolbar = ({
               <option value="tiredOfPlaying">Tired of playing</option>
             </select>
           </div>
-          <input type="submit"  className="submitButton"/>
+          <input type="submit" className="submitButton" />
         </div>
       </form>
 
@@ -167,9 +167,11 @@ const Toolbar = ({
         <RiDownloadFill fontSize={24} color={"black"} title="Download Graph" />
       </a>
 
-      <CgExport fontSize={24} color={"black"} title="Insert Graph" />
+      <label>
+        <CgExport fontSize={24} color={"black"} title="Insert Graph" />
 
-      <input id="download" onChange={handleFileSelected} type="file"></input>
+        <input id="download" onChange={handleFileSelected} type="file"></input>
+      </label>
     </div>
   );
 };

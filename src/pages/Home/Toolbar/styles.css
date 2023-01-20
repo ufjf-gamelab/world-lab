@@ -6,7 +6,9 @@
   height: 24px;
 }
 
-
+label input{
+  display: none;
+}
 .submitButton{
   height: 50px;
 }
