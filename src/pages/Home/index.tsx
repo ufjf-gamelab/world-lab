@@ -11,7 +11,7 @@ import {
   ICustomSearchFormValues,
   IEdge,
   INode,
-} from "../../types/index";
+} from "./types/index";
 import { eloRatingChallenge, getNodeEdges } from "../../helpers";
 import { churnModelValues } from "../../helpers/churnModels";
 
