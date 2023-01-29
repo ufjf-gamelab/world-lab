@@ -109,7 +109,7 @@ const Toolbar = ({
               <option value="threeAndOut">3 and out</option>
               <option value="tryhard">Tryhard</option>
               <option value="noChoices">No choices</option>
-              <option value="tiredOfPlaying">Tired of playing</option>
+              <option value="itemGeneratedHelp">Item generated help</option>
             </select>
           </div>
           <input type="submit" className="submitButton" />

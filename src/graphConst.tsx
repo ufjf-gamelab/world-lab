@@ -211,7 +211,7 @@ export const graphConsts: Record<string, any> = {
   defaultGraph: [
     {
       data: { id: "1", label: "Node 1", churnCount: 0 },
-      position: { x: 600, y: 150 },
+      position: { x: 600, y: 16000 },
     },
     {
       data: { id: "2", label: "Node 2", churnCount: 0 },
@@ -255,7 +255,7 @@ export const graphConsts: Record<string, any> = {
         target: "2",
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1600,
       },
     },
     {
@@ -264,7 +264,7 @@ export const graphConsts: Record<string, any> = {
         target: "3",
         attempts: 0,
         failures: 0,
-        difficulty: 30,
+        difficulty: 1600,
       },
     },
     {
@@ -273,7 +273,7 @@ export const graphConsts: Record<string, any> = {
         target: "4",
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1600,
       },
     },
     {
@@ -282,7 +282,7 @@ export const graphConsts: Record<string, any> = {
         target: "5",
         attempts: 0,
         failures: 0,
-        difficulty: 5,
+        difficulty: 1600,
       },
     },
     {
@@ -291,7 +291,7 @@ export const graphConsts: Record<string, any> = {
         target: "3",
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1600,
       },
     },
     {
@@ -300,7 +300,7 @@ export const graphConsts: Record<string, any> = {
         target: "6",
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1600,
       },
     },
     {
@@ -309,7 +309,7 @@ export const graphConsts: Record<string, any> = {
         target: "7",
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1600,
       },
     },
     {
@@ -318,7 +318,7 @@ export const graphConsts: Record<string, any> = {
         target: "5",
         attempts: 0,
         failures: 0,
-        difficulty: 5,
+        difficulty: 1600,
       },
     },
     {
@@ -327,7 +327,7 @@ export const graphConsts: Record<string, any> = {
         target: "9",
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1600,
       },
     },
     {
@@ -336,7 +336,7 @@ export const graphConsts: Record<string, any> = {
         target: "10",
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1600,
       },
     },
     {
@@ -354,7 +354,7 @@ export const graphConsts: Record<string, any> = {
         target: "8",
         attempts: 0,
         failures: 0,
-        difficulty: 2,
+        difficulty: 1600,
       },
     },
     {
@@ -363,7 +363,7 @@ export const graphConsts: Record<string, any> = {
         target: "10",
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1600,
       },
     },
     {
@@ -372,7 +372,7 @@ export const graphConsts: Record<string, any> = {
         target: "10",
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1600,
       },
     },
   ],
