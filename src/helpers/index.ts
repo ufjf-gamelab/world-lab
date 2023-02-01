@@ -9,15 +9,29 @@ export const calculateProbabilityEloRating = (
 
 export const eloRatingChallenge = (data: any, playerRating: number) => {
   let edgeData = data.randomEdge.data();
+  console.log(
+    "🚀 ~ file: index.ts:12 ~ eloRatingChallenge ~ edgeData",
+    edgeData
+  );
 
-  const Ra = playerRating;
-  const Rb = edgeData.difficulty;
+  // const Ra = playerRating;
+  const Ra = 1700;
 
-  //const K = 32;
+  // const Rb = edgeData.difficulty;
+  const Rb = 1600;
+
+  const K = 32;
 
   let playerWinProbability = calculateProbabilityEloRating(Rb, Ra) * 100;
-
   let botWinProbability = calculateProbabilityEloRating(Ra, Rb) * 100;
+  console.log(
+    "🚀 ~ file: index.ts:24 ~ eloRatingChallenge ~ player upgrade",
+    Ra + K * (1 - playerWinProbability/100)
+  );
+  console.log(
+    "🚀 ~ file: index.ts:24 ~ eloRatingChallenge ~ bot upgrade",
+    Rb + K * (0 - botWinProbability/100)
+  );
 
   const duelValues = [playerWinProbability, botWinProbability];
 
@@ -25,7 +39,7 @@ export const eloRatingChallenge = (data: any, playerRating: number) => {
 };
 
 export const getNodeEdges = (cyRef: any, nextNode: string, col: any) => {
-  cyRef.current
+  return cyRef.current
     ?.$(`#${nextNode}`)
     .neighborhood()
     .filter(function (ele: any) {
@@ -55,21 +69,24 @@ export const getNodeEdges = (cyRef: any, nextNode: string, col: any) => {
     });
 };
 
-export const initializeStandardDifficulty = (challengeModel:string, setBotInitialDifficulty:any) => {
+export const initializeStandardDifficulty = (challengeModel: string) => {
+  let initialDifficulty;
   switch (challengeModel) {
     case "easy":
-      setBotInitialDifficulty(1300);
+      initialDifficulty = 1300;
       break;
     case "medium":
-      setBotInitialDifficulty(1500);
+      initialDifficulty = 1500;
       break;
     case "hard":
-      setBotInitialDifficulty(1700);
+      initialDifficulty = 1700;
       break;
     case "extreme":
-      setBotInitialDifficulty(1800);
+      initialDifficulty = 1800;
       break;
     default:
-      setBotInitialDifficulty(1600);
+      initialDifficulty = 1600;
   }
+
+  return initialDifficulty;
 };

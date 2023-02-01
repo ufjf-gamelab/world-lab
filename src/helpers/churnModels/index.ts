@@ -15,10 +15,24 @@ const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
 
   let playerHability;
   let botHability;
-
-  for (let i = 0; i < 3; i++) {
+  
+  console.log("duel", duel);
+  for (let i = 0; i < 10; i++) {
     playerHability = Math.floor(Math.random() * duel[0]);
+    console.log(
+      "🚀 ~ file: index.ts:21 ~ threeAndOutModel ~ playerHability",
+      playerHability
+    );
     botHability = Math.floor(Math.random() * duel[1]);
+    console.log(
+      "🚀 ~ file: index.ts:23 ~ threeAndOutModel ~ botHability",
+      botHability
+    );
+    console.log(
+      "🚀 ~ file: index.ts:23 ~ threeAndOutModel ~ player - bot ",
+      playerHability - botHability
+    );
+
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
       data.col.merge(data.randomEdge);

@@ -8,7 +8,7 @@ export const difficultyModelValues = {
 export const adaptativeDificulty = (data: any, cyRef: any) => {
   let edgeData = data.randomEdge.data();
 
-  cyRef.current?.$(`#${edgeData.id}`).data({ difficulty: data.edgeDifficulty });
+  cyRef.current?.$(`#${edgeData.id}`).data({ difficulty: data.botDifficulty });
   data.setBotDifficulty(data.botDifficulty + 10);
   return;
 };
@@ -16,7 +16,7 @@ export const adaptativeDificulty = (data: any, cyRef: any) => {
 export const linearDifficulty = (data: any, cyRef: any) => {
   let edgeData = data.randomEdge.data();
 
-  cyRef.current?.$(`#${edgeData.id}`).data({ difficulty: data.edgeDifficulty });
+  cyRef.current?.$(`#${edgeData.id}`).data({ difficulty: data.botDifficulty });
   data.setBotDifficulty(data.botDifficulty + 10);
   //estimate player difficulty
   // get the diference between the values

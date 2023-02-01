@@ -12,7 +12,7 @@ import {
   IEdge,
   INode,
 } from "./types/index";
-import { eloRatingChallenge, getNodeEdges } from "../../helpers";
+import { eloRatingChallenge, getNodeEdges, initializeStandardDifficulty } from "../../helpers";
 import { churnModelValues } from "../../helpers/churnModels";
 import { difficultyModelValues } from "../../helpers/difficultyModels";
 
@@ -116,7 +116,7 @@ const Home = () => {
   }, [clickedPosition]);
   useEffect(() => {
     if (!simulatorData) return;
-
+    setBotDifficulty(initializeStandardDifficulty(simulatorData.challengeModel))
     for (let i = 0; i < simulatorData.numberOfRuns; i++) {
       customSearchNeighbour(simulatorData);
     }
@@ -149,6 +149,7 @@ const Home = () => {
     setElements(newNodes);
   };
 
+  
   const getNextNode = (col: any, randomEdge: any) => {
     let edge = randomEdge.data();
     let nextNode;
