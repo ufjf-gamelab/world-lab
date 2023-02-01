@@ -7,12 +7,11 @@ export const calculateProbabilityEloRating = (
   );
 };
 
-export const eloRatingChallenge = (data: any, actualPlayerRating: number) => {
+export const eloRatingChallenge = (data: any, playerRating: number) => {
   let edgeData = data.randomEdge.data();
-  let edgeDifficulty = edgeData.difficulty;
 
-  const Ra = actualPlayerRating;
-  const Rb = edgeDifficulty;
+  const Ra = playerRating;
+  const Rb = edgeData.difficulty;
 
   //const K = 32;
 
@@ -25,9 +24,8 @@ export const eloRatingChallenge = (data: any, actualPlayerRating: number) => {
   return duelValues;
 };
 
-export const getNodeEdges = (cyRef: any, nextNode:string, col:any) => {
-
-    cyRef.current
+export const getNodeEdges = (cyRef: any, nextNode: string, col: any) => {
+  cyRef.current
     ?.$(`#${nextNode}`)
     .neighborhood()
     .filter(function (ele: any) {
@@ -57,48 +55,21 @@ export const getNodeEdges = (cyRef: any, nextNode:string, col:any) => {
     });
 };
 
-
-
-
-type Player = {
-  rating: number;
-  rd: number;
-  volatility: number;
-};
-
-type Game = {
-  player: Player;
-  opponent: Player;
-  result: 'win' | 'loss';
-};
-
-const systemConstant = 0.5;
-const q = Math.log(10) / 400;
-
-const calculateWinProbability = (player: Player, opponent: Player) => {
-  const g = (rd: number) => 1 / Math.sqrt(1 + (3 * rd * 2) / (Math.PI * 2));
-  return 1 / (1 + 10 ** (-g(opponent.rd) * (player.rating - opponent.rating) / 400));
-};
-
-const updatePlayer = (player: Player, games: Game[]) => {
-  const newRd = Math.sqrt(player.rd * 2 + player.volatility * 2);
-
-  let sumWinProbabilityMinusHalf = 0;
-  for (const game of games) {
-    if (game.player !== player) {
-      continue;
-    }
-
-    const winProbability = calculateWinProbability(game.player, game.opponent);
-    sumWinProbabilityMinusHalf += game.result === 'win' ? winProbability - 0.5 : -0.5;
+export const initializeStandardDifficulty = (challengeModel:string, setBotInitialDifficulty:any) => {
+  switch (challengeModel) {
+    case "easy":
+      setBotInitialDifficulty(1300);
+      break;
+    case "medium":
+      setBotInitialDifficulty(1500);
+      break;
+    case "hard":
+      setBotInitialDifficulty(1700);
+      break;
+    case "extreme":
+      setBotInitialDifficulty(1800);
+      break;
+    default:
+      setBotInitialDifficulty(1600);
   }
-  const g = (rd: number) => 1 / Math.sqrt(1 + (3 * rd * 2) / (Math.PI * 2));
-  const I = (g(newRd) ** 2) * sumWinProbabilityMinusHalf;
-  const newRating = player.rating + (q / (1 / (newRd ** 2) + 1 / I)) * sumWinProbabilityMinusHalf;
-
-  // return {
-  //   rating: newRating,
-  //   rd: newRd,
-  //   volatility: player.volatility,
-  // };
 };

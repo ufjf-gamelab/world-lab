@@ -5,7 +5,7 @@ export const churnModelValues = {
     tryhardModel(val, val2, cyRef),
   noChoicesModel: (val: number[], val2: any, cyRef: any) =>
     noChoicesModel(val, val2, cyRef),
-    itemGeneratedHelp: (val: number[], val2: any, cyRef: any) =>
+  itemGeneratedHelp: (val: number[], val2: any, cyRef: any) =>
     randomItemGeneratorModel(val, val2, cyRef),
 };
 
@@ -22,8 +22,8 @@ const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
       data.col.merge(data.randomEdge);
-      data.col.merge(`#${data.chosenNode}`);
-      return data.chosenNode;
+      data.col.merge(`#${data.nextNode}`);
+      return data.nextNode;
     }
   }
   return "fail";
@@ -39,8 +39,8 @@ const tryhardModel = (duel: number[], data: any, cyRef: any) => {
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
       data.col.merge(data.randomEdge);
-      data.col.merge(`#${data.chosenNode}`);
-      return data.chosenNode;
+      data.col.merge(`#${data.nextNode}`);
+      return data.nextNode;
     }
   }
   return "fail";
@@ -56,8 +56,8 @@ const noChoicesModel = (duel: number[], data: any, cyRef: any) => {
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
       data.col.merge(data.randomEdge);
-      data.col.merge(`#${data.chosenNode}`);
-      return data.chosenNode;
+      data.col.merge(`#${data.nextNode}`);
+      return data.nextNode;
     }
   }
 
@@ -80,8 +80,8 @@ const randomItemGeneratorModel = (duel: number[], data: any, cyRef: any) => {
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
       data.col.merge(data.randomEdge);
-      data.col.merge(`#${data.chosenNode}`);
-      return data.chosenNode;
+      data.col.merge(`#${data.nextNode}`);
+      return data.nextNode;
     }
   }
 

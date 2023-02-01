@@ -14,6 +14,7 @@ import {
 } from "./types/index";
 import { eloRatingChallenge, getNodeEdges } from "../../helpers";
 import { churnModelValues } from "../../helpers/churnModels";
+import { difficultyModelValues } from "../../helpers/difficultyModels";
 
 const Home = () => {
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -27,7 +28,10 @@ const Home = () => {
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
   const [churnRate, setChurnRate] = useState<number>(0);
   const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
-  const [estimatedPlayerRating, setEstimatedPlayerRating] =
+  const [estimatedPlayerRating, setEstimatedPlayerRating] = useState<number>(1500);
+  const [botDifficulty, setBotDifficulty] =
+    useState<number>(1600);
+  const [DiferenceInHabilit, setDiferenceInHability] =
     useState<number>(1700);
   const [simulatorData, setSimulatorData] = useState<ICustomSearchFormValues>();
 
@@ -112,6 +116,7 @@ const Home = () => {
   }, [clickedPosition]);
   useEffect(() => {
     if (!simulatorData) return;
+
     for (let i = 0; i < simulatorData.numberOfRuns; i++) {
       customSearchNeighbour(simulatorData);
     }
@@ -146,40 +151,33 @@ const Home = () => {
 
   const getNextNode = (col: any, randomEdge: any) => {
     let edge = randomEdge.data();
-    let chosenNode;
+    let nextNode;
     let churnNode;
 
     if (col?.contains(cyRef?.current!.$(`#${edge.target}`))) {
-      chosenNode = edge.source;
+      nextNode = edge.source;
       churnNode = edge.target;
     } else {
-      chosenNode = edge.target;
+      nextNode = edge.target;
       churnNode = edge.source;
     }
 
     let edgeFailures = edge.failures;
-    let nodeOperatingData = { randomEdge, chosenNode, col, churnNode };
+    let nodeOperatingData = { randomEdge, nextNode, col, churnNode };
+    let difficultyOperatingData = { botDifficulty, setBotDifficulty, randomEdge  };
 
-    // const difficultyModelValues = {
-    //   normalDifficulty: basicDifficulty(edge),
-    //   adaptativeDificulty: adaptativeDificulty(nodeOperatingData),
-    // };
-    // const chosenDifficultyModel =
-    //   simulatorData?.difficultyModel as keyof typeof difficultyModelValues;
-    // const difficulty = difficultyModelValues[chosenDifficultyModel];
+    const chosenDifficultyModel =
+      simulatorData?.difficultyModel as keyof typeof difficultyModelValues;
+    difficultyModelValues[chosenDifficultyModel](difficultyOperatingData, cyRef);
 
-    const challengeModelValues = {
-      randomMode: randomChallenge(nodeOperatingData),
-      eloRating: eloRatingChallenge(nodeOperatingData, actualPlayerRating),
-    };
-
-    const chosenchallengeModel =
-      simulatorData?.challengeModel as keyof typeof challengeModelValues;
-    const duelValues = challengeModelValues[chosenchallengeModel];
+    const duelValues = eloRatingChallenge(
+      nodeOperatingData,
+      actualPlayerRating
+    );
 
     const chosenChurnModel =
       simulatorData?.churnModel as keyof typeof churnModelValues;
-    const nextNode = churnModelValues[chosenChurnModel](
+    nextNode = churnModelValues[chosenChurnModel](
       duelValues,
       nodeOperatingData,
       cyRef
@@ -195,31 +193,6 @@ const Home = () => {
     }
 
     return nextNode;
-  };
-
-  const adjustEstimatedUserValue = (userValue: number, botValue: number) => {
-    const ratingDifference = userValue - botValue;
-    if (ratingDifference > 70) {
-      setEstimatedPlayerRating(ratingDifference / 2);
-    } else if (ratingDifference > 50) {
-      setEstimatedPlayerRating(estimatedPlayerRating + 32);
-    } else if (ratingDifference < 20) {
-      setEstimatedPlayerRating(estimatedPlayerRating + 10);
-    } else if (ratingDifference < 0) {
-      setEstimatedPlayerRating(estimatedPlayerRating - 10);
-    }
-  };
-
-  const randomChallenge = (data: any) => {
-    let edgeData = data.randomEdge.data();
-    let botHability = edgeData.difficulty;
-    // let userHability =
-    //   Math.floor(Math.random() * 3) + simulatorData?.playerRating!;
-    let userHability = simulatorData?.playerRating;
-
-    const duelValues = [userHability, botHability];
-
-    return duelValues;
   };
 
   const resetStyles = () => {
@@ -274,7 +247,6 @@ const Home = () => {
       })
       .data({ difficulty: difficulty, attempts: 0, failures: 0 });
   };
-  
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
     let file = e.target.files && e.target?.files?.[0];

@@ -92,14 +92,16 @@ const Toolbar = ({
           <div className="formInput">
             <h3>Challenge model </h3>
             <select {...registerValue("challengeModel")}>
-              <option value="randomMode">Random rating</option>
-              <option value="eloRating">Elo rating</option>
+              <option value="easy">easy (1300)</option>
+              <option value="medium">medium (1500)</option>
+              <option value="hard">hard (1700)</option>
+              <option value="extreme">extreme (1800)</option>
             </select>
           </div>
           <div className="formInput difficultyModelContainer">
             <h3>Difficulty model </h3>
             <select {...registerValue("difficultyModel")}>
-              <option value="normalDifficulty">Normal difficulty</option>
+              <option value="linearDifficulty">Linear difficulty</option>
               <option value="adaptiveDifficulty">Adaptive difficulty</option>
             </select>
           </div>
