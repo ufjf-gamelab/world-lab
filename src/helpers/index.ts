@@ -9,10 +9,7 @@ export const calculateProbabilityEloRating = (
 
 export const eloRatingChallenge = (data: any, playerRating: number) => {
   let edgeData = data.randomEdge.data();
-  console.log(
-    "🚀 ~ file: index.ts:12 ~ eloRatingChallenge ~ edgeData",
-    edgeData
-  );
+
 
   // const Ra = playerRating;
   const Ra = 1700;
@@ -69,9 +66,9 @@ export const getNodeEdges = (cyRef: any, nextNode: string, col: any) => {
     });
 };
 
-export const initializeStandardDifficulty = (challengeModel: string) => {
+export const initializeStandardDifficulty = (progressionModel: string) => {
   let initialDifficulty;
-  switch (challengeModel) {
+  switch (progressionModel) {
     case "easy":
       initialDifficulty = 1300;
       break;

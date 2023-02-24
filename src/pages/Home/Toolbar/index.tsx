@@ -6,15 +6,8 @@ import { GrPowerReset } from "react-icons/gr";
 import { RiDownloadFill } from "react-icons/ri";
 import { BiGitCompare } from "react-icons/bi";
 import "./styles.css";
-interface ICustomSearchFormValues {
-  firstNode: string;
-  lastNode: string;
-  difficultyModel: string;
-  challengeModel: string;
-  churnModel: string;
-  numberOfRuns: number;
-  playerRating: number;
-}
+import { ICustomSearchFormValues } from "../types";
+
 
 interface ToolbarProps {
   onSubmitCustomSearch: any;
@@ -89,20 +82,35 @@ const Toolbar = ({
               })}
             />
           </div>
+   
+          <div className="formInput">
+            <h3>Player model </h3>
+            <select {...registerValue("playerModel")}>
+              <option value="explorer">Explorer</option>
+              <option value="story">Story</option>
+              <option value="casual">Casual</option>
+            </select>
+          </div>
+
           <div className="formInput">
             <h3>Challenge model </h3>
             <select {...registerValue("challengeModel")}>
-              <option value="easy">easy (1300)</option>
-              <option value="medium">medium (1500)</option>
-              <option value="hard">hard (1700)</option>
-              <option value="extreme">extreme (1800)</option>
+              <option value="eloRating">Elo rating</option>
+              <option value="randomRating">Random</option>
             </select>
           </div>
           <div className="formInput difficultyModelContainer">
             <h3>Difficulty model </h3>
             <select {...registerValue("difficultyModel")}>
-              <option value="linearDifficulty">Linear difficulty</option>
-              <option value="adaptiveDifficulty">Adaptive difficulty</option>
+              <option value="linearDifficulty">Linear</option>
+              <option value="adaptiveDifficulty">Adaptive</option>
+            </select>
+          </div>
+          <div className="formInput">
+            <h3>Progression model </h3>
+            <select {...registerValue("progressionModel")}>
+              <option value="fixed">Fixed</option>
+              <option value="Incremental">Incremental</option>
             </select>
           </div>
           <div className="formInput">
@@ -111,7 +119,7 @@ const Toolbar = ({
               <option value="threeAndOut">3 and out</option>
               <option value="tryhard">Tryhard</option>
               <option value="noChoices">No choices</option>
-              <option value="itemGeneratedHelp">Item generated help</option>
+              <option value="flow">flow</option>
             </select>
           </div>
           <input type="submit" className="submitButton" />

@@ -32,11 +32,13 @@ export type INode  = {
   export type ICustomSearchFormValues  = {
     firstNode: string;
     lastNode: string;
-    challengeModel: string;
+    progressionModel: string;
     churnModel: string;
     difficultyModel: string;
+    challengeModel: string;
     numberOfRuns: number;
     playerRating: number;
+    playerModel: string;
   }
   
   export type FormValues  = {
@@ -45,6 +47,7 @@ export type INode  = {
     attempts?: number;
     difficulty?: number;
     failures?: string;
+    probabilityOfWinning?: number;
     newAttributes: {
       attribute: string;
       value: string;

@@ -163,6 +163,10 @@ const Information = ({
                   <h2>Failures</h2>
                   <h3>{selectedEdge?.failures}</h3>
                 </div>
+                <div className="subtitle">
+                  <h2>Probability of Winning</h2>
+                  <h3>{selectedEdge?.probabilityOfWinning}%</h3>
+                </div>
               </>
             )}
 

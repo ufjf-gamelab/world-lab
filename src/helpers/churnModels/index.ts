@@ -5,8 +5,7 @@ export const churnModelValues = {
     tryhardModel(val, val2, cyRef),
   noChoicesModel: (val: number[], val2: any, cyRef: any) =>
     noChoicesModel(val, val2, cyRef),
-  itemGeneratedHelp: (val: number[], val2: any, cyRef: any) =>
-    randomItemGeneratorModel(val, val2, cyRef),
+  flow: (val: number[], val2: any, cyRef: any) => flowModel(val, val2, cyRef),
 };
 
 const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
@@ -15,23 +14,11 @@ const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
 
   let playerHability;
   let botHability;
-  
-  console.log("duel", duel);
+
   for (let i = 0; i < 10; i++) {
     playerHability = Math.floor(Math.random() * duel[0]);
-    console.log(
-      "🚀 ~ file: index.ts:21 ~ threeAndOutModel ~ playerHability",
-      playerHability
-    );
+
     botHability = Math.floor(Math.random() * duel[1]);
-    console.log(
-      "🚀 ~ file: index.ts:23 ~ threeAndOutModel ~ botHability",
-      botHability
-    );
-    console.log(
-      "🚀 ~ file: index.ts:23 ~ threeAndOutModel ~ player - bot ",
-      playerHability - botHability
-    );
 
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
@@ -79,17 +66,13 @@ const noChoicesModel = (duel: number[], data: any, cyRef: any) => {
   return data.churnNode;
 };
 
-const randomItemGeneratorModel = (duel: number[], data: any, cyRef: any) => {
+const flowModel = (duel: number[], data: any, cyRef: any) => {
   let edgeData = data.randomEdge.data();
   let edgeAttempts = edgeData.attempts;
   let playerHability;
   let botHability;
-  let numberOfItems;
-  let itemPowerup;
-  for (let i = 0; i < 3; i++) {
-    numberOfItems = Math.floor(Math.random() * 3);
-    itemPowerup = numberOfItems * Math.floor(Math.random() * 10);
-    playerHability = Math.floor(Math.random() * duel[0]) + itemPowerup;
+  for (let i = 0; i < 10; i++) {
+    playerHability = Math.floor(Math.random() * duel[0]);
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {

@@ -12,9 +12,14 @@ import {
   IEdge,
   INode,
 } from "./types/index";
-import { eloRatingChallenge, getNodeEdges, initializeStandardDifficulty } from "../../helpers";
+import {
+  eloRatingChallenge,
+  getNodeEdges,
+  initializeStandardDifficulty,
+} from "../../helpers";
 import { churnModelValues } from "../../helpers/churnModels";
 import { difficultyModelValues } from "../../helpers/difficultyModels";
+import { explorerModel, playerModelValues } from "../../helpers/playerModels";
 
 const Home = () => {
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -26,13 +31,8 @@ const Home = () => {
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge>();
-  const [churnRate, setChurnRate] = useState<number>(0);
   const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
-  const [estimatedPlayerRating, setEstimatedPlayerRating] = useState<number>(1500);
-  const [botDifficulty, setBotDifficulty] =
-    useState<number>(1600);
-  const [DiferenceInHabilit, setDiferenceInHability] =
-    useState<number>(1700);
+  const [botDifficulty, setBotDifficulty] = useState<number>(1600);
   const [simulatorData, setSimulatorData] = useState<ICustomSearchFormValues>();
 
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
@@ -61,6 +61,7 @@ const Home = () => {
       difficulty: edgeData.difficulty,
       attempts: edgeData.attempts,
       failures: edgeData.failures,
+      probabilityOfWinning: edgeData.probabilityOfWinning,
       newAttributes: [...edgeData.newAttributes],
     };
 
@@ -84,6 +85,7 @@ const Home = () => {
     if (!isInitialNodes) {
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elements, cyRef]);
 
@@ -116,9 +118,9 @@ const Home = () => {
   }, [clickedPosition]);
   useEffect(() => {
     if (!simulatorData) return;
-    setBotDifficulty(initializeStandardDifficulty(simulatorData.challengeModel))
+
     for (let i = 0; i < simulatorData.numberOfRuns; i++) {
-      customSearchNeighbour(simulatorData);
+      playerSimulatorPath(simulatorData);
     }
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
@@ -149,51 +151,102 @@ const Home = () => {
     setElements(newNodes);
   };
 
-  
-  const getNextNode = (col: any, randomEdge: any) => {
-    let edge = randomEdge.data();
-    let nextNode;
-    let churnNode;
-
-    if (col?.contains(cyRef?.current!.$(`#${edge.target}`))) {
-      nextNode = edge.source;
-      churnNode = edge.target;
-    } else {
-      nextNode = edge.target;
-      churnNode = edge.source;
-    }
-
-    let edgeFailures = edge.failures;
-    let nodeOperatingData = { randomEdge, nextNode, col, churnNode };
-    let difficultyOperatingData = { botDifficulty, setBotDifficulty, randomEdge  };
-
-    const chosenDifficultyModel =
-      simulatorData?.difficultyModel as keyof typeof difficultyModelValues;
-    difficultyModelValues[chosenDifficultyModel](difficultyOperatingData, cyRef);
-
-    const duelValues = eloRatingChallenge(
-      nodeOperatingData,
-      actualPlayerRating
+  const playerSimulatorPath = (simulatorData: ICustomSearchFormValues) => {
+    resetStyles();
+    let playerPath = playerModelPath(simulatorData);
+    console.log(
+      "🚀 ~ file: index.tsx:156 ~ playerSimulatorPath ~ playerPath",
+      playerPath
     );
 
-    const chosenChurnModel =
-      simulatorData?.churnModel as keyof typeof churnModelValues;
-    nextNode = churnModelValues[chosenChurnModel](
-      duelValues,
-      nodeOperatingData,
-      cyRef
-    );
+    let failedToFinish = false;
 
-    if (nextNode === "fail") {
-      let oldChurnCount = parseInt(
-        cyRef.current?.$(`#${churnNode}`).data("churnCount")
+    let simulatingPath = playerPath.filter(function (
+      ele: any,
+      i: any,
+      eles: any
+    ) {
+      if (failedToFinish) return false;
+      if (ele.isEdge()) return true;
+      if (ele.id() === simulatorData.lastNode) return true;
+
+      let edge = eles[i + 1]?.data();
+      console.log(
+        "🚀 ~ file: index.tsx:170 ~ playerSimulatorPath ~ edge",
+        edge.probabilityOfWinning
       );
 
-      cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
-      cyRef.current?.$(`#${edge.id}`).data({ failures: edgeFailures + 1 });
-    }
+      let playerWinningChances = Math.random() * edge.probabilityOfWinning;
+      console.log(
+        "🚀 ~ file: index.tsx:175 ~ playerSimulatorPath ~ playerWinningChances",
+        playerWinningChances
+      );
+      let playerLosingChances =
+        Math.random() * (100 - edge.probabilityOfWinning);
 
-    return nextNode;
+      console.log(
+        "🚀 ~ file: index.tsx:177 ~ playerSimulatorPath ~ playerLosingChances",
+        playerLosingChances
+      );
+      if (playerWinningChances > playerLosingChances) return true;
+
+      failedToFinish = true;
+      return false;
+    });
+
+    console.log(
+      "🚀 ~ file: index.tsx:167 ~ playerSimulatorPath ~ simulatingPath",
+      simulatingPath
+    );
+    simulatingPath?.addClass("highlighted");
+    // let edge = randomEdge.data();
+
+    // if (col?.contains(cyRef?.current!.$(`#${edge.target}`))) {
+    //   nextNode = edge.source;
+    //   churnNode = edge.target;
+    // } else {
+    //   nextNode = edge.target;
+    //   churnNode = edge.source;
+    // }
+
+    // let edgeFailures = edge.failures;
+    // let nodeOperatingData = { randomEdge, nextNode, col, churnNode };
+    // let difficultyOperatingData = {
+    //   botDifficulty,
+    //   setBotDifficulty,
+    //   randomEdge,
+    // };
+
+    // const chosenDifficultyModel =
+    //   simulatorData?.difficultyModel as keyof typeof difficultyModelValues;
+    // difficultyModelValues[chosenDifficultyModel](
+    //   difficultyOperatingData,
+    //   cyRef
+    // );
+
+    // const duelValues = eloRatingChallenge(
+    //   nodeOperatingData,
+    //   actualPlayerRating
+    // );
+
+    // const chosenChurnModel =
+    //   simulatorData?.churnModel as keyof typeof churnModelValues;
+    // nextNode = churnModelValues[chosenChurnModel](
+    //   duelValues,
+    //   nodeOperatingData,
+    //   cyRef
+    // );
+
+    // if (nextNode === "fail") {
+    //   let oldChurnCount = parseInt(
+    //     cyRef.current?.$(`#${churnNode}`).data("churnCount")
+    //   );
+
+    //   cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
+    //   cyRef.current?.$(`#${edge.id}`).data({ failures: edgeFailures + 1 });
+    // }
+
+    // return nextNode;
   };
 
   const resetStyles = () => {
@@ -214,39 +267,55 @@ const Home = () => {
     cyRef.current?.elements().data("churnCount", 0);
   };
 
-  const customSearchNeighbour = (data: ICustomSearchFormValues) => {
+  // const playerSimulatorPath = (data: ICustomSearchFormValues) => {
+  //   resetStyles();
+  //   setChurnRate(0);
+  //   let col = cyRef.current?.collection();
+  //   col?.merge(`#${data?.firstNode}`);
+  //   let neighborhoodEdges: any = getNodeEdges(cyRef, data?.firstNode, col);
+
+  //   let randomEdge =
+  //     neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
+
+  //   let nextNode = getNextNode(col, randomEdge);
+
+  //   while (nextNode !== "fail" && nextNode !== data?.lastNode) {
+  //     neighborhoodEdges = getNodeEdges(cyRef, nextNode, col);
+
+  //     if (neighborhoodEdges.length === 0) break;
+
+  //     randomEdge =
+  //       neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
+
+  //     nextNode = getNextNode(col, randomEdge);
+  //   }
+
+  //   col?.addClass("highlighted");
+  // };
+
+  const playerModelPath = (data: ICustomSearchFormValues) => {
     resetStyles();
-    setChurnRate(0);
-    let col = cyRef.current?.collection();
-    col?.merge(`#${data?.firstNode}`);
-    let neighborhoodEdges: any = getNodeEdges(cyRef, data?.firstNode, col);
 
-    let randomEdge =
-      neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
+    let playerPath;
 
-    let nextNode = getNextNode(col, randomEdge);
+    const chosenPlayerModel =
+      simulatorData?.playerModel as keyof typeof playerModelValues;
 
-    while (nextNode !== "fail" && nextNode !== data?.lastNode) {
-      neighborhoodEdges = getNodeEdges(cyRef, nextNode, col);
-
-      if (neighborhoodEdges.length === 0) break;
-
-      randomEdge =
-        neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
-
-      nextNode = getNextNode(col, randomEdge);
-    }
-
-    col?.addClass("highlighted");
+    playerPath = playerModelValues[chosenPlayerModel](data, cyRef);
+    return playerPath;
   };
-
   const setInvariableGraphDifficulty = (difficulty: number = 1600) => {
     cyRef.current
       ?.elements()
       .filter(function (ele) {
         return ele.isEdge();
       })
-      .data({ difficulty: difficulty, attempts: 0, failures: 0 });
+      .data({
+        difficulty: difficulty,
+        attempts: 0,
+        failures: 0,
+        probabilityOfWinning: 50,
+      });
   };
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
