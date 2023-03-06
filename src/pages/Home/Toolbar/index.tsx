@@ -96,7 +96,7 @@ const Toolbar = ({
             <h3>Challenge model </h3>
             <select {...registerValue("challengeModel")}>
               <option value="eloRating">Elo rating</option>
-              <option value="randomRating">Random</option>
+              <option value="randomProbability">Random</option>
             </select>
           </div>
           <div className="formInput difficultyModelContainer">

@@ -9,7 +9,7 @@ export const explorerModel = (data: any, cyRef: any) => {
   let dfs = cyRef?.current?.elements().dfs({
     roots: `#${data.firstNode}`,
     visit: function (v: any, e: any, u: any, i: any, depth: any) {
-      console.log("visit " + v.id());
+      
     },
     directed: false,
   });
@@ -45,5 +45,6 @@ export const storyModel = (data: any, cyRef: any) => {
 
   let nodePaths = aStar.path;
   let col = cyRef.current.collection();
+
   return col.merge(nodePaths);
 };

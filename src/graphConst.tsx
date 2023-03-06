@@ -15,6 +15,8 @@ export const graphConsts: Record<string, any> = {
 
         let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
 
+        if (ele.isNode()) return 40;
+
         return v;
       },
     },
@@ -34,7 +36,7 @@ export const graphConsts: Record<string, any> = {
         let numAttempts = ele.data("failures");
 
         let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
-
+        if (ele.isNode()) return 40;
         return v;
       },
     },
@@ -124,7 +126,6 @@ export const graphConsts: Record<string, any> = {
     style: {
       backgroundColor: function (ele: any) {
         let core = ele.cy();
-        console.log("entrei cor");
         let max = core.elements().max(function (ele: any) {
           return ele.data("churnCount");
         }).value;
@@ -138,7 +139,7 @@ export const graphConsts: Record<string, any> = {
         } else {
           hue = ((churnCount - min) * (100 - 0)) / (max - min) + 1;
         }
-        console.log("🚀 ~ file: graphConst.tsx ~ line 160 ~ hue", hue);
+
 
         return ["hsl(", 100 - hue, ",100%,50%)"].join("");
       },

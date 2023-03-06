@@ -6,7 +6,8 @@ interface FormValues {
   churnCount: number;
   attempts?: number;
   difficulty?: number;
-  failures?: string;
+  failures?: number;
+  probabilityOfWinning?: number;
   newAttributes: {
     attribute: string;
     value: string;
@@ -15,6 +16,7 @@ interface FormValues {
 
 interface ModalFormProps {
   modalFormIsOpen: any;
+  setIsModalFormOpen: any;
   closeModal: any;
   primaryNode: any;
   onSubmitNode: any;
@@ -41,27 +43,31 @@ const ModalForm = ({
   selectedEdge,
   onSubmitEdge,
 }: ModalFormProps) => {
-  const {
-    register,
-    control,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>({
-    defaultValues: {
-      newAttributes: [{ attribute: "", value: "" }],
-    },
+  const { register, control, reset, handleSubmit } = useForm<FormValues>({
     mode: "onBlur",
   });
+
+  const {
+    register: registerEdge,
+    handleSubmit: handleSubmitEdge,
+    reset: resetEdge,
+  } = useForm<FormValues>();
+
   const { fields, append, remove } = useFieldArray({
     name: "newAttributes",
     control,
   });
 
+  const resetFormValue = () => {
+    reset();
+    resetEdge();
+  };
+
   return (
     <Modal
       isOpen={modalFormIsOpen}
       onRequestClose={closeModal}
+      onAfterClose={resetFormValue}
       style={modalStyles}
       ariaHideApp={false}
       contentLabel="modal-form"
@@ -133,12 +139,12 @@ const ModalForm = ({
       )}
 
       {selectedEdge && (
-        <form onSubmit={handleSubmit(onSubmitEdge)}>
+        <form onSubmit={handleSubmitEdge(onSubmitEdge)}>
           <div className="formContainer">
             <div className="formInput">
               <h3>Label</h3>
               <input
-                {...register("label")}
+                {...registerEdge("label")}
                 defaultValue={selectedEdge?.label}
                 placeholder="Label"
               />
@@ -148,7 +154,7 @@ const ModalForm = ({
               <h3>Difficulty</h3>
               <input
                 type="number"
-                {...register("difficulty", {
+                {...registerEdge("difficulty", {
                   valueAsNumber: true,
                   required: true,
                 })}
@@ -159,7 +165,7 @@ const ModalForm = ({
               <h3>attempts</h3>
               <input
                 type="number"
-                {...register("attempts", {
+                {...registerEdge("attempts", {
                   valueAsNumber: true,
                   required: true,
                 })}
@@ -170,11 +176,22 @@ const ModalForm = ({
               <h3>failures</h3>
               <input
                 type="number"
-                {...register("failures", {
+                {...registerEdge("failures", {
                   valueAsNumber: true,
                   required: true,
                 })}
                 defaultValue={selectedEdge?.failures}
+              />
+            </div>
+            <div className="formInput">
+              <h3>Probability of winning</h3>
+              <input
+                type="number"
+                {...registerEdge("probabilityOfWinning", {
+                  valueAsNumber: true,
+                  required: true,
+                })}
+                defaultValue={selectedEdge?.probabilityOfWinning}
               />
             </div>
             {fields.map((field, index) => {
@@ -183,7 +200,7 @@ const ModalForm = ({
                   <section className={"section"} key={field.id}>
                     <input
                       placeholder="attribute"
-                      {...register(
+                      {...registerEdge(
                         `newAttributes.${index}.attribute` as const,
                         {}
                       )}
@@ -191,7 +208,10 @@ const ModalForm = ({
                     />
                     <input
                       placeholder="name"
-                      {...register(`newAttributes.${index}.value` as const, {})}
+                      {...registerEdge(
+                        `newAttributes.${index}.value` as const,
+                        {}
+                      )}
                       defaultValue={field.value}
                     />
 

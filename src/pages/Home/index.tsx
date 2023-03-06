@@ -20,17 +20,18 @@ import {
 import { churnModelValues } from "../../helpers/churnModels";
 import { difficultyModelValues } from "../../helpers/difficultyModels";
 import { explorerModel, playerModelValues } from "../../helpers/playerModels";
+import { challengeModelValues } from "../../helpers/challengeModels";
 
 const Home = () => {
   const cyRef = useRef<cytoscape.Core | null>(null);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
   const [isCreatingRelationship, setIsCreatingRelationship] = useState(false);
   const [isInitialNodes, setisInitialNodes] = useState(true);
-  const [primaryNode, setPrimaryNode] = useState<INode>();
+  const [primaryNode, setPrimaryNode] = useState<INode | null>(null);
   const [relationship, setRelationship] = useState<INode[] | []>([]);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
-  const [selectedEdge, setSelectedEdge] = useState<IEdge>();
+  const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
   const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
   const [botDifficulty, setBotDifficulty] = useState<number>(1600);
   const [simulatorData, setSimulatorData] = useState<ICustomSearchFormValues>();
@@ -49,10 +50,10 @@ const Home = () => {
     const data = {
       label: nodeData.label,
       churnCount: nodeData.churnCount,
-      newAttributes: [...nodeData.newAttributes],
     };
 
     cyRef.current?.$(`#${primaryNode?.id}`).data(data);
+    setPrimaryNode(null);
     closeModal();
   };
   const onSubmitEdge: SubmitHandler<FormValues> = (edgeData: FormValues) => {
@@ -62,10 +63,11 @@ const Home = () => {
       attempts: edgeData.attempts,
       failures: edgeData.failures,
       probabilityOfWinning: edgeData.probabilityOfWinning,
-      newAttributes: [...edgeData.newAttributes],
     };
 
     cyRef.current?.$(`#${selectedEdge?.id}`).data(data);
+
+    setSelectedEdge(null);
     closeModal();
   };
   const onSubmitCustomSearch: SubmitHandler<ICustomSearchFormValues> = (
@@ -136,6 +138,7 @@ const Home = () => {
           attempts: 0,
           failures: 0,
           difficulty: 1600,
+          probabilityOfWinning: 50,
         },
       });
       const newNodes = cyRef.current?.elements().jsons();
@@ -154,13 +157,10 @@ const Home = () => {
   const playerSimulatorPath = (simulatorData: ICustomSearchFormValues) => {
     resetStyles();
     let playerPath = playerModelPath(simulatorData);
-    console.log(
-      "🚀 ~ file: index.tsx:156 ~ playerSimulatorPath ~ playerPath",
-      playerPath
-    );
 
     let failedToFinish = false;
 
+    let playerRating = simulatorData.playerRating;
     let simulatingPath = playerPath.filter(function (
       ele: any,
       i: any,
@@ -170,34 +170,42 @@ const Home = () => {
       if (ele.isEdge()) return true;
       if (ele.id() === simulatorData.lastNode) return true;
 
-      let edge = eles[i + 1]?.data();
-      console.log(
-        "🚀 ~ file: index.tsx:170 ~ playerSimulatorPath ~ edge",
-        edge.probabilityOfWinning
+      let initialNodeData = ele.data();
+
+      let edge = eles[i + 1];
+
+      let edgeData = edge.data();
+
+      let duelValues;
+      let wonDuel;
+      let nodeOperatingData = { edge, playerRating };
+
+      const chosenChallengeModel =
+        simulatorData?.challengeModel as keyof typeof challengeModelValues;
+      duelValues =
+        challengeModelValues[chosenChallengeModel](nodeOperatingData);
+
+      const chosenChurnModel =
+        simulatorData?.churnModel as keyof typeof churnModelValues;
+      wonDuel = churnModelValues[chosenChurnModel](
+        duelValues,
+        nodeOperatingData,
+        cyRef
       );
 
-      let playerWinningChances = Math.random() * edge.probabilityOfWinning;
-      console.log(
-        "🚀 ~ file: index.tsx:175 ~ playerSimulatorPath ~ playerWinningChances",
-        playerWinningChances
-      );
-      let playerLosingChances =
-        Math.random() * (100 - edge.probabilityOfWinning);
+      if (!wonDuel) {
+        failedToFinish = true;
+        cyRef.current
+          ?.$(`#${edgeData.id}`)
+          .data({ failures: edgeData.failures + 1 });
+        cyRef.current
+          ?.$(`#${initialNodeData.id}`)
+          .data({ churnCount: initialNodeData.churnCount + 1 });
+      }
 
-      console.log(
-        "🚀 ~ file: index.tsx:177 ~ playerSimulatorPath ~ playerLosingChances",
-        playerLosingChances
-      );
-      if (playerWinningChances > playerLosingChances) return true;
-
-      failedToFinish = true;
-      return false;
+      return true;
     });
 
-    console.log(
-      "🚀 ~ file: index.tsx:167 ~ playerSimulatorPath ~ simulatingPath",
-      simulatingPath
-    );
     simulatingPath?.addClass("highlighted");
     // let edge = randomEdge.data();
 
@@ -217,9 +225,9 @@ const Home = () => {
     //   randomEdge,
     // };
 
-    // const chosenDifficultyModel =
+    // const chosenChallengeModel =
     //   simulatorData?.difficultyModel as keyof typeof difficultyModelValues;
-    // difficultyModelValues[chosenDifficultyModel](
+    // difficultyModelValues[chosenChallengeModel](
     //   difficultyOperatingData,
     //   cyRef
     // );
@@ -302,6 +310,10 @@ const Home = () => {
       simulatorData?.playerModel as keyof typeof playerModelValues;
 
     playerPath = playerModelValues[chosenPlayerModel](data, cyRef);
+    console.log(
+      "🚀 ~ file: index.tsx:313 ~ playerModelPath ~ playerPath:",
+      playerPath
+    );
     return playerPath;
   };
   const setInvariableGraphDifficulty = (difficulty: number = 1600) => {
@@ -318,6 +330,13 @@ const Home = () => {
       });
   };
 
+  const changeStyleSettings = (className: string, applyStyle: boolean) => {
+    if (applyStyle) {
+      cyRef.current?.elements().addClass(className);
+    } else {
+      cyRef.current?.elements().removeClass(className);
+    }
+  };
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
     let file = e.target.files && e.target?.files?.[0];
 
@@ -375,10 +394,12 @@ const Home = () => {
           setSelectedEdge={setSelectedEdge}
           setPrimaryNode={setPrimaryNode}
           setIsCreatingNode={setIsCreatingNode}
+          changeStyleSettings={changeStyleSettings}
         />
       </div>
       <ModalForm
         modalFormIsOpen={modalFormIsOpen}
+        setIsModalFormOpen={setIsModalFormOpen}
         closeModal={closeModal}
         primaryNode={primaryNode}
         onSubmitNode={onSubmitNode}

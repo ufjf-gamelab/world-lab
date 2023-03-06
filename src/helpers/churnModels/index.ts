@@ -9,7 +9,7 @@ export const churnModelValues = {
 };
 
 const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
-  let edgeData = data.randomEdge.data();
+  let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
 
   let playerHability;
@@ -22,15 +22,13 @@ const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
 
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      data.col.merge(data.randomEdge);
-      data.col.merge(`#${data.nextNode}`);
-      return data.nextNode;
+      return true;
     }
   }
-  return "fail";
+  return false;
 };
 const tryhardModel = (duel: number[], data: any, cyRef: any) => {
-  let edgeData = data.randomEdge.data();
+  let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
   let playerHability;
   let botHability;
@@ -39,15 +37,13 @@ const tryhardModel = (duel: number[], data: any, cyRef: any) => {
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      data.col.merge(data.randomEdge);
-      data.col.merge(`#${data.nextNode}`);
-      return data.nextNode;
+      return true;
     }
   }
-  return "fail";
+  return false;
 };
 const noChoicesModel = (duel: number[], data: any, cyRef: any) => {
-  let edgeData = data.randomEdge.data();
+  let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
   let playerHability;
   let botHability;
@@ -56,7 +52,7 @@ const noChoicesModel = (duel: number[], data: any, cyRef: any) => {
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      data.col.merge(data.randomEdge);
+      data.col.merge(data.edge);
       data.col.merge(`#${data.nextNode}`);
       return data.nextNode;
     }
@@ -67,7 +63,7 @@ const noChoicesModel = (duel: number[], data: any, cyRef: any) => {
 };
 
 const flowModel = (duel: number[], data: any, cyRef: any) => {
-  let edgeData = data.randomEdge.data();
+  let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
   let playerHability;
   let botHability;
@@ -76,7 +72,7 @@ const flowModel = (duel: number[], data: any, cyRef: any) => {
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      data.col.merge(data.randomEdge);
+      data.col.merge(data.edge);
       data.col.merge(`#${data.nextNode}`);
       return data.nextNode;
     }

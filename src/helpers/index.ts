@@ -10,25 +10,14 @@ export const calculateProbabilityEloRating = (
 export const eloRatingChallenge = (data: any, playerRating: number) => {
   let edgeData = data.randomEdge.data();
 
+  const Ra = playerRating;
 
-  // const Ra = playerRating;
-  const Ra = 1700;
-
-  // const Rb = edgeData.difficulty;
-  const Rb = 1600;
+  const Rb = edgeData.difficulty;
 
   const K = 32;
 
   let playerWinProbability = calculateProbabilityEloRating(Rb, Ra) * 100;
   let botWinProbability = calculateProbabilityEloRating(Ra, Rb) * 100;
-  console.log(
-    "🚀 ~ file: index.ts:24 ~ eloRatingChallenge ~ player upgrade",
-    Ra + K * (1 - playerWinProbability/100)
-  );
-  console.log(
-    "🚀 ~ file: index.ts:24 ~ eloRatingChallenge ~ bot upgrade",
-    Rb + K * (0 - botWinProbability/100)
-  );
 
   const duelValues = [playerWinProbability, botWinProbability];
 
