@@ -1,8 +1,11 @@
-import { GrEdit } from "react-icons/gr";
+import { useState } from "react";
+
+import { BiTrash, BiEdit } from "react-icons/bi";
+import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import "./styles.css";
 interface InformationProps {
   isCreatingRelationship: any;
-  showStyles: any;
+
   relationship: any;
   setIsCreatingRelationship: any;
   setRelationship: any;
@@ -24,7 +27,7 @@ interface IAttribute {
 
 const Information = ({
   isCreatingRelationship,
-  showStyles,
+
   relationship,
   setIsCreatingRelationship,
   setRelationship,
@@ -39,13 +42,16 @@ const Information = ({
   setPrimaryNode,
   setIsCreatingNode,
 }: InformationProps) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   return (
+
+
     <>
       {isCreatingRelationship ? (
         <div className="containerRelationship">
           <>
             <h2 className="titleRelationship">Create relationship?</h2>
-            <div className="subtitle">
+            <div className="elementInfo">
               <h2>
                 {relationship[0]?.id
                   ? "Source Node ID"
@@ -53,7 +59,7 @@ const Information = ({
               </h2>
               <h3>{relationship[0]?.id}</h3>
             </div>
-            <div className="subtitle">
+            <div className="elementInfo">
               <h2>
                 {relationship[1]?.id
                   ? "Target Node ID"
@@ -61,7 +67,7 @@ const Information = ({
               </h2>
               <h3>{relationship[1]?.id}</h3>
             </div>
-            <div className="subtitle">
+            <div className="elementInfo">
               <button
                 onClick={() => {
                   setIsCreatingRelationship(false);
@@ -72,7 +78,7 @@ const Information = ({
               </button>
             </div>
             <div
-              className="subtitle"
+              className="elementInfo"
               onClick={() => {
                 createRelationship();
               }}
@@ -82,23 +88,25 @@ const Information = ({
           </>
         </div>
       ) : (
-        <div className="container">
-          <div>
+        <div className="InformationContainer">
+          <div className="nodeEdgeInformation">
             <>
               {(primaryNode || selectedEdge) && !isCreatingNode && (
-                <div className="header">
-                  <h1>Data</h1>
+                <div className="informationHeader">
+                  <h3>Data</h3>
 
-                  <div
-                    className="editButton"
+                  <BiEdit
+                  className="editButton"
+                  title="Editar"
+                    fontSize={24}
                     onClick={() => {
                       if (primaryNode || selectedEdge) openModal();
                     }}
-                  >
-                    <h3>edit</h3>
-                    <GrEdit />
-                  </div>
-                  <button
+                  />
+
+                  <BiTrash
+                    title="Apagar"
+                    fontSize={24}
                     onClick={() => {
                       if (primaryNode) {
                         deleteElement(primaryNode);
@@ -109,32 +117,29 @@ const Information = ({
 
                       return deleteElement(selectedEdge);
                     }}
-                  >
-                    {primaryNode && "Delete Node"}
-                    {selectedEdge && "Delete Edge"}
-                  </button>
+                  />
                 </div>
               )}
             </>
             {primaryNode && !isCreatingNode && (
               <>
-                <div className="subtitle">
-                  <h2>Node ID</h2>
+                <div className="elementInfo">
+                  <h4>Node ID:</h4>
                   <h3>{primaryNode?.id}</h3>
                 </div>
-                <div className="subtitle">
-                  <h2>Node Label</h2>
+                <div className="elementInfo">
+                  <h4>Node Label:</h4>
                   <h3>{primaryNode?.label}</h3>
                 </div>
-                <div className="subtitle">
-                  <h2>Churn count</h2>
+                <div className="elementInfo">
+                  <h4>Churn count:</h4>
                   <h3>{primaryNode?.churnCount}</h3>
                 </div>
 
                 {primaryNode?.newAttributes?.map((a: IAttribute) => {
                   return (
-                    <div className="subtitle">
-                      <h2>{a.attribute}</h2>
+                    <div className="elementInfo">
+                      <h4>{a.attribute}:</h4>
                       <h3>{a.value}</h3>
                     </div>
                   );
@@ -144,28 +149,28 @@ const Information = ({
 
             {selectedEdge && !isCreatingNode && (
               <>
-                <div className="subtitle">
+                <div className="elementInfo">
                   <h2>Source</h2>
                   <h3>{selectedEdge?.source}</h3>
                 </div>
-                <div className="subtitle">
+                <div className="elementInfo">
                   <h2>Target</h2>
                   <h3>{selectedEdge?.target}</h3>
                 </div>
 
-                <div className="subtitle">
+                <div className="elementInfo">
                   <h2>Difficulty</h2>
                   <h3>{selectedEdge?.difficulty}</h3>
                 </div>
-                <div className="subtitle">
+                <div className="elementInfo">
                   <h2>attempts</h2>
                   <h3>{selectedEdge?.attempts}</h3>
                 </div>
-                <div className="subtitle">
+                <div className="elementInfo">
                   <h2>Failures</h2>
                   <h3>{selectedEdge?.failures}</h3>
                 </div>
-                <div className="subtitle">
+                <div className="elementInfo">
                   <h2>Probability of Winning</h2>
                   <h3>{selectedEdge?.probabilityOfWinning}%</h3>
                 </div>
@@ -189,10 +194,31 @@ const Information = ({
               </>
             )}
           </div>
-        
 
-          <div>
-            <ul className="slide">
+          <div className="settingsContainer">
+            <div
+              className="titleContainer"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <h3>Settings</h3>
+              {isDropdownOpen ? (
+                <MdKeyboardArrowDown
+                  fontSize={24}
+                  color={"black"}
+                  title="Open dropdown"
+                />
+              ) : (
+                <MdKeyboardArrowUp
+                  fontSize={24}
+                  color={"black"}
+                  title="Open dropdown"
+                />
+              )}
+            </div>
+            <ul
+              className="dropdownSettings"
+              style={{ height: isDropdownOpen ? "300px" : "0" }}
+            >
               <li>
                 <div className="switchContainer">
                   <h4 className="switchTitle">Attempts Width</h4>
@@ -211,9 +237,12 @@ const Information = ({
                 <div className="switchContainer">
                   <h4 className="switchTitle">Attempts Color</h4>
                   <label className="switch">
-                    <input type="checkbox"     onChange={(e) =>
+                    <input
+                      type="checkbox"
+                      onChange={(e) =>
                         changeStyleSettings("attemptsColor", e.target.checked)
-                      }  />
+                      }
+                    />
                     <span className="slider round"></span>
                   </label>
                 </div>
@@ -222,9 +251,15 @@ const Information = ({
                 <div className="switchContainer">
                   <h4 className="switchTitle">% Failures/attempts Color</h4>
                   <label className="switch">
-                    <input type="checkbox"   onChange={(e) =>
-                        changeStyleSettings("failuresAttemptsColor", e.target.checked)
-                      }  />
+                    <input
+                      type="checkbox"
+                      onChange={(e) =>
+                        changeStyleSettings(
+                          "failuresAttemptsColor",
+                          e.target.checked
+                        )
+                      }
+                    />
                     <span className="slider round"></span>
                   </label>
                 </div>
@@ -233,9 +268,12 @@ const Information = ({
                 <div className="switchContainer">
                   <h4 className="switchTitle">Failures Width</h4>
                   <label className="switch">
-                    <input type="checkbox" onChange={(e) =>
+                    <input
+                      type="checkbox"
+                      onChange={(e) =>
                         changeStyleSettings("failuresWidth", e.target.checked)
-                      }   />
+                      }
+                    />
                     <span className="slider round"></span>
                   </label>
                 </div>
@@ -244,9 +282,12 @@ const Information = ({
                 <div className="switchContainer">
                   <h4 className="switchTitle">Failures Color</h4>
                   <label className="switch">
-                    <input type="checkbox" onChange={(e) =>
+                    <input
+                      type="checkbox"
+                      onChange={(e) =>
                         changeStyleSettings("failuresColor", e.target.checked)
-                      }   />
+                      }
+                    />
                     <span className="slider round"></span>
                   </label>
                 </div>
@@ -255,9 +296,12 @@ const Information = ({
                 <div className="switchContainer">
                   <h4 className="switchTitle">Node Churn Count Color</h4>
                   <label className="switch">
-                    <input type="checkbox" onChange={(e) =>
+                    <input
+                      type="checkbox"
+                      onChange={(e) =>
                         changeStyleSettings("churnCountColor", e.target.checked)
-                      }   />
+                      }
+                    />
                     <span className="slider round"></span>
                   </label>
                 </div>
@@ -266,9 +310,15 @@ const Information = ({
                 <div className="switchContainer">
                   <h4 className="switchTitle">Failures / Attemps label</h4>
                   <label className="switch">
-                    <input type="checkbox" onChange={(e) =>
-                        changeStyleSettings("failuresAttemptsLabel", e.target.checked)
-                      }  />
+                    <input
+                      type="checkbox"
+                      onChange={(e) =>
+                        changeStyleSettings(
+                          "failuresAttemptsLabel",
+                          e.target.checked
+                        )
+                      }
+                    />
                     <span className="slider round"></span>
                   </label>
                 </div>
@@ -277,7 +327,7 @@ const Information = ({
                 <div className="switchContainer">
                   <h4 className="switchTitle">Node label</h4>
                   <label className="switch">
-                    <input type="checkbox"  />
+                    <input type="checkbox" />
                     <span className="slider round"></span>
                   </label>
                 </div>

@@ -42,15 +42,16 @@ const Graph = ({
           graphConsts.edgeFailuresColor,
           graphConsts.edgeFailuresAttemptsColor,
           graphConsts.edgeFailuresAttemptsColor,
+          graphConsts.selectedNode,
           graphConsts.customPath,
         ]}
         cy={(cy) => {
           if (!cyRef) return "";
           cyRef.current = cy;
-          cy.on("drag ", function (evt) {
-            const newNodes = cyRef.current?.elements().jsons();
-            setElements(newNodes);
-          });
+          // cy.on("drag ", function (evt) {
+          //   const newNodes = cyRef.current?.elements().jsons();
+          //   setElements(newNodes);
+          // });
 
           cy.on("tap", "node", function (event) {
             let node = event.target;

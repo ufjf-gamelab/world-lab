@@ -12,16 +12,12 @@ import {
   IEdge,
   INode,
 } from "./types/index";
-import {
-  eloRatingChallenge,
-  getNodeEdges,
-  initializeStandardDifficulty,
-} from "../../helpers";
-import { churnModelValues } from "../../helpers/churnModels";
-import { difficultyModelValues } from "../../helpers/difficultyModels";
-import { explorerModel, playerModelValues } from "../../helpers/playerModels";
-import { challengeModelValues } from "../../helpers/challengeModels";
 
+import { churnModelValues } from "../../helpers/churnModels";
+
+import { playerModelValues } from "../../helpers/playerModels";
+import { challengeModelValues } from "../../helpers/challengeModels";
+import "./styles.css";
 const Home = () => {
   const cyRef = useRef<cytoscape.Core | null>(null);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
@@ -207,6 +203,7 @@ const Home = () => {
     });
 
     simulatingPath?.addClass("highlighted");
+
     // let edge = randomEdge.data();
 
     // if (col?.contains(cyRef?.current!.$(`#${edge.target}`))) {
@@ -261,13 +258,6 @@ const Home = () => {
     cyRef.current?.elements().removeClass(graphConsts.classStylesNames);
   };
 
-  const showStyles = (style: string, isEdge = true) => {
-    if (isEdge) cyRef.current?.elements().edges().addClass(style);
-    else {
-      cyRef.current?.elements().nodes().addClass(style);
-    }
-  };
-
   const resetNodesAtributes = () => {
     resetStyles();
     cyRef.current?.elements().data("attempts", 0);
@@ -310,10 +300,7 @@ const Home = () => {
       simulatorData?.playerModel as keyof typeof playerModelValues;
 
     playerPath = playerModelValues[chosenPlayerModel](data, cyRef);
-    console.log(
-      "🚀 ~ file: index.tsx:313 ~ playerModelPath ~ playerPath:",
-      playerPath
-    );
+
     return playerPath;
   };
   const setInvariableGraphDifficulty = (difficulty: number = 1600) => {
@@ -381,7 +368,6 @@ const Home = () => {
 
         <Information
           isCreatingRelationship={isCreatingRelationship}
-          showStyles={showStyles}
           relationship={relationship}
           setIsCreatingRelationship={setIsCreatingRelationship}
           setRelationship={setRelationship}

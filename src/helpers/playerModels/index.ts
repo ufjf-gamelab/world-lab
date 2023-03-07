@@ -31,7 +31,7 @@ export const explorerModel = (data: any, cyRef: any) => {
     goal: `#${data.lastNode}`,
   });
 
-  let nodePathAstar = aStar.path?.select();
+  let nodePathAstar = aStar.path;
 
   let col = cyRef.current.collection();
   return col.merge(filteredPathCollection).merge(nodePathAstar);

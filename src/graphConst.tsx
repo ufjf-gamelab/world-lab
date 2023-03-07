@@ -63,13 +63,7 @@ export const graphConsts: Record<string, any> = {
     },
   },
 
-  customPath: {
-    selector: ".highlighted",
-    style: {
-      "background-color": "#61bffc",
-      "line-color": "#61bffc",
-    },
-  },
+
 
   edgeAttemptsColor: {
     selector: ".attemptsColor",
@@ -175,6 +169,8 @@ export const graphConsts: Record<string, any> = {
       "font-size": "16px",
       "text-valign": "center",
       "text-halign": "center",
+      "color" : "#000000",
+      "font-family" : "Poppins",
       label: function (node: any) {
         const nodeAtribute = node.data();
         // let labelFinal = "";
@@ -184,6 +180,14 @@ export const graphConsts: Record<string, any> = {
         // return labelFinal;
         return nodeAtribute.id;
       },
+    },
+  },
+  selectedNode: {
+    selector: ":selected",
+    style: {
+  
+      "backgroundColor" : "#A17DFF",
+      "color" : "#FFFFFF",
     },
   },
   edgeFailuresAttemptsLabel: {
@@ -196,16 +200,25 @@ export const graphConsts: Record<string, any> = {
 
       label: function (edge: any) {
         const edgeAtribute = edge.data();
-        if (edgeAtribute.failures > 0 && edgeAtribute.attempts > 0)
+        if (edgeAtribute.failures > 0 && edgeAtribute.attempts > 0 && !edge.isNode())
           return (
             "Failures/Attempts: " +
             Math.trunc((edgeAtribute.failures / edgeAtribute.attempts) * 100) +
             " %"
           );
-        else {
+        else if( !edge.isNode()) {
           return "Failures/Attempts: " + 0;
         }
       },
+    },
+  },
+
+  customPath: {
+    selector: ".highlighted",
+    style: {
+      "background-color": "#1F075F",
+      "line-color": "#1F075F",
+      "color" : "white",
     },
   },
 

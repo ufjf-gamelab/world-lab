@@ -1,7 +1,25 @@
-.container {
-  width: 100%;
+.InformationContainer {
+  width: 30%;
 }
 
+.informationHeader{
+  display: flex;
+  align-items: center;
+  background-color: #F2F2F2;
+  border-radius: 7px;
+  padding: 10px;
+  gap: 15px;
+}
+.informationHeader h3{
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+}
+
+.nodeEdgeInformation{
+  display: flex;
+    flex-direction: column;
+}
 .containerRelationship {
   display: grid;
   grid-template-rows: 50px 100px 100px;
@@ -16,20 +34,25 @@
   text-align: center;
 }
 
-.subtitle {
-  display: inline-flex;
-  margin: 20px;
-  align-items: center;
-  flex-direction: column;
-}
-
-.header {
+.elementInfo {
   display: flex;
-  margin-bottom: 30px;
-  justify-content: space-around;
   align-items: center;
+  flex-direction: row;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid #F2F2F2;;
 }
 
+.elementInfo h3{
+  font-size: 20px;
+  line-height: 18px;
+}
+
+.elementInfo h4{
+  font-size: 20px;
+  line-height: 18px;
+  font-weight: 500;
+}
 .titleCreateNode {
   text-align: center;
   margin: 10px auto;
@@ -57,12 +80,15 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  margin-left: auto;
 }
 
 .switchContainer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid #f2f2f2;
+  padding: 10px;
 }
 
 .switchTitle {
@@ -71,6 +97,15 @@
   line-height: 18px;
 }
 
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f2f2f2;
+  padding: 10px;
+  border-radius: 7px;
+}
 .switch {
   position: relative;
   display: inline-block;
@@ -84,6 +119,15 @@
   height: 0;
 }
 
+.dropdownList {
+  list-style-type: none;
+  height: 0px;
+  transition: height 0.4s ease;
+}
+
+#dropdownActive:checked .dropdownList {
+  height: 300px;
+}
 .slider {
   position: absolute;
   cursor: pointer;
@@ -129,3 +173,11 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+.dropdownSettings {
+  overflow: hidden;
+  transition: height 0.4s ease;
+}
+
+
+
