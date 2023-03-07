@@ -150,28 +150,28 @@ const Information = ({
             {selectedEdge && !isCreatingNode && (
               <>
                 <div className="elementInfo">
-                  <h2>Source</h2>
+                  <h4>Source</h4>
                   <h3>{selectedEdge?.source}</h3>
                 </div>
                 <div className="elementInfo">
-                  <h2>Target</h2>
+                  <h4>Target</h4>
                   <h3>{selectedEdge?.target}</h3>
                 </div>
 
                 <div className="elementInfo">
-                  <h2>Difficulty</h2>
+                  <h4>Difficulty</h4>
                   <h3>{selectedEdge?.difficulty}</h3>
                 </div>
                 <div className="elementInfo">
-                  <h2>attempts</h2>
+                  <h4>attempts</h4>
                   <h3>{selectedEdge?.attempts}</h3>
                 </div>
                 <div className="elementInfo">
-                  <h2>Failures</h2>
+                  <h4>Failures</h4>
                   <h3>{selectedEdge?.failures}</h3>
                 </div>
                 <div className="elementInfo">
-                  <h2>Probability of Winning</h2>
+                  <h4>Probability of Winning</h4>
                   <h3>{selectedEdge?.probabilityOfWinning}%</h3>
                 </div>
               </>
@@ -217,7 +217,7 @@ const Information = ({
             </div>
             <ul
               className="dropdownSettings"
-              style={{ height: isDropdownOpen ? "300px" : "0" }}
+              style={{ height: isDropdownOpen ? "600px" : "0" }}
             >
               <li>
                 <div className="switchContainer">

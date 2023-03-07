@@ -67,7 +67,7 @@ const Toolbar = ({
           >
             <FiDownloadCloud
               fontSize={24}
-              color={"black"}
+              color={"white"}
               title="Download Graph"
             />
             Download
