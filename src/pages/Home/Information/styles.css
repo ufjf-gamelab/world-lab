@@ -1,33 +1,37 @@
 .InformationContainer {
   width: 30%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
-.informationHeader{
+.informationHeader {
   display: flex;
   align-items: center;
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   border-radius: 7px;
   padding: 10px;
   gap: 15px;
 }
-.informationHeader h3{
+.informationHeader h3 {
   font-style: normal;
   font-weight: 400;
   font-size: 20px;
 }
 
-.nodeEdgeInformation{
+.nodeEdgeInformation {
   display: flex;
-    flex-direction: column;
+  flex-direction: column;
+  background-color: #ffff;
+  padding: 10px;
 }
 .containerRelationship {
   display: grid;
   grid-template-rows: 50px 100px 100px;
-  border: 1px solid black;
-  padding: 13px;
+
   border-radius: 17px;
-  width: 560px;
-  height: 675px;
+
 }
 .titleRelationship {
   grid-column: 1/3;
@@ -39,16 +43,17 @@
   align-items: center;
   flex-direction: row;
   gap: 10px;
+  background-color: #ffff;
   padding: 12px;
-  border-bottom: 1px solid #F2F2F2;;
+  border-bottom: 1px solid #f2f2f2;
 }
 
-.elementInfo h3{
+.elementInfo h3 {
   font-size: 20px;
   line-height: 18px;
 }
 
-.elementInfo h4{
+.elementInfo h4 {
   font-size: 20px;
   line-height: 18px;
   font-weight: 500;
@@ -89,6 +94,7 @@
   justify-content: space-between;
   border-bottom: 1px solid #f2f2f2;
   padding: 10px;
+  background-color: #ffff;
 }
 
 .switchTitle {
@@ -96,7 +102,6 @@
   font-size: 12px;
   line-height: 18px;
 }
-
 
 .titleContainer {
   display: flex;
@@ -178,6 +183,3 @@ input:checked + .slider:before {
   overflow: hidden;
   transition: height 0.4s ease;
 }
-
-
-
