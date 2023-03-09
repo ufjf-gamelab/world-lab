@@ -63,8 +63,6 @@ export const graphConsts: Record<string, any> = {
     },
   },
 
-
-
   edgeAttemptsColor: {
     selector: ".attemptsColor",
     style: {
@@ -134,7 +132,6 @@ export const graphConsts: Record<string, any> = {
           hue = ((churnCount - min) * (100 - 0)) / (max - min) + 1;
         }
 
-
         return ["hsl(", 100 - hue, ",100%,50%)"].join("");
       },
     },
@@ -169,8 +166,8 @@ export const graphConsts: Record<string, any> = {
       "font-size": "16px",
       "text-valign": "center",
       "text-halign": "center",
-      "color" : "#000000",
-      "font-family" : "Poppins",
+      color: "#000000",
+      "font-family": "Poppins",
       label: function (node: any) {
         const nodeAtribute = node.data();
         // let labelFinal = "";
@@ -182,12 +179,20 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
+
+  hideNodeLabel: {
+    selector: ".hideNodeLabel",
+    style: {
+      label: function (node: any) {
+        return "";
+      },
+    },
+  },
   selectedNode: {
     selector: ":selected",
     style: {
-  
-      "backgroundColor" : "#A17DFF",
-      "color" : "#FFFFFF",
+      backgroundColor: "#A17DFF",
+      color: "#FFFFFF",
     },
   },
   edgeFailuresAttemptsLabel: {
@@ -200,13 +205,17 @@ export const graphConsts: Record<string, any> = {
 
       label: function (edge: any) {
         const edgeAtribute = edge.data();
-        if (edgeAtribute.failures > 0 && edgeAtribute.attempts > 0 && !edge.isNode())
+        if (
+          edgeAtribute.failures > 0 &&
+          edgeAtribute.attempts > 0 &&
+          !edge.isNode()
+        )
           return (
             "Failures/Attempts: " +
             Math.trunc((edgeAtribute.failures / edgeAtribute.attempts) * 100) +
             " %"
           );
-        else if( !edge.isNode()) {
+        else if (!edge.isNode()) {
           return "Failures/Attempts: " + 0;
         }
       },
@@ -218,7 +227,7 @@ export const graphConsts: Record<string, any> = {
     style: {
       "background-color": "#1F075F",
       "line-color": "#1F075F",
-      "color" : "white",
+      color: "white",
     },
   },
 
@@ -395,6 +404,7 @@ export const graphConsts: Record<string, any> = {
     "highlighted",
     "tentativas",
     "firstNode",
+    "hideNodeLabel",
     "attemptsColor",
     "attemptsWidth",
     "failuresWidth",

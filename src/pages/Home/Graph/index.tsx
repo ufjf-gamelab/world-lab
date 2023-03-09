@@ -33,6 +33,7 @@ const Graph = ({
         layout={layouts.circle}
         stylesheet={[
           graphConsts.nodeLabel,
+          graphConsts.hideNodeLabel,
           graphConsts.edgeFailuresAttemptsLabel,
           graphConsts.edgeAttempts,
           graphConsts.edgeAttemptsColor,
