@@ -8,9 +8,7 @@ export const playerModelValues = {
 export const explorerModel = (data: any, cyRef: any) => {
   let dfs = cyRef?.current?.elements().dfs({
     roots: `#${data.firstNode}`,
-    visit: function (v: any, e: any, u: any, i: any, depth: any) {
-      
-    },
+    visit: function (v: any, e: any, u: any, i: any, depth: any) {},
     directed: false,
   });
 
@@ -18,8 +16,16 @@ export const explorerModel = (data: any, cyRef: any) => {
   let pathCollection = dfs.path;
 
   let filteredPathCollection = pathCollection?.filter(function (ele: any) {
+    if (
+      ele.data("source") === data.lastNode ||
+      ele.data("target") === data.lastNode
+    ) {
+      return false;
+    }
+
     return ele.data("id") !== data.lastNode;
   });
+ 
 
   const lastPlayerPosition =
     filteredPathCollection[filteredPathCollection.length - 1];
@@ -33,7 +39,9 @@ export const explorerModel = (data: any, cyRef: any) => {
 
   let nodePathAstar = aStar.path;
 
+
   let col = cyRef.current.collection();
+
   return col.merge(filteredPathCollection).merge(nodePathAstar);
 };
 

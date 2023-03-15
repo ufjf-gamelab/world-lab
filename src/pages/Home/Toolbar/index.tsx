@@ -101,7 +101,7 @@ const Toolbar = ({
                 type="number"
                 {...registerValue("playerRating", {
                   valueAsNumber: true,
-                  required: true,
+               
                 })}
               />
             </div>

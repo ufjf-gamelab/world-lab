@@ -29,7 +29,7 @@ const Home = () => {
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
   const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
-  const [botDifficulty, setBotDifficulty] = useState<number>(1600);
+
   const [simulatorData, setSimulatorData] = useState<ICustomSearchFormValues>();
 
   const [modalFormIsOpen, setIsModalFormOpen] = useState(false);
@@ -153,6 +153,10 @@ const Home = () => {
   const playerSimulatorPath = (simulatorData: ICustomSearchFormValues) => {
     resetStyles();
     let playerPath = playerModelPath(simulatorData);
+    console.log(
+      "🚀 ~ file: index.tsx:156 ~ playerSimulatorPath ~ playerPath:",
+      playerPath
+    );
 
     let failedToFinish = false;
 
@@ -164,6 +168,7 @@ const Home = () => {
     ) {
       if (failedToFinish) return false;
       if (ele.isEdge()) return true;
+      console.log("currentId", ele.id(), simulatorData.lastNode);
       if (ele.id() === simulatorData.lastNode) return true;
 
       let initialNodeData = ele.data();
@@ -255,6 +260,7 @@ const Home = () => {
   };
 
   const resetStyles = () => {
+    cyRef.current?.fit();
     cyRef.current?.elements().removeClass(graphConsts.classStylesNames);
   };
 

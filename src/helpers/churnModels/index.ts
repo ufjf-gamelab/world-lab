@@ -15,7 +15,7 @@ const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
   let playerHability;
   let botHability;
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 3; i++) {
     playerHability = Math.floor(Math.random() * duel[0]);
 
     botHability = Math.floor(Math.random() * duel[1]);
