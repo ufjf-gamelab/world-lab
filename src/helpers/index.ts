@@ -7,20 +7,20 @@ export const calculateProbabilityEloRating = (
   );
 };
 
-export const eloRatingChallenge = (data: any, playerRating: number) => {
-  let edgeData = data.randomEdge.data();
+export const eloRatingChallenge = (data: any) => {
 
-  const Ra = playerRating;
+  
+let edgeData = data.edge.data();
+const Ra = data.playerRating;
+
 
   const Rb = edgeData.difficulty;
 
-  const K = 32;
 
   let playerWinProbability = calculateProbabilityEloRating(Rb, Ra) * 100;
   let botWinProbability = calculateProbabilityEloRating(Ra, Rb) * 100;
 
   const duelValues = [playerWinProbability, botWinProbability];
-
   return duelValues;
 };
 

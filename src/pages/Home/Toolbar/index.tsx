@@ -36,9 +36,16 @@ const Toolbar = ({
   isCreatingNode,
   isCreatingRelationship,
 }: ToolbarProps) => {
-  const { register: registerValue, handleSubmit: handleSubmitSearch } =
-    useForm<ICustomSearchFormValues>();
+  const {
+    register: registerValue,
+    watch,
+    handleSubmit: handleSubmitSearch,
+  } = useForm<ICustomSearchFormValues>();
 
+  const watchAllFields = watch();
+  const watchShowRating = watch("challengeModel", "eloRating");
+  console.log("🚀 ~ file: index.tsx:47 ~ watchShowRating:", watchShowRating)
+  console.log("watchAllFields", watchAllFields);
   return (
     <>
       <div className="header">
@@ -95,16 +102,6 @@ const Toolbar = ({
                 type={"number"}
               />
             </div>
-            <div className="formInput playerRatingContainer">
-              <h3>Player Rating</h3>
-              <input
-                type="number"
-                {...registerValue("playerRating", {
-                  valueAsNumber: true,
-               
-                })}
-              />
-            </div>
 
             <div className="formInput numberOfRunsContainer">
               <h3>Number of runs </h3>
@@ -133,18 +130,29 @@ const Toolbar = ({
                 <option value="randomProbability">Random</option>
               </select>
             </div>
+            {watchShowRating && (
+              <div className="formInput playerRatingContainer">
+                <h3>Player Rating</h3>
+                <input
+                  type="number"
+                  {...registerValue("playerRating", {
+                    valueAsNumber: true,
+                  })}
+                />
+              </div>
+            )}
             <div className="formInput difficultyModelContainer">
               <h3>Difficulty model </h3>
               <select {...registerValue("difficultyModel")}>
-                <option value="linearDifficulty">Linear</option>
-                <option value="adaptiveDifficulty">Adaptive</option>
+                <option value="linear">Linear</option>
+                <option value="adaptive">Adaptive</option>
               </select>
             </div>
             <div className="formInput">
               <h3>Progression model </h3>
               <select {...registerValue("progressionModel")}>
                 <option value="fixed">Fixed</option>
-                <option value="Incremental">Incremental</option>
+                <option value="incremental">Incremental</option>
               </select>
             </div>
             <div className="formInput">

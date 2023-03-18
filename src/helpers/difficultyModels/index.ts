@@ -1,7 +1,7 @@
 export const difficultyModelValues = {
-  linearDifficulty: (nodeOperatingData: any, cyRef: any) =>
+  lineary: (nodeOperatingData: any, cyRef: any) =>
     linearDifficulty(nodeOperatingData, cyRef),
-  adaptativeDificulty: (nodeOperatingData: any, cyRef: any) =>
+  adaptative: (nodeOperatingData: any, cyRef: any) =>
     adaptativeDificulty(nodeOperatingData, cyRef),
 };
 

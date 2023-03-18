@@ -25,11 +25,13 @@ export const explorerModel = (data: any, cyRef: any) => {
 
     return ele.data("id") !== data.lastNode;
   });
- 
+
+
 
   const lastPlayerPosition =
-    filteredPathCollection[filteredPathCollection.length - 1];
-
+  filteredPathCollection[filteredPathCollection.length - 1];
+  
+  console.log("🚀 ~ file: index.ts:35 ~ explorerModel ~ lastPlayerPosition:", lastPlayerPosition)
   const lastPlayerPositionID = lastPlayerPosition?.data("id");
 
   let aStar = cyRef.current?.elements()?.aStar({
@@ -37,12 +39,14 @@ export const explorerModel = (data: any, cyRef: any) => {
     goal: `#${data.lastNode}`,
   });
 
+
   let nodePathAstar = aStar.path;
 
-
   let col = cyRef.current.collection();
+  let fullSearch = col.merge(filteredPathCollection).merge(nodePathAstar);
 
-  return col.merge(filteredPathCollection).merge(nodePathAstar);
+ 
+  return fullSearch;
 };
 
 export const storyModel = (data: any, cyRef: any) => {

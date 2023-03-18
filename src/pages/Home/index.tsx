@@ -18,6 +18,7 @@ import { churnModelValues } from "../../helpers/churnModels";
 import { playerModelValues } from "../../helpers/playerModels";
 import { challengeModelValues } from "../../helpers/challengeModels";
 import "./styles.css";
+import { progressionModelValues } from "../../helpers/progressionModels";
 const Home = () => {
   const cyRef = useRef<cytoscape.Core | null>(null);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
@@ -153,10 +154,6 @@ const Home = () => {
   const playerSimulatorPath = (simulatorData: ICustomSearchFormValues) => {
     resetStyles();
     let playerPath = playerModelPath(simulatorData);
-    console.log(
-      "🚀 ~ file: index.tsx:156 ~ playerSimulatorPath ~ playerPath:",
-      playerPath
-    );
 
     let failedToFinish = false;
 
@@ -168,14 +165,16 @@ const Home = () => {
     ) {
       if (failedToFinish) return false;
       if (ele.isEdge()) return true;
-      console.log("currentId", ele.id(), simulatorData.lastNode);
       if (ele.id() === simulatorData.lastNode) return true;
 
       let initialNodeData = ele.data();
 
+
       let edge = eles[i + 1];
+     
 
       let edgeData = edge.data();
+  
 
       let duelValues;
       let wonDuel;
@@ -202,12 +201,18 @@ const Home = () => {
         cyRef.current
           ?.$(`#${initialNodeData.id}`)
           .data({ churnCount: initialNodeData.churnCount + 1 });
+      } else {
+        const chosenProgressionModel =
+          simulatorData?.progressionModel as keyof typeof progressionModelValues;
+        playerRating =
+          progressionModelValues[chosenProgressionModel](nodeOperatingData);
       }
 
       return true;
     });
 
-    simulatingPath?.addClass("highlighted");
+
+     simulatingPath?.addClass("highlighted");
 
     // let edge = randomEdge.data();
 
