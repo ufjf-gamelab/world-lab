@@ -1,4 +1,4 @@
 export const containerStyle = {
-    width: "1432px",
+    width: "75%",
     height: "667px",
   };

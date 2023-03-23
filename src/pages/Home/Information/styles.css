@@ -1,5 +1,5 @@
 .InformationContainer {
-  width: 30%;
+  width: 25%;
 
   display: flex;
   flex-direction: column;
@@ -14,6 +14,51 @@
   padding: 10px;
   gap: 15px;
 }
+
+.nodeManipulation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  box-shadow: 0px 10px 30px rgba(122, 137, 254, 0.04);
+  border-radius: 10px;
+  padding: 12px 20px;
+  gap: 15px;
+}
+
+.createNode,
+.createEdge {
+  display: flex;
+  gap: 5px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+}
+
+.formInput {
+  width: 174px;
+}
+.formInput select,
+.formInput input {
+  color: #8c8fa7;
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.nodeManipulation > p {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+}
+
 .informationHeader h3 {
   font-style: normal;
   font-weight: 400;
@@ -31,7 +76,6 @@
   grid-template-rows: 50px 100px 100px;
 
   border-radius: 17px;
-
 }
 .titleRelationship {
   grid-column: 1/3;
@@ -80,6 +124,23 @@
   border-radius: 5px;
 }
 
+.settingsContainer,
+.layoutContainer {
+  background: #ffffff;
+  box-shadow: 0px 10px 30px rgba(122, 137, 254, 0.04);
+  border-radius: 10px;
+  padding: 10px 6px;
+}
+
+.layoutContainer select {
+  width: 100%;
+  background: #f2f2f2;
+  border-radius: 7px;
+}
+
+.layoutContainer select > option:hover {
+  background-color: #1f075f !important;
+}
 .editButton {
   display: flex;
   align-items: center;
@@ -95,6 +156,11 @@
   border-bottom: 1px solid #f2f2f2;
   padding: 10px;
   background-color: #ffff;
+}
+.resetStylesButton {
+  background: none;
+  margin: auto;
+  color: #1f075f;
 }
 
 .switchTitle {
@@ -131,7 +197,7 @@
 }
 
 #dropdownActive:checked .dropdownList {
-  height: 300px;
+  height: 431px;
 }
 .slider {
   position: absolute;

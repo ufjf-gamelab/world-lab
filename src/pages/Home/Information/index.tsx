@@ -1,7 +1,10 @@
 import { useState } from "react";
 
 import { BiTrash, BiEdit } from "react-icons/bi";
+import { FiGitPullRequest, FiPlusCircle } from "react-icons/fi";
+import { GrPowerReset } from "react-icons/gr";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import { layouts } from "../layouts";
 import "./styles.css";
 interface InformationProps {
   isCreatingRelationship: any;
@@ -19,6 +22,7 @@ interface InformationProps {
   setPrimaryNode: any;
   setIsCreatingNode: any;
   changeStyleSettings: any;
+  setLayout: any;
 }
 interface IAttribute {
   attribute: string;
@@ -27,7 +31,6 @@ interface IAttribute {
 
 const Information = ({
   isCreatingRelationship,
-
   relationship,
   setIsCreatingRelationship,
   setRelationship,
@@ -41,11 +44,35 @@ const Information = ({
   changeStyleSettings,
   setPrimaryNode,
   setIsCreatingNode,
+  setLayout,
 }: InformationProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   return (
     <>
       <div className="InformationContainer">
+        <div className="nodeManipulation">
+          <div
+            className="createNode"
+            onClick={() => {
+              setIsCreatingRelationship(false);
+              setIsCreatingNode(!isCreatingNode);
+              setRelationship([]);
+            }}
+          >
+            <FiPlusCircle fontSize={24} color={"black"} />
+            <p> New node</p>
+          </div>
+          <div
+            className="createEdge"
+            onClick={() => {
+              setIsCreatingNode(false);
+              setIsCreatingRelationship(!isCreatingRelationship);
+              setRelationship([]);
+            }}
+          >
+            <FiGitPullRequest fontSize={24} color={"black"} /> <p>Node links</p>
+          </div>
+        </div>
         {isCreatingNode && (
           <>
             <h2 className="titleCreateNode">Click on screen to create node</h2>
@@ -103,95 +130,97 @@ const Information = ({
           </div>
         )}
 
-      { (primaryNode || selectedEdge) && <div className="nodeEdgeInformation">
-          <>
-            {(primaryNode || selectedEdge) && (
-              <div className="informationHeader">
-                <h3>Data</h3>
+        {(primaryNode || selectedEdge) && (
+          <div className="nodeEdgeInformation">
+            <>
+              {(primaryNode || selectedEdge) && (
+                <div className="informationHeader">
+                  <h3>Data</h3>
 
-                <BiEdit
-                  className="editButton"
-                  title="Editar"
-                  fontSize={24}
-                  onClick={() => {
-                    if (primaryNode || selectedEdge) openModal();
-                  }}
-                />
+                  <BiEdit
+                    className="editButton"
+                    title="Editar"
+                    fontSize={24}
+                    onClick={() => {
+                      if (primaryNode || selectedEdge) openModal();
+                    }}
+                  />
 
-                <BiTrash
-                  title="Apagar"
-                  fontSize={24}
-                  onClick={() => {
-                    if (primaryNode) {
-                      deleteElement(primaryNode);
-                      setPrimaryNode(undefined);
-                      return;
-                    }
-                    setSelectedEdge(undefined);
+                  <BiTrash
+                    title="Apagar"
+                    fontSize={24}
+                    onClick={() => {
+                      if (primaryNode) {
+                        deleteElement(primaryNode);
+                        setPrimaryNode(undefined);
+                        return;
+                      }
+                      setSelectedEdge(undefined);
 
-                    return deleteElement(selectedEdge);
-                  }}
-                />
-              </div>
+                      return deleteElement(selectedEdge);
+                    }}
+                  />
+                </div>
+              )}
+            </>
+
+            {primaryNode && (
+              <>
+                <div className="elementInfo">
+                  <h4>Node ID:</h4>
+                  <h3>{primaryNode?.id}</h3>
+                </div>
+                <div className="elementInfo">
+                  <h4>Node Label:</h4>
+                  <h3>{primaryNode?.label}</h3>
+                </div>
+                <div className="elementInfo">
+                  <h4>Churn count:</h4>
+                  <h3>{primaryNode?.churnCount}</h3>
+                </div>
+
+                {primaryNode?.newAttributes?.map((a: IAttribute) => {
+                  return (
+                    <div className="elementInfo">
+                      <h4>{a.attribute}:</h4>
+                      <h3>{a.value}</h3>
+                    </div>
+                  );
+                })}
+              </>
             )}
-          </>
 
-          {primaryNode && (
-            <>
-              <div className="elementInfo">
-                <h4>Node ID:</h4>
-                <h3>{primaryNode?.id}</h3>
-              </div>
-              <div className="elementInfo">
-                <h4>Node Label:</h4>
-                <h3>{primaryNode?.label}</h3>
-              </div>
-              <div className="elementInfo">
-                <h4>Churn count:</h4>
-                <h3>{primaryNode?.churnCount}</h3>
-              </div>
+            {selectedEdge && (
+              <>
+                <div className="elementInfo">
+                  <h4>Source</h4>
+                  <h3>{selectedEdge?.source}</h3>
+                </div>
+                <div className="elementInfo">
+                  <h4>Target</h4>
+                  <h3>{selectedEdge?.target}</h3>
+                </div>
 
-              {primaryNode?.newAttributes?.map((a: IAttribute) => {
-                return (
-                  <div className="elementInfo">
-                    <h4>{a.attribute}:</h4>
-                    <h3>{a.value}</h3>
-                  </div>
-                );
-              })}
-            </>
-          )}
-
-          {selectedEdge && (
-            <>
-              <div className="elementInfo">
-                <h4>Source</h4>
-                <h3>{selectedEdge?.source}</h3>
-              </div>
-              <div className="elementInfo">
-                <h4>Target</h4>
-                <h3>{selectedEdge?.target}</h3>
-              </div>
-
-              <div className="elementInfo">
-                <h4>Difficulty</h4>
-                <h3>{selectedEdge?.difficulty}</h3>
-              </div>
-              <div className="elementInfo">
-                <h4>attempts</h4>
-                <h3>{selectedEdge?.attempts}</h3>
-              </div>
-              <div className="elementInfo">
-                <h4>Failures</h4>
-                <h3>{selectedEdge?.failures}</h3>
-              </div>
-              <div className="elementInfo">
-                <h4>Probability of Winning</h4>
-                <h3>{selectedEdge?.probabilityOfWinning}%</h3>
-              </div>
-            </>
-          )}
-        </div>}
+                <div className="elementInfo">
+                  <h4>Difficulty</h4>
+                  <h3>{selectedEdge?.difficulty}</h3>
+                </div>
+                <div className="elementInfo">
+                  <h4>attempts</h4>
+                  <h3>{selectedEdge?.attempts}</h3>
+                </div>
+                <div className="elementInfo">
+                  <h4>Failures</h4>
+                  <h3>{selectedEdge?.failures}</h3>
+                </div>
+                <div className="elementInfo">
+                  <h4>Probability of Winning</h4>
+                  <h3>{selectedEdge?.probabilityOfWinning}%</h3>
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="settingsContainer">
           <div
@@ -215,7 +244,7 @@ const Information = ({
           </div>
           <ul
             className="dropdownSettings"
-            style={{ height: isDropdownOpen ? "345px" : "0" }}
+            style={{ height: isDropdownOpen ? "100%" : "0" }}
           >
             <li>
               <div className="switchContainer">
@@ -224,7 +253,7 @@ const Information = ({
                   <input
                     type="checkbox"
                     onChange={(e) =>
-                      changeStyleSettings("attemptsWidth", e.target.checked)
+                      changeStyleSettings("edgeAttemptsWidth", e.target.checked)
                     }
                   />
                   <span className="slider round"></span>
@@ -238,7 +267,7 @@ const Information = ({
                   <input
                     type="checkbox"
                     onChange={(e) =>
-                      changeStyleSettings("attemptsColor", e.target.checked)
+                      changeStyleSettings("edgeAttemptsColor", e.target.checked)
                     }
                   />
                   <span className="slider round"></span>
@@ -247,13 +276,13 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">% Failures/attempts Color</h4>
+                <h4 className="switchTitle">Failures / attempts Color</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
                     onChange={(e) =>
                       changeStyleSettings(
-                        "failuresAttemptsColor",
+                        "edgeFailuresAttemptsColor",
                         e.target.checked
                       )
                     }
@@ -269,7 +298,7 @@ const Information = ({
                   <input
                     type="checkbox"
                     onChange={(e) =>
-                      changeStyleSettings("failuresWidth", e.target.checked)
+                      changeStyleSettings("edgeFailuresWidth", e.target.checked)
                     }
                   />
                   <span className="slider round"></span>
@@ -283,7 +312,7 @@ const Information = ({
                   <input
                     type="checkbox"
                     onChange={(e) =>
-                      changeStyleSettings("failuresColor", e.target.checked)
+                      changeStyleSettings("edgeFailuresColor", e.target.checked)
                     }
                   />
                   <span className="slider round"></span>
@@ -297,7 +326,7 @@ const Information = ({
                   <input
                     type="checkbox"
                     onChange={(e) =>
-                      changeStyleSettings("churnCountColor", e.target.checked)
+                      changeStyleSettings("nodeChurnCountColor", e.target.checked)
                     }
                   />
                   <span className="slider round"></span>
@@ -312,7 +341,24 @@ const Information = ({
                     type="checkbox"
                     onChange={(e) =>
                       changeStyleSettings(
-                        "failuresAttemptsLabel",
+                        "edgeFailuresAttemptsLabel",
+                        e.target.checked
+                      )
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <div className="switchContainer">
+                <h4 className="switchTitle">Failures / Attemps width</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings(
+                        "edgeFailuresAttemptsWidth",
                         e.target.checked
                       )
                     }
@@ -325,17 +371,62 @@ const Information = ({
               <div className="switchContainer">
                 <h4 className="switchTitle">Node label</h4>
                 <label className="switch">
-                  <input type="checkbox"   onChange={(e) =>
-                      changeStyleSettings(
-                        "hideNodeLabel",
-                        e.target.checked
-                      )
-                    }/>
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings("hideNodeLabel", e.target.checked)
+                    }
+                  />
                   <span className="slider round"></span>
                 </label>
               </div>
             </li>
+            <li>
+              <div className="switchContainer">
+                <h4 className="switchTitle">Attempts label</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings("edgeAttemptsLabel", e.target.checked)
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <div className="switchContainer">
+                <h4 className="switchTitle">Node Churn Count</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings("nodeChurnCountLabel", e.target.checked)
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <button className="resetStylesButton">Resetar estilos</button>
+            </li>
           </ul>
+        </div>
+        <div className="layoutContainer">
+          <select
+            placeholder="Nome do layout do grafo aqui"
+            onChange={(e) => {
+              setLayout({ ...layouts[e.target.value] });
+            }}
+          >
+            {Object.keys(layouts).map((l) => (
+              <option key={l} value={l}>
+                {l}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </>

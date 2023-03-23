@@ -84,7 +84,7 @@ const Toolbar = ({
       <div className="buttonContainer">
         <form onSubmit={handleSubmitSearch(onSubmitCustomSearch)}>
           <div className="formPathContainer">
-            <div className="formInput">
+            <div className="formInput firstNodeContainer">
               <h3>First node</h3>
               <input
                 {...registerValue("firstNode")}
@@ -183,17 +183,8 @@ const Toolbar = ({
           title="  Reset Node atributes"
           onClick={() => resetNodesAtributes()}
         />
-        <BsPlusCircle
-          fontSize={24}
-          color={"black"}
-          title="Create node"
-          onClick={() => {
-            setIsCreatingNode(!isCreatingNode);
-            setRelationship([]);
-            setIsCreatingRelationship(false);
-          }}
-        />
-        <FiSettings
+      
+        {/* <FiSettings
           fontSize={24}
           color={"black"}
           title="Change Node Difficulty"
@@ -201,15 +192,7 @@ const Toolbar = ({
             setInvariableGraphDifficulty();
           }}
         />
-        <BiGitCompare
-          fontSize={24}
-          color={"black"}
-          title="Create Relationship"
-          onClick={() => {
-            setIsCreatingRelationship(!isCreatingRelationship);
-            setRelationship([]);
-          }}
-        />
+      */}
       </div>
     </>
   );

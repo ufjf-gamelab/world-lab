@@ -19,6 +19,7 @@ import { playerModelValues } from "../../helpers/playerModels";
 import { challengeModelValues } from "../../helpers/challengeModels";
 import "./styles.css";
 import { progressionModelValues } from "../../helpers/progressionModels";
+import { layouts } from "./layouts";
 const Home = () => {
   const cyRef = useRef<cytoscape.Core | null>(null);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
@@ -30,6 +31,7 @@ const Home = () => {
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
   const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
+  const [layout, setLayout] = useState(null);
 
   const [simulatorData, setSimulatorData] = useState<ICustomSearchFormValues>();
 
@@ -78,13 +80,14 @@ const Home = () => {
     const localElements = JSON.parse(window.localStorage.getItem("elements")!);
     setElements(localElements);
     setisInitialNodes(false);
+
   }, []);
 
   useEffect(() => {
     if (!isInitialNodes) {
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
-
+    cyRef.current?.fit()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elements, cyRef]);
 
@@ -169,12 +172,9 @@ const Home = () => {
 
       let initialNodeData = ele.data();
 
-
       let edge = eles[i + 1];
-     
 
       let edgeData = edge.data();
-  
 
       let duelValues;
       let wonDuel;
@@ -211,8 +211,7 @@ const Home = () => {
       return true;
     });
 
-
-     simulatingPath?.addClass("highlighted");
+    simulatingPath?.addClass("highlighted");
 
     // let edge = randomEdge.data();
 
@@ -224,7 +223,7 @@ const Home = () => {
     //   churnNode = edge.source;
     // }
 
-    // let edgeFailures = edge.failures;
+    // let edgeFailuresWidth = edge.failures;
     // let nodeOperatingData = { randomEdge, nextNode, col, churnNode };
     // let difficultyOperatingData = {
     //   botDifficulty,
@@ -258,19 +257,20 @@ const Home = () => {
     //   );
 
     //   cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
-    //   cyRef.current?.$(`#${edge.id}`).data({ failures: edgeFailures + 1 });
+    //   cyRef.current?.$(`#${edge.id}`).data({ failures: edgeFailuresWidth + 1 });
     // }
 
     // return nextNode;
   };
 
   const resetStyles = () => {
-    cyRef.current?.fit();
+    cyRef.current?.fit()
     cyRef.current?.elements().removeClass(graphConsts.classStylesNames);
   };
 
   const resetNodesAtributes = () => {
     resetStyles();
+
     cyRef.current?.elements().data("attempts", 0);
     cyRef.current?.elements().data("failures", 0);
     cyRef.current?.elements().data("churnCount", 0);
@@ -375,6 +375,7 @@ const Home = () => {
           setClickedPosition={setClickedPosition}
           isCreatingNode={isCreatingNode}
           cyRef={cyRef}
+          layout={layout}
         />
 
         <Information
@@ -392,6 +393,7 @@ const Home = () => {
           setPrimaryNode={setPrimaryNode}
           setIsCreatingNode={setIsCreatingNode}
           changeStyleSettings={changeStyleSettings}
+          setLayout={setLayout}
         />
       </div>
       <ModalForm

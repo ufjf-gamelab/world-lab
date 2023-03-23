@@ -1,29 +1,26 @@
 .formContainer {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 700px;
-    gap: 20px;
-  }
-  
-  .formInput {
-    display: flex;
-    flex-direction: column;  
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 700px;
+  gap: 20px;
+}
 
-  }
+.formInput {
+  display: flex;
+  flex-direction: column;
+}
 
- 
-  
-  .formInput h3{
-    font-size: 17px;
-  }
-
-
-
+.formInput h3 {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+}
 
 button[type="submit"],
 input[type="submit"] {
-  background: #1F075F;
+  background: #1f075f;
   color: white;
   border: none;
   padding: 20px;
@@ -32,7 +29,7 @@ input[type="submit"] {
 
 button[type="submit"]:hover,
 input[type="submit"]:hover {
-opacity: 0.8;
+  opacity: 0.8;
 }
 
 button[type="submit"]:active,

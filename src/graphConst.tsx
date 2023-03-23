@@ -1,6 +1,6 @@
 export const graphConsts: Record<string, any> = {
   edgeAttempts: {
-    selector: ".attemptsWidth",
+    selector: ".edgeAttemptsWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
@@ -21,8 +21,23 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
-  edgeFailures: {
-    selector: ".failuresWidth",
+  edgeAttemptsLabel: {
+    selector: ".edgeAttemptsLabel",
+    style: {
+      label: function (ele: any) {
+        const nodeAtribute = ele.data();
+        // let labelFinal = "";
+        // Object.keys(nodeAtribute).map(function (key, index) {
+        //   return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
+        // });
+        // return labelFinal;
+        if (ele.isNode()) return ;
+        return nodeAtribute.attempts;
+      },
+    },
+  },
+  edgeFailuresWidth: {
+    selector: ".edgeFailuresWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
@@ -36,14 +51,15 @@ export const graphConsts: Record<string, any> = {
         let numAttempts = ele.data("failures");
 
         let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
+        console.log("🚀 ~ file: graphConst.tsx:54 ~ v:", v)
         if (ele.isNode()) return 40;
         return v;
       },
     },
   },
 
-  edgeFailuresAttempts: {
-    selector: ".failuresAttemptsWidth",
+  edgeFailuresAttemptsWidth: {
+    selector: ".edgeFailuresAttemptsWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
@@ -57,14 +73,14 @@ export const graphConsts: Record<string, any> = {
         let numAttempts = ele.data("attempts");
 
         let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
-
+        if (ele.isNode()) return 40;
         return v;
       },
     },
   },
 
   edgeAttemptsColor: {
-    selector: ".attemptsColor",
+    selector: ".edgeAttemptsColor",
     style: {
       lineColor: function (ele: any) {
         let core = ele.cy();
@@ -89,7 +105,7 @@ export const graphConsts: Record<string, any> = {
   },
 
   edgeFailuresColor: {
-    selector: ".failuresColor",
+    selector: ".edgeFailuresColor",
     style: {
       lineColor: function (ele: any) {
         let core = ele.cy();
@@ -114,7 +130,7 @@ export const graphConsts: Record<string, any> = {
     },
   },
   nodeChurnCountColor: {
-    selector: ".churnCountColor",
+    selector: ".nodeChurnCountColor",
     style: {
       backgroundColor: function (ele: any) {
         let core = ele.cy();
@@ -136,8 +152,23 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
+  nodeChurnCountLabel: {
+    selector: ".nodeChurnCountLabel",
+    style: {
+      label: function (ele: any) {
+        const nodeAtribute = ele.data();
+        // let labelFinal = "";
+        // Object.keys(nodeAtribute).map(function (key, index) {
+        //   return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
+        // });
+        // return labelFinal;
+        if (!ele.isNode()) return ;
+        return nodeAtribute.churnCount;
+      },
+    },
+  },
   edgeFailuresAttemptsColor: {
-    selector: ".failuresAttemptsColor",
+    selector: ".edgeFailuresAttemptsColor",
     style: {
       lineColor: function (ele: any) {
         let numAttempts = ele.data("attempts");
@@ -191,14 +222,20 @@ export const graphConsts: Record<string, any> = {
   selectedNode: {
     selector: ":selected",
     style: {
-      backgroundColor: "#A17DFF",
-      color: "#FFFFFF",
+      "line-color": "#A17DFF",
+      backgroundColor:  "#A17DFF",
+
+      color: function (ele: any) {
+        if (!ele.isNode()) return "black";
+        else if (ele.isNode()) {
+          return "white";
+        }
+      },
     },
   },
   edgeFailuresAttemptsLabel: {
-    selector: ".failuresAttemptsLabel",
+    selector: ".edgeFailuresAttemptsLabel",
     style: {
-      shape: "ellipse",
       "text-wrap": "wrap",
       "text-max-width": "200px",
       "font-size": "16px",
@@ -211,12 +248,11 @@ export const graphConsts: Record<string, any> = {
           !edge.isNode()
         )
           return (
-            "Failures/Attempts: " +
             Math.trunc((edgeAtribute.failures / edgeAtribute.attempts) * 100) +
             " %"
           );
         else if (!edge.isNode()) {
-          return "Failures/Attempts: " + 0;
+          return 0;
         }
       },
     },
@@ -227,7 +263,12 @@ export const graphConsts: Record<string, any> = {
     style: {
       "background-color": "#1F075F",
       "line-color": "#1F075F",
-      color: "white",
+      color: function (ele: any) {
+        if (!ele.isNode()) return "black";
+        else if (ele.isNode()) {
+          return "white";
+        }
+      },
     },
   },
 
@@ -402,16 +443,16 @@ export const graphConsts: Record<string, any> = {
 
   classStylesNames: [
     "highlighted",
-    "tentativas",
     "firstNode",
     "hideNodeLabel",
-    "attemptsColor",
-    "attemptsWidth",
-    "failuresWidth",
-    "failuresColor",
-    "failuresAttemptsWidth",
-    "failuresAttemptsColor",
-    "failuresAttemptsLabel",
-    "churnCountColor",
+    "edgeAttemptsColor",
+    "edgeAttemptsWidth",
+    "edgeFailuresWidth",
+    "edgeFailuresColor",
+    "edgeFailuresAttemptsWidth",
+    "edgeFailuresAttemptsColor",
+    "edgeFailuresAttemptsLabel",
+    "nodeChurnCountColor",
+    "nodeChurnCountLabel",
   ],
 };

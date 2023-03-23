@@ -60,7 +60,7 @@ label input {
 }
 
 .lastNodeContainer,
-.firstNode {
+.firstNodeContainer {
   width: 96px;
 }
 .buttonContainer {
@@ -80,6 +80,8 @@ input,
 select {
   box-sizing: border-box;
   border-radius: 4px;
-  border: 1px solid rgb(15, 14, 14);
-  padding: 10px 15px;
+  border: 1px solid #D1D1D1;
+  box-shadow: 0px 20px 40px rgba(122, 137, 254, 0.05);
+  border-radius: 6px;
+  padding: 10px;
 }
