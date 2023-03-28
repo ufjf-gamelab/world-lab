@@ -39,9 +39,6 @@
   justify-content: center;
 }
 
-.formInput {
-  width: 174px;
-}
 .formInput select,
 .formInput input {
   color: #8c8fa7;
@@ -124,6 +121,9 @@
   border-radius: 5px;
 }
 
+.InformationContainer {
+  overflow: auto;
+}
 .settingsContainer,
 .layoutContainer {
   background: #ffffff;
@@ -164,9 +164,10 @@
 }
 
 .switchTitle {
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 18px;
+font-style: normal;
+font-weight: 400;
+line-height: 18px;
+color: #000000;
 }
 
 .titleContainer {

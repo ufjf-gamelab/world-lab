@@ -39,15 +39,9 @@ label input {
 .submitButton {
   height: 50px;
 }
-.playerRatingContainer {
-  width: 138px;
-}
 
-.difficultyModelContainer {
-  width: 158px;
-}
-.numberOfRunsContainer {
-  width: 140px;
+.formInput {
+  width: 156px;
 }
 .formPathContainer {
   display: flex;
@@ -55,14 +49,7 @@ label input {
   align-items: center;
 }
 
-.playerRatingContainer {
-  width: 113px;
-}
 
-.lastNodeContainer,
-.firstNodeContainer {
-  width: 96px;
-}
 .buttonContainer {
   display: flex;
   gap: 20px;

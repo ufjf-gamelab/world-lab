@@ -84,7 +84,7 @@ const Toolbar = ({
       <div className="buttonContainer">
         <form onSubmit={handleSubmitSearch(onSubmitCustomSearch)}>
           <div className="formPathContainer">
-            <div className="formInput firstNodeContainer">
+            <div className="formInput ">
               <h3>First node</h3>
               <input
                 {...registerValue("firstNode")}
@@ -93,7 +93,7 @@ const Toolbar = ({
                 placeholder="First node"
               />
             </div>
-            <div className="formInput lastNodeContainer">
+            <div className="formInput ">
               <h3>Last node</h3>
               <input
                 {...registerValue("lastNode")}
@@ -103,7 +103,7 @@ const Toolbar = ({
               />
             </div>
 
-            <div className="formInput numberOfRunsContainer">
+            <div className="formInput ">
               <h3>Number of runs </h3>
               <input
                 type="number"
@@ -131,7 +131,7 @@ const Toolbar = ({
               </select>
             </div>
             {watchShowRating && (
-              <div className="formInput playerRatingContainer">
+              <div className="formInput ">
                 <h3>Player Rating</h3>
                 <input
                   type="number"
@@ -141,7 +141,7 @@ const Toolbar = ({
                 />
               </div>
             )}
-            <div className="formInput difficultyModelContainer">
+            <div className="formInput ">
               <h3>Difficulty model </h3>
               <select {...registerValue("difficultyModel")}>
                 <option value="linear">Linear</option>
