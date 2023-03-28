@@ -51,7 +51,6 @@ export const graphConsts: Record<string, any> = {
         let numAttempts = ele.data("failures");
 
         let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
-        console.log("🚀 ~ file: graphConst.tsx:54 ~ v:", v)
         if (ele.isNode()) return 40;
         return v;
       },

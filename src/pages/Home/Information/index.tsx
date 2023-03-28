@@ -262,6 +262,20 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
+                <h4 className="switchTitle">Attempts label</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings("edgeAttemptsLabel", e.target.checked)
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <div className="switchContainer">
                 <h4 className="switchTitle">Attempts Color</h4>
                 <label className="switch">
                   <input
@@ -274,23 +288,7 @@ const Information = ({
                 </label>
               </div>
             </li>
-            <li>
-              <div className="switchContainer">
-                <h4 className="switchTitle">Failures / attempts Color</h4>
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    onChange={(e) =>
-                      changeStyleSettings(
-                        "edgeFailuresAttemptsColor",
-                        e.target.checked
-                      )
-                    }
-                  />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-            </li>
+          
             <li>
               <div className="switchContainer">
                 <h4 className="switchTitle">Failures Width</h4>
@@ -319,20 +317,7 @@ const Information = ({
                 </label>
               </div>
             </li>
-            <li>
-              <div className="switchContainer">
-                <h4 className="switchTitle">Node Churn Count Color</h4>
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    onChange={(e) =>
-                      changeStyleSettings("nodeChurnCountColor", e.target.checked)
-                    }
-                  />
-                  <span className="slider round"></span>
-                </label>
-              </div>
-            </li>
+           
             <li>
               <div className="switchContainer">
                 <h4 className="switchTitle">Failures / Attemps label</h4>
@@ -342,6 +327,23 @@ const Information = ({
                     onChange={(e) =>
                       changeStyleSettings(
                         "edgeFailuresAttemptsLabel",
+                        e.target.checked
+                      )
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <div className="switchContainer">
+                <h4 className="switchTitle">Failures / attempts Color</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings(
+                        "edgeFailuresAttemptsColor",
                         e.target.checked
                       )
                     }
@@ -383,12 +385,12 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Attempts label</h4>
+                <h4 className="switchTitle">Node Churn Color</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
                     onChange={(e) =>
-                      changeStyleSettings("edgeAttemptsLabel", e.target.checked)
+                      changeStyleSettings("nodeChurnCountColor", e.target.checked)
                     }
                   />
                   <span className="slider round"></span>
