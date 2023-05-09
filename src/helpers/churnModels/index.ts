@@ -1,3 +1,5 @@
+import { updateEstimatedPlayerRating } from "..";
+
 export const churnModelValues = {
   threeAndOut: (val: number[], val2: any, cyRef: any) =>
     threeAndOutModel(val, val2, cyRef),
@@ -22,8 +24,10 @@ const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
 
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
+      updateEstimatedPlayerRating(data, true);
       return true;
     }
+    updateEstimatedPlayerRating(data, false);
   }
   return false;
 };
@@ -37,8 +41,10 @@ const tryhardModel = (duel: number[], data: any, cyRef: any) => {
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
+      updateEstimatedPlayerRating(data, true);
       return true;
     }
+    updateEstimatedPlayerRating(data, false);
   }
   return false;
 };

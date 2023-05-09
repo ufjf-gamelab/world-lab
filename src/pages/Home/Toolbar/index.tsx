@@ -44,8 +44,8 @@ const Toolbar = ({
 
   const watchAllFields = watch();
   const watchShowRating = watch("challengeModel", "eloRating");
-  console.log("🚀 ~ file: index.tsx:47 ~ watchShowRating:", watchShowRating)
-  console.log("watchAllFields", watchAllFields);
+  // console.log("🚀 ~ file: index.tsx:47 ~ watchShowRating:", watchShowRating)
+  // console.log("watchAllFields", watchAllFields);
   return (
     <>
       <div className="header">

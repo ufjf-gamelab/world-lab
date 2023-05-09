@@ -30,7 +30,11 @@ const Home = () => {
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
-  const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
+  const [actualPlayerRating, setActualPlayerRating] = useState<number | null>(
+    null
+  );
+  const [estimatedPlayerRating, setEstimatedPlayerRating] =
+    useState<number>(1500);
   const [layout, setLayout] = useState(null);
 
   const [simulatorData, setSimulatorData] = useState<ICustomSearchFormValues>();
@@ -80,14 +84,13 @@ const Home = () => {
     const localElements = JSON.parse(window.localStorage.getItem("elements")!);
     setElements(localElements);
     setisInitialNodes(false);
-
   }, []);
 
   useEffect(() => {
     if (!isInitialNodes) {
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
-    cyRef.current?.fit()
+    cyRef.current?.fit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elements, cyRef]);
 
@@ -178,7 +181,12 @@ const Home = () => {
 
       let duelValues;
       let wonDuel;
-      let nodeOperatingData = { edge, playerRating };
+      let nodeOperatingData = {
+        edge,
+        playerRating,
+        setEstimatedPlayerRating,
+        estimatedPlayerRating,
+      };
 
       const chosenChallengeModel =
         simulatorData?.challengeModel as keyof typeof challengeModelValues;
@@ -264,13 +272,15 @@ const Home = () => {
   };
 
   const resetStyles = () => {
-    cyRef.current?.fit()
+    cyRef.current?.fit();
     cyRef.current?.elements().removeClass(graphConsts.classStylesNames);
   };
 
   const resetNodesAtributes = () => {
     resetStyles();
-
+    setActualPlayerRating(null);
+    setSimulatorData(undefined);
+    setEstimatedPlayerRating(1500);
     cyRef.current?.elements().data("attempts", 0);
     cyRef.current?.elements().data("failures", 0);
     cyRef.current?.elements().data("churnCount", 0);
@@ -351,6 +361,8 @@ const Home = () => {
 
   return (
     <div className="wrapper">
+      <h3> Player Rating ${actualPlayerRating}</h3>
+      <h3> Player Rating estimation ${estimatedPlayerRating}</h3>
       <Toolbar
         onSubmitCustomSearch={onSubmitCustomSearch}
         handleFileSelected={handleFileSelected}
