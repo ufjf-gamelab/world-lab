@@ -21,30 +21,33 @@ export const eloRatingChallenge = (data: any) => {
 };
 
 export const updateEstimatedPlayerRating = (data: any, playerWon: boolean) => {
+console.log("🚀 ~ file: index.ts:24 ~ updateEstimatedPlayerRating ~ playerWon:", playerWon)
 
 
-  let Ra = data.playerRating;
+  let Ra = data.estimatedPlayerRating;
   console.log("🚀 ~ file: index.ts:27 ~ updateEstimatedPlayerRating ~ Ra:", Ra)
   let edgeData = data.edge.data();
   const Rb = edgeData.difficulty;
   console.log("🚀 ~ file: index.ts:30 ~ updateEstimatedPlayerRating ~ Rb:", Rb)
 
-  let playerWinProbability = calculateProbabilityEloRating(Rb, Ra) 
+  let playerWinProbability = calculateProbabilityEloRating(Rb, data.estimatedPlayerRating) 
+  console.log("🚀 ~ file: index.ts:34 ~ updateEstimatedPlayerRating ~ playerWinProbability:", playerWinProbability)
   let botWinProbability = calculateProbabilityEloRating(Ra, Rb);
 
   if (playerWon === true) {
     Ra = Ra + 32 * (1 - playerWinProbability);
+    console.log("🚀 ~ file: index.ts:38 ~ updateEstimatedPlayerRating ~ Ra:", Ra)
     data.setEstimatedPlayerRating(Ra)
 
   }
 
   else {
-    Ra = Ra + 31 * (0 - playerWinProbability);
+    Ra = Ra + 32 * (0 - playerWinProbability);
     data.setEstimatedPlayerRating(Ra)
   }
 
   console.log("Updated Ratings:-");
-  console.log("Ra = " + Math.round(Ra * 1000000.0) / 1000000.0);
+  console.log("Ra = " + data.estimatedPlayerRating);
 };
 
 export const getNodeEdges = (cyRef: any, nextNode: string, col: any) => {
