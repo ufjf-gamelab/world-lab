@@ -1,4 +1,4 @@
-import { updateEstimatedPlayerRating } from "..";
+import { changePlayerEmotionState, updateEstimatedPlayerRating } from "..";
 
 export const churnModelValues = {
   threeAndOut: (val: number[], val2: any, cyRef: any) =>
@@ -58,14 +58,11 @@ const noChoicesModel = (duel: number[], data: any, cyRef: any) => {
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      data.col.merge(data.edge);
-      data.col.merge(`#${data.nextNode}`);
-      return data.nextNode;
+      return true;
     }
   }
 
-  cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeData.failures + 1 });
-  return data.churnNode;
+  return false;
 };
 
 const flowModel = (duel: number[], data: any, cyRef: any) => {
@@ -73,17 +70,19 @@ const flowModel = (duel: number[], data: any, cyRef: any) => {
   let edgeAttempts = edgeData.attempts;
   let playerHability;
   let botHability;
-  for (let i = 0; i < 10; i++) {
+
+  let differenceInDamage;
+  let playerEmotion = data.playerEmotion;
+
+  while (playerEmotion > 40 && playerEmotion < 60) {
     playerHability = Math.floor(Math.random() * duel[0]);
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
+    differenceInDamage = playerHability - botHability;
+    playerEmotion = changePlayerEmotionState(playerEmotion, differenceInDamage);
     if (playerHability > botHability) {
-      data.col.merge(data.edge);
-      data.col.merge(`#${data.nextNode}`);
-      return data.nextNode;
+      return true;
     }
   }
-
-  cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeData.failures + 1 });
-  return data.churnNode;
+  return false;
 };

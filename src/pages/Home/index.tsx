@@ -33,6 +33,7 @@ const Home = () => {
   const [actualPlayerRating, setActualPlayerRating] = useState<number | null>(
     null
   );
+  const [playerEmotion, setPlayerEmotion] = useState(50);
   const [estimatedPlayerRating, setEstimatedPlayerRating] =
     useState<number>(1500);
   const [layout, setLayout] = useState(null);
@@ -186,6 +187,8 @@ const Home = () => {
         playerRating,
         setEstimatedPlayerRating,
         estimatedPlayerRating,
+        playerEmotion,
+        setPlayerEmotion,
       };
 
       const chosenChallengeModel =
@@ -212,8 +215,8 @@ const Home = () => {
       } else {
         const chosenProgressionModel =
           simulatorData?.progressionModel as keyof typeof progressionModelValues;
-        playerRating =
-          progressionModelValues[chosenProgressionModel](nodeOperatingData);
+        setActualPlayerRating(playerRating =
+          progressionModelValues[chosenProgressionModel](nodeOperatingData));
       }
 
       return true;

@@ -21,32 +21,27 @@ export const eloRatingChallenge = (data: any) => {
 };
 
 export const updateEstimatedPlayerRating = (data: any, playerWon: boolean) => {
-console.log("🚀 ~ file: index.ts:24 ~ updateEstimatedPlayerRating ~ playerWon:", playerWon)
-
 
   let Ra = data.estimatedPlayerRating;
-  console.log("🚀 ~ file: index.ts:27 ~ updateEstimatedPlayerRating ~ Ra:", Ra)
   let edgeData = data.edge.data();
   const Rb = edgeData.difficulty;
-  console.log("🚀 ~ file: index.ts:30 ~ updateEstimatedPlayerRating ~ Rb:", Rb)
 
-  let playerWinProbability = calculateProbabilityEloRating(Rb, data.estimatedPlayerRating) 
-  console.log("🚀 ~ file: index.ts:34 ~ updateEstimatedPlayerRating ~ playerWinProbability:", playerWinProbability)
-  let botWinProbability = calculateProbabilityEloRating(Ra, Rb);
+
+  let playerWinProbability = calculateProbabilityEloRating(
+    Rb,
+    data.estimatedPlayerRating
+  );
+
 
   if (playerWon === true) {
     Ra = Ra + 32 * (1 - playerWinProbability);
-    console.log("🚀 ~ file: index.ts:38 ~ updateEstimatedPlayerRating ~ Ra:", Ra)
-    data.setEstimatedPlayerRating(Ra)
-
-  }
-
-  else {
+  
+    data.setEstimatedPlayerRating(Ra);
+  } else {
     Ra = Ra + 32 * (0 - playerWinProbability);
-    data.setEstimatedPlayerRating(Ra)
+    data.setEstimatedPlayerRating(Ra);
   }
 
-  console.log("Updated Ratings:-");
   console.log("Ra = " + data.estimatedPlayerRating);
 };
 
@@ -101,4 +96,29 @@ export const initializeStandardDifficulty = (progressionModel: string) => {
   }
 
   return initialDifficulty;
+};
+
+export const changePlayerEmotionState = (
+  playerEmotion: any,
+  differenceInDamage: number
+) => {
+
+  //agente perdeu
+  if (differenceInDamage >= 10) {
+    return playerEmotion - 2;
+  } else if (differenceInDamage >= 20) {
+    return playerEmotion - 5;
+  } else if (differenceInDamage >= 30) {
+    return playerEmotion - 10;
+  }
+
+  // agente ganhou
+  else if (differenceInDamage <= -10) {
+    return playerEmotion + 2;
+  } else if (differenceInDamage <= -20) {
+    return playerEmotion + 5;
+  } else if (differenceInDamage <= -30) {
+    return playerEmotion + 10;
+  }
+  return playerEmotion;
 };

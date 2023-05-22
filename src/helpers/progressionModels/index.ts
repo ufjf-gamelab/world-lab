@@ -1,4 +1,5 @@
-import { eloRatingChallenge } from "..";
+import { randomFill } from "crypto";
+import { calculateProbabilityEloRating, eloRatingChallenge } from "..";
 
 export const progressionModelValues = {
   fixed: (nodeOperatingData: any) => fixedProgression(nodeOperatingData),
@@ -11,14 +12,22 @@ export const fixedProgression = (data: any) => {
 };
 
 export const incrementalProgression = (data: any) => {
-
-  let probabilityOfDuel;
- 
-  const Ra = data.playerRating;
+  let Ra = data.playerRating;
   const K = 32;
-  probabilityOfDuel= eloRatingChallenge(data);
 
-  const playerNewRating = Ra + 15
+  
+  let edgeData = data.edge.data();
+  const Rb = edgeData.difficulty;
 
-  return playerNewRating;
+
+  let playerWinProbability = calculateProbabilityEloRating(
+    Rb,
+    data.estimatedPlayerRating
+  );
+
+    Ra = Ra + K * (1 - playerWinProbability);
+  
+    return Ra;
+  
+
 };

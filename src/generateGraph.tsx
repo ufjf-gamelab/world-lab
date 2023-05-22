@@ -26,7 +26,7 @@ export function generateGraph(n = 8, m = n * 2, acyclic = false) {
         target: id2,
         attempts: 0,
         failures: 0,
-        difficulty: 15,
+        difficulty: 1500,
       },
     });
   }
