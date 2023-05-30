@@ -210,6 +210,7 @@ export const graphConsts: Record<string, any> = {
     },
   },
 
+  
   hideNodeLabel: {
     selector: ".hideNodeLabel",
     style: {
@@ -232,13 +233,24 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
+
+  edgeLabel: {
+    selector: "edge",
+    style: {
+      'text-margin-y': '-10px',
+      'text-margin-x': '-10px',
+    },
+  },
+
+
+
   edgeFailuresAttemptsLabel: {
     selector: ".edgeFailuresAttemptsLabel",
     style: {
       "text-wrap": "wrap",
       "text-max-width": "200px",
       "font-size": "16px",
-
+  
       label: function (edge: any) {
         const edgeAtribute = edge.data();
         if (
@@ -257,6 +269,30 @@ export const graphConsts: Record<string, any> = {
     },
   },
 
+  edgeAttemptsFailuresLabel: {
+    selector: ".edgeAttemptsFailuresLabel",
+    style: {
+      "text-wrap": "wrap",
+      "text-max-width": "200px",
+      "font-size": "16px",
+  
+      label: function (edge: any) {
+        const edgeAtribute = edge.data();
+        if (
+          edgeAtribute.failures > 0 &&
+          edgeAtribute.attempts > 0 &&
+          !edge.isNode()
+        )
+          return (
+            Math.trunc( 100 - (edgeAtribute.failures / edgeAtribute.attempts) * 100) +
+            " %"
+          );
+        else if (!edge.isNode()) {
+          return 0;
+        }
+      },
+    },
+  },
   customPath: {
     selector: ".highlighted",
     style: {
@@ -443,6 +479,7 @@ export const graphConsts: Record<string, any> = {
   classStylesNames: [
     "highlighted",
     "firstNode",
+    "edgeLabel",
     "hideNodeLabel",
     "edgeAttemptsColor",
     "edgeAttemptsWidth",

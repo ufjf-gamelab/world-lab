@@ -77,8 +77,8 @@ const Home = () => {
   const onSubmitCustomSearch: SubmitHandler<ICustomSearchFormValues> = (
     data: ICustomSearchFormValues
   ) => {
-    setSimulatorData(data);
     setActualPlayerRating(data.playerRating);
+    setSimulatorData(data);
   };
 
   useEffect(() => {
@@ -164,7 +164,6 @@ const Home = () => {
 
     let failedToFinish = false;
 
-    let playerRating = simulatorData.playerRating;
     let simulatingPath = playerPath.filter(function (
       ele: any,
       i: any,
@@ -184,13 +183,14 @@ const Home = () => {
       let wonDuel;
       let nodeOperatingData = {
         edge,
-        playerRating,
-        setEstimatedPlayerRating,
+        actualPlayerRating,
         estimatedPlayerRating,
+        setEstimatedPlayerRating,
         playerEmotion,
         setPlayerEmotion,
       };
 
+      
       const chosenChallengeModel =
         simulatorData?.challengeModel as keyof typeof challengeModelValues;
       duelValues =
@@ -215,9 +215,18 @@ const Home = () => {
       } else {
         const chosenProgressionModel =
           simulatorData?.progressionModel as keyof typeof progressionModelValues;
-        setActualPlayerRating(playerRating =
-          progressionModelValues[chosenProgressionModel](nodeOperatingData));
+        setActualPlayerRating(
+          progressionModelValues[chosenProgressionModel](nodeOperatingData)
+        );
       }
+
+      // const chosendIFFICULTYModel =
+      //   simulatorData?.difficultyModel as keyof typeof difficultyModelValues;
+      // difficultyModelValues[chosenChallengeModel](
+      //   difficultyOperatingData,
+      //   cyRef
+      // );
+
 
       return true;
     });
@@ -364,7 +373,7 @@ const Home = () => {
 
   return (
     <div className="wrapper">
-      <h3> Player Rating ${actualPlayerRating}</h3>
+      <h3> Player Skill ${actualPlayerRating}</h3>
       <h3> Player Rating estimation ${estimatedPlayerRating}</h3>
       <Toolbar
         onSubmitCustomSearch={onSubmitCustomSearch}

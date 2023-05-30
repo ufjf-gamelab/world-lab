@@ -1,23 +1,23 @@
 import { changePlayerEmotionState, updateEstimatedPlayerRating } from "..";
 
 export const churnModelValues = {
-  threeAndOut: (val: number[], val2: any, cyRef: any) =>
-    threeAndOutModel(val, val2, cyRef),
-  tryhard: (val: number[], val2: any, cyRef: any) =>
-    tryhardModel(val, val2, cyRef),
-  noChoicesModel: (val: number[], val2: any, cyRef: any) =>
-    noChoicesModel(val, val2, cyRef),
+  oneChance: (val: number[], val2: any, cyRef: any) =>
+    oneChanceModel(val, val2, cyRef),
+    oneHundredChoices: (val: number[], val2: any, cyRef: any) =>
+  oneHundredChoicesModel(val, val2, cyRef),
+  tenChoices: (val: number[], val2: any, cyRef: any) =>
+  tenChoicesModel(val, val2, cyRef),
   flow: (val: number[], val2: any, cyRef: any) => flowModel(val, val2, cyRef),
 };
 
-const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
+const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
   let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
 
   let playerHability;
   let botHability;
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 1; i++) {
     playerHability = Math.floor(Math.random() * duel[0]);
 
     botHability = Math.floor(Math.random() * duel[1]);
@@ -31,12 +31,12 @@ const threeAndOutModel = (duel: number[], data: any, cyRef: any) => {
   }
   return false;
 };
-const tryhardModel = (duel: number[], data: any, cyRef: any) => {
+const oneHundredChoicesModel = (duel: number[], data: any, cyRef: any) => {
   let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
   let playerHability;
   let botHability;
-  for (let i = 0; i < 99; i++) {
+  for (let i = 0; i < 100; i++) {
     playerHability = Math.floor(Math.random() * duel[0]);
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
@@ -48,7 +48,7 @@ const tryhardModel = (duel: number[], data: any, cyRef: any) => {
   }
   return false;
 };
-const noChoicesModel = (duel: number[], data: any, cyRef: any) => {
+const tenChoicesModel = (duel: number[], data: any, cyRef: any) => {
   let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
   let playerHability;

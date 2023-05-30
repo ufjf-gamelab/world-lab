@@ -39,6 +39,7 @@ const Graph = ({
           graphConsts.nodeLabel,
           graphConsts.hideNodeLabel,
           graphConsts.edgeFailuresAttemptsLabel,
+          graphConsts.edgeAttemptsFailuresLabel,
           graphConsts.edgeAttempts,
           graphConsts.edgeAttemptsLabel,
           graphConsts.edgeAttemptsColor,
@@ -50,6 +51,7 @@ const Graph = ({
           graphConsts.edgeFailuresAttemptsColor,
           graphConsts.selectedNode,
           graphConsts.customPath,
+          graphConsts.edgeLabel
         ]}
         cy={(cy) => {
           if (!cyRef) return "";

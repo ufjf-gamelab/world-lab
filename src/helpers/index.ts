@@ -103,6 +103,7 @@ export const changePlayerEmotionState = (
   differenceInDamage: number
 ) => {
 
+  //entre 40 e 60 é a zona do flow
   //agente perdeu
   if (differenceInDamage >= 10) {
     return playerEmotion - 2;

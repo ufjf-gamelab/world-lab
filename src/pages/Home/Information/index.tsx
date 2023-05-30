@@ -320,7 +320,7 @@ const Information = ({
            
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Failures / Attemps label</h4>
+                <h4 className="switchTitle">Failures %</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -335,9 +335,11 @@ const Information = ({
                 </label>
               </div>
             </li>
+
+            
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Failures / attempts Color</h4>
+                <h4 className="switchTitle">Failed Duels % Color</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -354,7 +356,7 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Failures / Attemps width</h4>
+                <h4 className="switchTitle">Failed Duels % width</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -369,9 +371,27 @@ const Information = ({
                 </label>
               </div>
             </li>
+
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Node label</h4>
+                <h4 className="switchTitle"> Successful Duels %</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings(
+                        "edgeAttemptsFailuresLabel",
+                        e.target.checked
+                      )
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <div className="switchContainer">
+                <h4 className="switchTitle">Node ID</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -412,7 +432,7 @@ const Information = ({
               </div>
             </li>
             <li>
-              <button className="resetStylesButton">Resetar estilos</button>
+              <button className="resetStylesButton">Reset styles</button>
             </li>
           </ul>
         </div>

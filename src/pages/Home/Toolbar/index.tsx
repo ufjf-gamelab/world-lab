@@ -119,7 +119,7 @@ const Toolbar = ({
               <select {...registerValue("playerModel")}>
                 <option value="explorer">Explorer</option>
                 <option value="story">Story</option>
-                <option value="casual">Casual</option>
+       
               </select>
             </div>
 
@@ -132,7 +132,7 @@ const Toolbar = ({
             </div>
             {watchShowRating && (
               <div className="formInput ">
-                <h3>Player Rating</h3>
+                <h3>Player Skill</h3>
                 <input
                   type="number"
                   {...registerValue("playerRating", {
@@ -151,16 +151,16 @@ const Toolbar = ({
             <div className="formInput">
               <h3>Progression model </h3>
               <select {...registerValue("progressionModel")}>
-                <option value="fixed">Fixed</option>
+                <option value="noProgression">No progression</option>
                 <option value="incremental">Incremental</option>
               </select>
             </div>
             <div className="formInput">
               <h3>Churn model </h3>
               <select {...registerValue("churnModel")}>
-                <option value="threeAndOut">3 and out</option>
-                <option value="tryhard">Tryhard</option>
-                <option value="noChoices">No choices</option>
+                <option value="oneChance">1 Chance</option>
+                <option value="tenChoices">10 Chances</option>
+                <option value="oneHundredChoices">100 Chances</option>
                 <option value="flow">flow</option>
               </select>
             </div>
