@@ -1,6 +1,6 @@
 export const graphConsts: Record<string, any> = {
   edgeAttempts: {
-    selector: ".edgeAttemptsWidth",
+    selector: "edge.edgeAttemptsWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
@@ -15,14 +15,14 @@ export const graphConsts: Record<string, any> = {
 
         let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
 
-        if (ele.isNode()) return 40;
+
 
         return v;
       },
     },
   },
   edgeAttemptsLabel: {
-    selector: ".edgeAttemptsLabel",
+    selector: "edge.edgeAttemptsLabel",
     style: {
       label: function (ele: any) {
         const nodeAtribute = ele.data();
@@ -31,13 +31,13 @@ export const graphConsts: Record<string, any> = {
         //   return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
         // });
         // return labelFinal;
-        if (ele.isNode()) return ;
+
         return nodeAtribute.attempts;
       },
     },
   },
   edgeFailuresWidth: {
-    selector: ".edgeFailuresWidth",
+    selector: "edge.edgeFailuresWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
@@ -58,7 +58,7 @@ export const graphConsts: Record<string, any> = {
   },
 
   edgeFailuresAttemptsWidth: {
-    selector: ".edgeFailuresAttemptsWidth",
+    selector: "edge.edgeFailuresAttemptsWidth",
     style: {
       width: function (ele: any) {
         let core = ele.cy();
@@ -72,14 +72,14 @@ export const graphConsts: Record<string, any> = {
         let numAttempts = ele.data("attempts");
 
         let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
-        if (ele.isNode()) return 40;
+   
         return v;
       },
     },
   },
 
   edgeAttemptsColor: {
-    selector: ".edgeAttemptsColor",
+    selector: "edge.edgeAttemptsColor",
     style: {
       lineColor: function (ele: any) {
         let core = ele.cy();
@@ -104,7 +104,7 @@ export const graphConsts: Record<string, any> = {
   },
 
   edgeFailuresColor: {
-    selector: ".edgeFailuresColor",
+    selector: "edge.edgeFailuresColor",
     style: {
       lineColor: function (ele: any) {
         let core = ele.cy();
@@ -129,7 +129,7 @@ export const graphConsts: Record<string, any> = {
     },
   },
   nodeChurnCountColor: {
-    selector: ".nodeChurnCountColor",
+    selector: "node.nodeChurnCountColor",
     style: {
       backgroundColor: function (ele: any) {
         let core = ele.cy();
@@ -152,7 +152,7 @@ export const graphConsts: Record<string, any> = {
     },
   },
   nodeChurnCountLabel: {
-    selector: ".nodeChurnCountLabel",
+    selector: "node.nodeChurnCountLabel",
     style: {
       label: function (ele: any) {
         const nodeAtribute = ele.data();
@@ -161,13 +161,12 @@ export const graphConsts: Record<string, any> = {
         //   return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
         // });
         // return labelFinal;
-        if (!ele.isNode()) return ;
         return nodeAtribute.churnCount;
       },
     },
   },
   edgeFailuresAttemptsColor: {
-    selector: ".edgeFailuresAttemptsColor",
+    selector: "edge.edgeFailuresAttemptsColor",
     style: {
       lineColor: function (ele: any) {
         let numAttempts = ele.data("attempts");
@@ -200,11 +199,8 @@ export const graphConsts: Record<string, any> = {
       "font-family": "Poppins",
       label: function (node: any) {
         const nodeAtribute = node.data();
-        // let labelFinal = "";
-        // Object.keys(nodeAtribute).map(function (key, index) {
-        //   return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
-        // });
-        // return labelFinal;
+
+
         return nodeAtribute.id;
       },
     },
@@ -212,7 +208,7 @@ export const graphConsts: Record<string, any> = {
 
   
   hideNodeLabel: {
-    selector: ".hideNodeLabel",
+    selector: "node.hideNodeLabel",
     style: {
       label: function (node: any) {
         return "";
@@ -245,7 +241,7 @@ export const graphConsts: Record<string, any> = {
 
 
   edgeFailuresAttemptsLabel: {
-    selector: ".edgeFailuresAttemptsLabel",
+    selector: "edge.edgeFailuresAttemptsLabel",
     style: {
       "text-wrap": "wrap",
       "text-max-width": "200px",
@@ -255,22 +251,21 @@ export const graphConsts: Record<string, any> = {
         const edgeAtribute = edge.data();
         if (
           edgeAtribute.failures > 0 &&
-          edgeAtribute.attempts > 0 &&
-          !edge.isNode()
+          edgeAtribute.attempts > 0 
         )
           return (
             Math.trunc((edgeAtribute.failures / edgeAtribute.attempts) * 100) +
             " %"
           );
-        else if (!edge.isNode()) {
+       
           return 0;
-        }
+        
       },
     },
   },
 
   edgeAttemptsFailuresLabel: {
-    selector: ".edgeAttemptsFailuresLabel",
+    selector: "edge.edgeAttemptsFailuresLabel",
     style: {
       "text-wrap": "wrap",
       "text-max-width": "200px",
@@ -280,16 +275,16 @@ export const graphConsts: Record<string, any> = {
         const edgeAtribute = edge.data();
         if (
           edgeAtribute.failures > 0 &&
-          edgeAtribute.attempts > 0 &&
-          !edge.isNode()
+          edgeAtribute.attempts > 0
+     
         )
           return (
             Math.trunc( 100 - (edgeAtribute.failures / edgeAtribute.attempts) * 100) +
             " %"
           );
-        else if (!edge.isNode()) {
+   
           return 0;
-        }
+        
       },
     },
   },
