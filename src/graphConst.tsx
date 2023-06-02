@@ -15,8 +15,6 @@ export const graphConsts: Record<string, any> = {
 
         let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
 
-
-
         return v;
       },
     },
@@ -57,14 +55,11 @@ export const graphConsts: Record<string, any> = {
     style: {
       label: function (ele: any) {
         const nodeAtribute = ele.data();
-  
 
         return nodeAtribute.probabilityOfWinning + "%";
       },
     },
   },
-
-
 
   edgeFailuresWidth: {
     selector: "edge.edgeFailuresWidth",
@@ -81,7 +76,7 @@ export const graphConsts: Record<string, any> = {
         let numAttempts = ele.data("failures");
 
         let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
-        if (ele.isNode()) return 40;
+
         return v;
       },
     },
@@ -91,19 +86,19 @@ export const graphConsts: Record<string, any> = {
     selector: "edge.edgeFailuresAttemptsWidth",
     style: {
       width: function (ele: any) {
-        let core = ele.cy();
-
-        let max = core.elements().max(function (ele: any) {
-          return ele.data("attempts");
-        }).value;
-        let min = core.elements().min(function (ele: any) {
-          return ele.data("attempts");
-        }).value;
         let numAttempts = ele.data("attempts");
-
-        let v = ((numAttempts - min) * (10 - 1)) / (max - min) + 1;
-   
-        return v;
+        let numFailures = ele.data("failures");
+      
+        // Calcula a proporção de falhas sobre tentativas
+        if(numFailures === 0 || numAttempts ===0 )
+        return 1
+        let ratio = numFailures / numAttempts;
+      
+        // Define o valor mínimo como 1 e o máximo como 10
+        let width = Math.max(1, Math.min(10, ratio * 10));
+        console.log("🚀 ~ file: graphConst.tsx:97 ~ width:", width)
+      
+        return width;
       },
     },
   },
@@ -230,13 +225,11 @@ export const graphConsts: Record<string, any> = {
       label: function (node: any) {
         const nodeAtribute = node.data();
 
-
         return nodeAtribute.id;
       },
     },
   },
 
-  
   hideNodeLabel: {
     selector: "node.hideNodeLabel",
     style: {
@@ -249,7 +242,7 @@ export const graphConsts: Record<string, any> = {
     selector: ":selected",
     style: {
       "line-color": "#A17DFF",
-      backgroundColor:  "#A17DFF",
+      backgroundColor: "#A17DFF",
 
       color: function (ele: any) {
         if (!ele.isNode()) return "black";
@@ -263,12 +256,10 @@ export const graphConsts: Record<string, any> = {
   edgeLabel: {
     selector: "edge",
     style: {
-      'text-margin-y': '-10px',
-      'text-margin-x': '-10px',
+      "text-margin-y": "-10px",
+      "text-margin-x": "-10px",
     },
   },
-
-
 
   edgeFailuresAttemptsLabel: {
     selector: "edge.edgeFailuresAttemptsLabel",
@@ -276,20 +267,16 @@ export const graphConsts: Record<string, any> = {
       "text-wrap": "wrap",
       "text-max-width": "200px",
       "font-size": "16px",
-  
+
       label: function (edge: any) {
         const edgeAtribute = edge.data();
-        if (
-          edgeAtribute.failures > 0 &&
-          edgeAtribute.attempts > 0 
-        )
+        if (edgeAtribute.failures > 0 && edgeAtribute.attempts > 0)
           return (
             Math.trunc((edgeAtribute.failures / edgeAtribute.attempts) * 100) +
             " %"
           );
-       
-          return 0;
-        
+
+        return 0;
       },
     },
   },
@@ -300,21 +287,17 @@ export const graphConsts: Record<string, any> = {
       "text-wrap": "wrap",
       "text-max-width": "200px",
       "font-size": "16px",
-  
+
       label: function (edge: any) {
         const edgeAtribute = edge.data();
-        if (
-          edgeAtribute.failures > 0 &&
-          edgeAtribute.attempts > 0
-     
-        )
+        if (edgeAtribute.failures > 0 && edgeAtribute.attempts > 0)
           return (
-            Math.trunc( 100 - (edgeAtribute.failures / edgeAtribute.attempts) * 100) +
-            " %"
+            Math.trunc(
+              100 - (edgeAtribute.failures / edgeAtribute.attempts) * 100
+            ) + " %"
           );
-   
-          return 0;
-        
+
+        return 0;
       },
     },
   },
