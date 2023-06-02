@@ -248,7 +248,7 @@ const Information = ({
           >
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Attempts Width</h4>
+                <h4 className="switchTitle">Attempts width (Quantity)</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -262,7 +262,7 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Attempts label</h4>
+                <h4 className="switchTitle">Attempts (Quantity)</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -276,7 +276,7 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Attempts Color</h4>
+                <h4 className="switchTitle">Attempts color (Quantity)</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -291,7 +291,7 @@ const Information = ({
           
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Failures Width</h4>
+                <h4 className="switchTitle">Failures width (Quantity)</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -333,7 +333,7 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Failures Color</h4>
+                <h4 className="switchTitle">Failures color (Quantity)</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -348,7 +348,7 @@ const Information = ({
            
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Failures %</h4>
+                <h4 className="switchTitle">Failures / attempts  %</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -367,7 +367,7 @@ const Information = ({
             
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Failed Duels % Color</h4>
+                <h4 className="switchTitle">Failures / attempts color </h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -384,7 +384,7 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Failed Duels % width</h4>
+                <h4 className="switchTitle">Failures / attempts width</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -402,7 +402,7 @@ const Information = ({
 
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle"> Successful Duels %</h4>
+                <h4 className="switchTitle"> Successful duels %</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -419,7 +419,7 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Node ID</h4>
+                <h4 className="switchTitle">Hide Node ID</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
