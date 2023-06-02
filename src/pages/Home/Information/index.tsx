@@ -305,6 +305,34 @@ const Information = ({
             </li>
             <li>
               <div className="switchContainer">
+                <h4 className="switchTitle">Elo Rating</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings("edgeEloLabel", e.target.checked)
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <div className="switchContainer">
+                <h4 className="switchTitle">Probability of winning %</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings("edgeprobabilityOfWinningLabel", e.target.checked)
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <div className="switchContainer">
                 <h4 className="switchTitle">Failures Color</h4>
                 <label className="switch">
                   <input

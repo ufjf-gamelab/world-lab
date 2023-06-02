@@ -51,7 +51,9 @@ const Graph = ({
           graphConsts.edgeFailuresAttemptsColor,
           graphConsts.selectedNode,
           graphConsts.customPath,
-          graphConsts.edgeLabel
+          graphConsts.edgeLabel,
+          graphConsts.edgeEloLabel,
+          graphConsts.edgeprobabilityOfWinningLabel
         ]}
         cy={(cy) => {
           if (!cyRef) return "";

@@ -36,6 +36,36 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
+  edgeEloLabel: {
+    selector: "edge.edgeEloLabel",
+    style: {
+      label: function (ele: any) {
+        const nodeAtribute = ele.data();
+        // let labelFinal = "";
+        // Object.keys(nodeAtribute).map(function (key, index) {
+        //   return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
+        // });
+        // return labelFinal;
+
+        return nodeAtribute.difficulty;
+      },
+    },
+  },
+
+  edgeprobabilityOfWinningLabel: {
+    selector: "edge.edgeprobabilityOfWinningLabel",
+    style: {
+      label: function (ele: any) {
+        const nodeAtribute = ele.data();
+  
+
+        return nodeAtribute.probabilityOfWinning + "%";
+      },
+    },
+  },
+
+
+
   edgeFailuresWidth: {
     selector: "edge.edgeFailuresWidth",
     style: {
@@ -480,6 +510,8 @@ export const graphConsts: Record<string, any> = {
     "edgeAttemptsWidth",
     "edgeFailuresWidth",
     "edgeFailuresColor",
+    "edgeEloLabel",
+    "edgeDifficultyOfWinning",
     "edgeFailuresAttemptsWidth",
     "edgeFailuresAttemptsColor",
     "edgeFailuresAttemptsLabel",
