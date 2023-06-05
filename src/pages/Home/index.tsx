@@ -82,6 +82,10 @@ const Home = () => {
   };
 
   useEffect(() => {
+    console.log("PlayerEmotion use effect", playerEmotion);
+  }, [playerEmotion]);
+
+  useEffect(() => {
     const localElements = JSON.parse(window.localStorage.getItem("elements")!);
     setElements(localElements);
     setisInitialNodes(false);
@@ -161,7 +165,7 @@ const Home = () => {
   const playerSimulatorPath = (simulatorData: ICustomSearchFormValues) => {
     resetStyles();
     let playerPath = playerModelPath(simulatorData);
-
+    let playerStress = 50;
     let failedToFinish = false;
 
     let simulatingPath = playerPath.filter(function (
@@ -174,10 +178,8 @@ const Home = () => {
       if (ele.id() === simulatorData.lastNode) return true;
 
       let initialNodeData = ele.data();
-
+      console.log("playerStress", playerStress);
       let edge = eles[i + 1];
-
-      let edgeData = edge.data();
 
       let duelValues;
       let wonDuel;
@@ -186,29 +188,30 @@ const Home = () => {
         actualPlayerRating,
         estimatedPlayerRating,
         setEstimatedPlayerRating,
-        playerEmotion,
-        setPlayerEmotion,
+        playerStress,
       };
 
-      
       const chosenChallengeModel =
         simulatorData?.challengeModel as keyof typeof challengeModelValues;
       duelValues =
         challengeModelValues[chosenChallengeModel](nodeOperatingData);
 
-      const chosenChurnModel =
-        simulatorData?.churnModel as keyof typeof churnModelValues;
-      wonDuel = churnModelValues[chosenChurnModel](
-        duelValues,
-        nodeOperatingData,
-        cyRef
-      );
+      if (simulatorData.churnModel === "flow") {
+        [wonDuel, playerStress ] = flowModel(duelValues, nodeOperatingData);
+        console.log("playerStress", playerStress);
+      } else {
+        const chosenChurnModel =
+          simulatorData?.churnModel as keyof typeof churnModelValues;
+        wonDuel = churnModelValues[chosenChurnModel](
+          duelValues,
+          nodeOperatingData,
+          cyRef
+        );
+      }
 
       if (!wonDuel) {
         failedToFinish = true;
-        cyRef.current
-          ?.$(`#${edgeData.id}`)
-          .data({ failures: edgeData.failures + 1 });
+
         cyRef.current
           ?.$(`#${initialNodeData.id}`)
           .data({ churnCount: initialNodeData.churnCount + 1 });
@@ -227,10 +230,8 @@ const Home = () => {
       //   cyRef
       // );
 
-
       return true;
     });
-
     simulatingPath?.addClass("highlighted");
 
     // let edge = randomEdge.data();
@@ -296,6 +297,69 @@ const Home = () => {
     cyRef.current?.elements().data("attempts", 0);
     cyRef.current?.elements().data("failures", 0);
     cyRef.current?.elements().data("churnCount", 0);
+  };
+
+  const flowModel = (duel: number[], data: any) => {
+    let edgeData = data.edge.data();
+    let edgeAttempts = edgeData.attempts;
+    let edgeFailures = edgeData.failures;
+    let playerHability;
+    let currentStress = data.playerStress;
+    let botHability;
+
+    let differenceInDamage;
+    console.log("PlayerStress flow", currentStress);
+    while (currentStress > 40 && currentStress < 60) {
+      playerHability = Math.floor(Math.random() * duel[0]);
+      botHability = Math.floor(Math.random() * duel[1]);
+      cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
+      differenceInDamage = playerHability - botHability;
+
+      currentStress = changePlayerEmotionState(
+        currentStress,
+        differenceInDamage
+        );
+
+      if (playerHability > botHability) {
+        return [true, currentStress];
+      }
+      cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
+    }
+
+    return [false, currentStress];
+  };
+
+  const changePlayerEmotionState = (
+    playerStress: number,
+    differenceInDamage: number
+  ) => {
+    //entre 40 e 60 é a zona do flow
+    //agente perdeu
+
+    if (differenceInDamage > 10 && differenceInDamage < 20) {
+      setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion - 2);
+      return playerStress - 2;
+    } else if (differenceInDamage > 20 && differenceInDamage < 30) {
+      setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion - 5);
+      return playerStress - 5;
+    } else if (differenceInDamage >= 30) {
+      setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion - 10);
+      return playerStress - 10;
+    }
+
+    // agente ganhou
+    else if (differenceInDamage < 0 && differenceInDamage > -10) {
+      setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion + 2);
+      return playerStress + 2;
+    } else if (differenceInDamage < -20 && differenceInDamage > -30) {
+      setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion + 5);
+      return playerStress - +5;
+    } else if (differenceInDamage <= -30) {
+      setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion + 10);
+      return playerStress + 10;
+    }
+
+    return playerStress - 1;
   };
 
   // const playerSimulatorPath = (data: ICustomSearchFormValues) => {

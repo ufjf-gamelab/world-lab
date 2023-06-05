@@ -98,28 +98,3 @@ export const initializeStandardDifficulty = (progressionModel: string) => {
   return initialDifficulty;
 };
 
-export const changePlayerEmotionState = (
-  playerEmotion: any,
-  differenceInDamage: number
-) => {
-
-  //entre 40 e 60 é a zona do flow
-  //agente perdeu
-  if (differenceInDamage >= 10) {
-    return playerEmotion - 2;
-  } else if (differenceInDamage >= 20) {
-    return playerEmotion - 5;
-  } else if (differenceInDamage >= 30) {
-    return playerEmotion - 10;
-  }
-
-  // agente ganhou
-  else if (differenceInDamage <= -10) {
-    return playerEmotion + 2;
-  } else if (differenceInDamage <= -20) {
-    return playerEmotion + 5;
-  } else if (differenceInDamage <= -30) {
-    return playerEmotion + 10;
-  }
-  return playerEmotion;
-};

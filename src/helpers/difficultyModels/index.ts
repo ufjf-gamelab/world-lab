@@ -16,7 +16,7 @@ export const adaptativeDificulty = (data: any, cyRef: any) => {
 export const linearDifficulty = (data: any, cyRef: any) => {
   let edgeData = data.randomEdge.data();
 
-  cyRef.current?.$(`#${edgeData.id}`).data({ difficulty: data.botDifficulty });
+  // cyRef.current?.$(`#${edgeData.id}`).data({ difficulty: data.botDifficulty });
 
   //estimate player difficulty
   // get the diference between the values

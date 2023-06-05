@@ -23,9 +23,10 @@ export const eloRatingModel = (data: any) => {
 
 export const randomModel = (data: any) => {
   let edge = data.edge.data();
-  let playerWinProbability = Math.random() * edge.probabilityOfWinning;
+  let playerWinProbability =  edge.probabilityOfWinning;
 
-  let botWinProbability = Math.random() * (100 - edge.probabilityOfWinning);
+  let botWinProbability =  (100 - edge.probabilityOfWinning);
+
 
   const duelValues = [playerWinProbability, botWinProbability];
 

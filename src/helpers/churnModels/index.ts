@@ -1,19 +1,19 @@
-import { changePlayerEmotionState, updateEstimatedPlayerRating } from "..";
+import { updateEstimatedPlayerRating } from "..";
 
 export const churnModelValues = {
   oneChance: (val: number[], val2: any, cyRef: any) =>
     oneChanceModel(val, val2, cyRef),
-    oneHundredChoices: (val: number[], val2: any, cyRef: any) =>
-  oneHundredChoicesModel(val, val2, cyRef),
+  oneHundredChoices: (val: number[], val2: any, cyRef: any) =>
+    oneHundredChoicesModel(val, val2, cyRef),
   tenChoices: (val: number[], val2: any, cyRef: any) =>
-  tenChoicesModel(val, val2, cyRef),
-  flow: (val: number[], val2: any, cyRef: any) => flowModel(val, val2, cyRef),
+    tenChoicesModel(val, val2, cyRef)
+
 };
 
 const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
   let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
-
+  let edgeFailures = edgeData.failures;
   let playerHability;
   let botHability;
 
@@ -27,6 +27,7 @@ const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
       updateEstimatedPlayerRating(data, true);
       return true;
     }
+    cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
     updateEstimatedPlayerRating(data, false);
   }
   return false;
@@ -34,6 +35,7 @@ const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
 const oneHundredChoicesModel = (duel: number[], data: any, cyRef: any) => {
   let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
+  let edgeFailures = edgeData.failures;
   let playerHability;
   let botHability;
   for (let i = 0; i < 100; i++) {
@@ -45,12 +47,14 @@ const oneHundredChoicesModel = (duel: number[], data: any, cyRef: any) => {
       return true;
     }
     updateEstimatedPlayerRating(data, false);
+    cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
   }
   return false;
 };
 const tenChoicesModel = (duel: number[], data: any, cyRef: any) => {
   let edgeData = data.edge.data();
   let edgeAttempts = edgeData.attempts;
+  let edgeFailures = edgeData.failures;
   let playerHability;
   let botHability;
   for (let i = 0; i < 10; i++) {
@@ -60,29 +64,9 @@ const tenChoicesModel = (duel: number[], data: any, cyRef: any) => {
     if (playerHability > botHability) {
       return true;
     }
+    cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
   }
 
   return false;
 };
 
-const flowModel = (duel: number[], data: any, cyRef: any) => {
-  let edgeData = data.edge.data();
-  let edgeAttempts = edgeData.attempts;
-  let playerHability;
-  let botHability;
-
-  let differenceInDamage;
-  let playerEmotion = data.playerEmotion;
-
-  while (playerEmotion > 40 && playerEmotion < 60) {
-    playerHability = Math.floor(Math.random() * duel[0]);
-    botHability = Math.floor(Math.random() * duel[1]);
-    cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
-    differenceInDamage = playerHability - botHability;
-    playerEmotion = changePlayerEmotionState(playerEmotion, differenceInDamage);
-    if (playerHability > botHability) {
-      return true;
-    }
-  }
-  return false;
-};

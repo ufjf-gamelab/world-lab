@@ -6,7 +6,7 @@ export const playerModelValues = {
 };
 
 export const explorerModel = (data: any, cyRef: any) => {
-  let dfs = cyRef?.current?.elements().dfs({
+  let dfs = cyRef?.current?.elements().bfs({
     roots: `#${data.firstNode}`,
     visit: function (v: any, e: any, u: any, i: any, depth: any) {},
     directed: false,
@@ -30,8 +30,7 @@ export const explorerModel = (data: any, cyRef: any) => {
 
   const lastPlayerPosition =
   filteredPathCollection[filteredPathCollection.length - 1];
-  
-  console.log("🚀 ~ file: index.ts:35 ~ explorerModel ~ lastPlayerPosition:", lastPlayerPosition)
+
   const lastPlayerPositionID = lastPlayerPosition?.data("id");
 
   let aStar = cyRef.current?.elements()?.aStar({

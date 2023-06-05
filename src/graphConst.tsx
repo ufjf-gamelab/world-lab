@@ -88,16 +88,18 @@ export const graphConsts: Record<string, any> = {
       width: function (ele: any) {
         let numAttempts = ele.data("attempts");
         let numFailures = ele.data("failures");
-      
+
         // Calcula a proporção de falhas sobre tentativas
-        if(numFailures === 0 || numAttempts ===0 )
-        return 1
+        if (numFailures === 0 && numAttempts === 0) return 1;
+        else if (numFailures === 0 && numAttempts > 0) {
+          return 10;
+        }
         let ratio = numFailures / numAttempts;
-      
+
         // Define o valor mínimo como 1 e o máximo como 10
         let width = Math.max(1, Math.min(10, ratio * 10));
-        console.log("🚀 ~ file: graphConst.tsx:97 ~ width:", width)
-      
+        console.log("🚀 ~ file: graphConst.tsx:97 ~ width:", width);
+
         return width;
       },
     },
@@ -140,13 +142,13 @@ export const graphConsts: Record<string, any> = {
         let min = core.elements().min(function (ele: any) {
           return ele.data("failures");
         }).value;
-        let attempts = ele.data("failures");
+        let failures = ele.data("failures");
 
         let hue;
-        if (attempts === 0) {
+        if (failures === 0 ) {
           hue = 0;
         } else {
-          hue = ((attempts - min) * (100 - 0)) / (max - min) + 1;
+          hue = ((failures - min) * (100 - 0)) / (max - min) + 1;
         }
 
         return ["hsl(", 100 - hue, ",100%,50%)"].join("");
@@ -275,6 +277,9 @@ export const graphConsts: Record<string, any> = {
             Math.trunc((edgeAtribute.failures / edgeAtribute.attempts) * 100) +
             " %"
           );
+        else if (edgeAtribute.failures === 0 && edgeAtribute.attempts > 0) {
+          return 100 + "%";
+        }
 
         return 0;
       },
@@ -296,6 +301,10 @@ export const graphConsts: Record<string, any> = {
               100 - (edgeAtribute.failures / edgeAtribute.attempts) * 100
             ) + " %"
           );
+
+          else if( edgeAtribute.failures === 0 && edgeAtribute.attempts > 0){
+            return 100 + "%"
+          }
 
         return 0;
       },
