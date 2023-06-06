@@ -44,6 +44,33 @@ a {
   height: 69vh;
 }
 
+.loadingIconContainer {
+  position: absolute;
+  z-index: 1;
+  width: 200px;
+  height: 100px;
+  left: 40%;
+  top: 55%;
+}
+
+.graphContainer {
+  width: 75%;
+}
+
+.graphActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+
+.graphActions svg {
+
+  border: 1px solid #E4E7EC;
+  border-radius: 6px;
+  background: #ffff;
+  padding: 8px 11.5px ;
+}
 .wrapper {
   background-color: #f8f8f8;
   height: 100vh;

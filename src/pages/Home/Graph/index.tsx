@@ -62,7 +62,7 @@ const Graph = ({
     
           cy.pon("dragfree").then(function (event) {
             const newNodes = cyRef.current?.elements().jsons();
-            console.log("acabei");
+      
             setElements(newNodes);
           });
           cy.on("tap", "node", function (event) {

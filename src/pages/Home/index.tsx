@@ -19,12 +19,15 @@ import { playerModelValues } from "../../helpers/playerModels";
 import { challengeModelValues } from "../../helpers/challengeModels";
 import "./styles.css";
 import { progressionModelValues } from "../../helpers/progressionModels";
-import { layouts } from "./layouts";
+
+import loadingIcon from "../../assets/loadingIcon.svg";
+import { MdCenterFocusWeak, MdZoomIn, MdZoomOut } from "react-icons/md";
 const Home = () => {
   const cyRef = useRef<cytoscape.Core | null>(null);
   const [isCreatingNode, setIsCreatingNode] = useState(false);
   const [isCreatingRelationship, setIsCreatingRelationship] = useState(false);
   const [isInitialNodes, setisInitialNodes] = useState(true);
+  const [isLoadingData, setisLoadingData] = useState(false);
   const [primaryNode, setPrimaryNode] = useState<INode | null>(null);
   const [relationship, setRelationship] = useState<INode[] | []>([]);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
@@ -82,22 +85,21 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log("PlayerEmotion use effect", playerEmotion);
-  }, [playerEmotion]);
-
-  useEffect(() => {
     const localElements = JSON.parse(window.localStorage.getItem("elements")!);
     setElements(localElements);
     setisInitialNodes(false);
+    cyRef.current?.fit();
   }, []);
 
   useEffect(() => {
     if (!isInitialNodes) {
       window.localStorage.setItem("elements", JSON.stringify(elements));
     }
+  }, [elements]);
+
+  useEffect(() => {
     cyRef.current?.fit();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elements, cyRef]);
+  }, [cyRef.current]);
 
   useEffect(() => {
     if (clickedPosition && isCreatingNode) {
@@ -128,12 +130,14 @@ const Home = () => {
   }, [clickedPosition]);
   useEffect(() => {
     if (!simulatorData) return;
+    setisLoadingData(true);
 
     for (let i = 0; i < simulatorData.numberOfRuns; i++) {
       playerSimulatorPath(simulatorData);
     }
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
+    setisLoadingData(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [simulatorData]);
 
@@ -197,7 +201,7 @@ const Home = () => {
         challengeModelValues[chosenChallengeModel](nodeOperatingData);
 
       if (simulatorData.churnModel === "flow") {
-        [wonDuel, playerStress ] = flowModel(duelValues, nodeOperatingData);
+        [wonDuel, playerStress] = flowModel(duelValues, nodeOperatingData);
         console.log("playerStress", playerStress);
       } else {
         const chosenChurnModel =
@@ -285,7 +289,6 @@ const Home = () => {
   };
 
   const resetStyles = () => {
-    cyRef.current?.fit();
     cyRef.current?.elements().removeClass(graphConsts.classStylesNames);
   };
 
@@ -318,7 +321,7 @@ const Home = () => {
       currentStress = changePlayerEmotionState(
         currentStress,
         differenceInDamage
-        );
+      );
 
       if (playerHability > botHability) {
         return [true, currentStress];
@@ -359,7 +362,7 @@ const Home = () => {
       return playerStress + 10;
     }
 
-    return playerStress - 1;
+    return playerStress;
   };
 
   // const playerSimulatorPath = (data: ICustomSearchFormValues) => {
@@ -453,19 +456,52 @@ const Home = () => {
         isCreatingRelationship={isCreatingRelationship}
       />
       <div className="mainContainer">
-        <Graph
-          elements={elements}
-          setSelectedEdge={setSelectedEdge}
-          setElements={setElements}
-          setPrimaryNode={setPrimaryNode}
-          setRelationship={setRelationship}
-          relationship={relationship}
-          setClickedPosition={setClickedPosition}
-          isCreatingNode={isCreatingNode}
-          cyRef={cyRef}
-          layout={layout}
-        />
+        <div className="graphContainer">
+          {isLoadingData && (
+            <div className="loadingIconContainer">
+              <img src={loadingIcon} alt="loading" />
+            </div>
+          )}
+          <Graph
+            elements={elements}
+            setSelectedEdge={setSelectedEdge}
+            setElements={setElements}
+            setPrimaryNode={setPrimaryNode}
+            setRelationship={setRelationship}
+            relationship={relationship}
+            setClickedPosition={setClickedPosition}
+            isCreatingNode={isCreatingNode}
+            cyRef={cyRef}
+            layout={layout}
+          />
+          <div className="graphActions">
+            <MdZoomIn
+              fontSize={30}
+              title="zoomIn"
+              onClick={() => {
+                let currentZoom = cyRef?.current?.zoom();
+                cyRef?.current?.zoom(currentZoom && currentZoom + 0.1);
+              }}
+            />
+            <MdCenterFocusWeak
+              fontSize={30}
+              title="center"
+              onClick={() => {
+                cyRef.current?.fit();
+              }}
+            />
+            <MdZoomOut
+              fontSize={30}
+              title="zoomOut"
+              onClick={() => {
+                let currentZoom = cyRef?.current?.zoom();
+                cyRef?.current?.zoom(currentZoom && currentZoom - 0.1);
 
+           
+              }}
+            />
+          </div>
+        </div>
         <Information
           isCreatingRelationship={isCreatingRelationship}
           relationship={relationship}

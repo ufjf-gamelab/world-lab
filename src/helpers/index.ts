@@ -33,16 +33,16 @@ export const updateEstimatedPlayerRating = (data: any, playerWon: boolean) => {
   );
 
 
-  if (playerWon === true) {
-    Ra = Ra + 32 * (1 - playerWinProbability);
+  // if (playerWon === true) {
+  //   Ra = Ra + 32 * (1 - playerWinProbability);
   
-    data.setEstimatedPlayerRating(Ra);
-  } else {
-    Ra = Ra + 32 * (0 - playerWinProbability);
-    data.setEstimatedPlayerRating(Ra);
-  }
+  //   data.setEstimatedPlayerRating(Ra);
+  // } else {
+  //   Ra = Ra + 32 * (0 - playerWinProbability);
+  //   data.setEstimatedPlayerRating(Ra);
+  // }
 
-  console.log("Ra = " + data.estimatedPlayerRating);
+ 
 };
 
 export const getNodeEdges = (cyRef: any, nextNode: string, col: any) => {

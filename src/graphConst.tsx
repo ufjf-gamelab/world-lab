@@ -98,8 +98,7 @@ export const graphConsts: Record<string, any> = {
 
         // Define o valor mínimo como 1 e o máximo como 10
         let width = Math.max(1, Math.min(10, ratio * 10));
-        console.log("🚀 ~ file: graphConst.tsx:97 ~ width:", width);
-
+     
         return width;
       },
     },

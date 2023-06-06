@@ -8,44 +8,45 @@ export const playerModelValues = {
 export const explorerModel = (data: any, cyRef: any) => {
   let dfs = cyRef?.current?.elements().bfs({
     roots: `#${data.firstNode}`,
-    visit: function (v: any, e: any, u: any, i: any, depth: any) {},
+    visit: function (v: any, e: any, u: any, i: any, depth: any) {
+      if (v.data("id") === data.lastNode) return false;
+    },
     directed: false,
   });
+  console.log("🚀 ~ file: index.ts:14 ~ dfs ~ dfs:", dfs);
 
   if (dfs.path.length === 0) return "";
   let pathCollection = dfs.path;
 
-  let filteredPathCollection = pathCollection?.filter(function (ele: any) {
-    if (
-      ele.data("source") === data.lastNode ||
-      ele.data("target") === data.lastNode
-    ) {
-      return false;
-    }
+  return pathCollection;
 
-    return ele.data("id") !== data.lastNode;
-  });
+  // let filteredPathCollection = pathCollection?.filter(function (ele: any) {
+  //   if (
+  //     ele.data("source") === data.lastNode ||
+  //     ele.data("target") === data.lastNode
+  //   ) {
+  //     return false;
+  //   }
 
+  //   return ele.data("id") !== data.lastNode;
+  // });
 
+  // const lastPlayerPosition =
+  //   filteredPathCollection[filteredPathCollection.length - 1];
 
-  const lastPlayerPosition =
-  filteredPathCollection[filteredPathCollection.length - 1];
+  // const lastPlayerPositionID = lastPlayerPosition?.data("id");
 
-  const lastPlayerPositionID = lastPlayerPosition?.data("id");
+  // let aStar = cyRef.current?.elements()?.aStar({
+  //   root: `#${lastPlayerPositionID}`,
+  //   goal: `#${data.lastNode}`,
+  // });
 
-  let aStar = cyRef.current?.elements()?.aStar({
-    root: `#${lastPlayerPositionID}`,
-    goal: `#${data.lastNode}`,
-  });
+  // let nodePathAstar = aStar.path;
 
+  // let col = cyRef.current.collection();
+  // let fullSearch = col.merge(filteredPathCollection).merge(nodePathAstar);
 
-  let nodePathAstar = aStar.path;
-
-  let col = cyRef.current.collection();
-  let fullSearch = col.merge(filteredPathCollection).merge(nodePathAstar);
-
- 
-  return fullSearch;
+  // return fullSearch;
 };
 
 export const storyModel = (data: any, cyRef: any) => {

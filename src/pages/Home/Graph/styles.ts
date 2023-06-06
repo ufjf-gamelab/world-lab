@@ -1,4 +1,4 @@
 export const containerStyle = {
-    width: "75%",
-    height: "600px",
+    width: "100%",
+    height: "91%",
   };
