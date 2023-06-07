@@ -22,6 +22,7 @@ interface InformationProps {
   setPrimaryNode: any;
   setIsCreatingNode: any;
   changeStyleSettings: any;
+  numberOfCreatedNodes: any;
   setLayout: any;
 }
 interface IAttribute {
@@ -44,6 +45,7 @@ const Information = ({
   changeStyleSettings,
   setPrimaryNode,
   setIsCreatingNode,
+  numberOfCreatedNodes,
   setLayout,
 }: InformationProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -74,18 +76,23 @@ const Information = ({
           </div>
         </div>
         {isCreatingNode && (
-          <>
+          <div className="containerCreateNode">
             <h2 className="titleCreateNode">Click on screen to create node</h2>
-
+            <div className="containerNumberOfNodes">
+              <h4 className="numberOfNodesLabel">Number of create nodes :</h4>
+              <h4 className="createdNumberOfNodes">
+                {numberOfCreatedNodes}
+              </h4>{" "}
+            </div>
             <button
               className="buttonCreateNode"
               onClick={() => {
                 setIsCreatingNode(false);
               }}
             >
-              Cancel
+              Stop creating nodes
             </button>
-          </>
+          </div>
         )}
 
         {isCreatingRelationship && (
@@ -108,7 +115,7 @@ const Information = ({
                 </h2>
                 <h3>{relationship[1]?.id}</h3>
               </div>
-              <div className="elementInfo">
+              <div className="relationshipButtonContainer">
                 <button
                   onClick={() => {
                     setIsCreatingRelationship(false);
@@ -117,14 +124,14 @@ const Information = ({
                 >
                   Cancel
                 </button>
-              </div>
-              <div
-                className="elementInfo"
-                onClick={() => {
-                  createRelationship();
-                }}
-              >
-                <button>Confirm</button>
+
+                <button
+                  onClick={() => {
+                    createRelationship();
+                  }}
+                >
+                  Confirm
+                </button>
               </div>
             </>
           </div>
@@ -288,7 +295,7 @@ const Information = ({
                 </label>
               </div>
             </li>
-          
+
             <li>
               <div className="switchContainer">
                 <h4 className="switchTitle">Failures width (Quantity)</h4>
@@ -324,7 +331,10 @@ const Information = ({
                   <input
                     type="checkbox"
                     onChange={(e) =>
-                      changeStyleSettings("edgeprobabilityOfWinningLabel", e.target.checked)
+                      changeStyleSettings(
+                        "edgeprobabilityOfWinningLabel",
+                        e.target.checked
+                      )
                     }
                   />
                   <span className="slider round"></span>
@@ -345,10 +355,10 @@ const Information = ({
                 </label>
               </div>
             </li>
-           
+
             <li>
               <div className="switchContainer">
-                <h4 className="switchTitle">Failures / attempts  %</h4>
+                <h4 className="switchTitle">Failures / attempts %</h4>
                 <label className="switch">
                   <input
                     type="checkbox"
@@ -364,7 +374,6 @@ const Information = ({
               </div>
             </li>
 
-            
             <li>
               <div className="switchContainer">
                 <h4 className="switchTitle">Failures / attempts color </h4>
@@ -438,7 +447,10 @@ const Information = ({
                   <input
                     type="checkbox"
                     onChange={(e) =>
-                      changeStyleSettings("nodeChurnCountColor", e.target.checked)
+                      changeStyleSettings(
+                        "nodeChurnCountColor",
+                        e.target.checked
+                      )
                     }
                   />
                   <span className="slider round"></span>
@@ -452,7 +464,10 @@ const Information = ({
                   <input
                     type="checkbox"
                     onChange={(e) =>
-                      changeStyleSettings("nodeChurnCountLabel", e.target.checked)
+                      changeStyleSettings(
+                        "nodeChurnCountLabel",
+                        e.target.checked
+                      )
                     }
                   />
                   <span className="slider round"></span>

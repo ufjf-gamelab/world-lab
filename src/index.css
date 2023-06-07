@@ -29,6 +29,9 @@ button {
   color: white;
   width: 130px;
   opacity: 1;
+  font-family: 'Poppins';
+font-style: normal;
+
 }
 
 a {
@@ -72,6 +75,6 @@ a {
   padding: 8px 11.5px ;
 }
 .wrapper {
-  background-color: #f8f8f8;
+  background-color: #ffff;
   height: 100vh;
 }

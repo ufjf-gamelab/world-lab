@@ -28,6 +28,7 @@ const Home = () => {
   const [isCreatingRelationship, setIsCreatingRelationship] = useState(false);
   const [isInitialNodes, setisInitialNodes] = useState(true);
   const [isLoadingData, setisLoadingData] = useState(false);
+  const [numberOfCreatedNodes, setNumberOfCreatedNodes] = useState<number>(0);
   const [primaryNode, setPrimaryNode] = useState<INode | null>(null);
   const [relationship, setRelationship] = useState<INode[] | []>([]);
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
@@ -80,6 +81,7 @@ const Home = () => {
   const onSubmitCustomSearch: SubmitHandler<ICustomSearchFormValues> = (
     data: ICustomSearchFormValues
   ) => {
+    setisLoadingData(true);
     setActualPlayerRating(data.playerRating);
     setSimulatorData(data);
   };
@@ -125,6 +127,9 @@ const Home = () => {
 
       const newNodes = cyRef.current?.elements().jsons();
       setElements(newNodes);
+      setNumberOfCreatedNodes((prevnodes) => prevnodes + 1);
+    } else if (!isCreatingNode) {
+      setNumberOfCreatedNodes(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickedPosition]);
@@ -182,7 +187,6 @@ const Home = () => {
       if (ele.id() === simulatorData.lastNode) return true;
 
       let initialNodeData = ele.data();
-      console.log("playerStress", playerStress);
       let edge = eles[i + 1];
 
       let duelValues;
@@ -237,55 +241,6 @@ const Home = () => {
       return true;
     });
     simulatingPath?.addClass("highlighted");
-
-    // let edge = randomEdge.data();
-
-    // if (col?.contains(cyRef?.current!.$(`#${edge.target}`))) {
-    //   nextNode = edge.source;
-    //   churnNode = edge.target;
-    // } else {
-    //   nextNode = edge.target;
-    //   churnNode = edge.source;
-    // }
-
-    // let edgeFailuresWidth = edge.failures;
-    // let nodeOperatingData = { randomEdge, nextNode, col, churnNode };
-    // let difficultyOperatingData = {
-    //   botDifficulty,
-    //   setBotDifficulty,
-    //   randomEdge,
-    // };
-
-    // const chosenChallengeModel =
-    //   simulatorData?.difficultyModel as keyof typeof difficultyModelValues;
-    // difficultyModelValues[chosenChallengeModel](
-    //   difficultyOperatingData,
-    //   cyRef
-    // );
-
-    // const duelValues = eloRatingChallenge(
-    //   nodeOperatingData,
-    //   actualPlayerRating
-    // );
-
-    // const chosenChurnModel =
-    //   simulatorData?.churnModel as keyof typeof churnModelValues;
-    // nextNode = churnModelValues[chosenChurnModel](
-    //   duelValues,
-    //   nodeOperatingData,
-    //   cyRef
-    // );
-
-    // if (nextNode === "fail") {
-    //   let oldChurnCount = parseInt(
-    //     cyRef.current?.$(`#${churnNode}`).data("churnCount")
-    //   );
-
-    //   cyRef.current?.$(`#${churnNode}`).data({ churnCount: oldChurnCount + 1 });
-    //   cyRef.current?.$(`#${edge.id}`).data({ failures: edgeFailuresWidth + 1 });
-    // }
-
-    // return nextNode;
   };
 
   const resetStyles = () => {
@@ -447,13 +402,7 @@ const Home = () => {
         handleFileSelected={handleFileSelected}
         resetStyles={resetStyles}
         resetNodesAtributes={resetNodesAtributes}
-        setInvariableGraphDifficulty={setInvariableGraphDifficulty}
         elements={elements}
-        setRelationship={setRelationship}
-        setIsCreatingNode={setIsCreatingNode}
-        setIsCreatingRelationship={setIsCreatingRelationship}
-        isCreatingNode={isCreatingNode}
-        isCreatingRelationship={isCreatingRelationship}
       />
       <div className="mainContainer">
         <div className="graphContainer">
@@ -496,8 +445,6 @@ const Home = () => {
               onClick={() => {
                 let currentZoom = cyRef?.current?.zoom();
                 cyRef?.current?.zoom(currentZoom && currentZoom - 0.1);
-
-           
               }}
             />
           </div>
@@ -518,6 +465,7 @@ const Home = () => {
           setIsCreatingNode={setIsCreatingNode}
           changeStyleSettings={changeStyleSettings}
           setLayout={setLayout}
+          numberOfCreatedNodes={numberOfCreatedNodes}
         />
       </div>
       <ModalForm

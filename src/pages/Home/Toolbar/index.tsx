@@ -14,13 +14,7 @@ interface ToolbarProps {
   handleFileSelected: any;
   resetStyles: any;
   resetNodesAtributes: any;
-  setInvariableGraphDifficulty: any;
   elements: any;
-  setRelationship: any;
-  setIsCreatingNode: any;
-  setIsCreatingRelationship: any;
-  isCreatingNode: any;
-  isCreatingRelationship: any;
 }
 
 const Toolbar = ({
@@ -28,13 +22,7 @@ const Toolbar = ({
   handleFileSelected,
   resetStyles,
   resetNodesAtributes,
-  setInvariableGraphDifficulty,
   elements,
-  setRelationship,
-  setIsCreatingNode,
-  setIsCreatingRelationship,
-  isCreatingNode,
-  isCreatingRelationship,
 }: ToolbarProps) => {
   const {
     register: registerValue,

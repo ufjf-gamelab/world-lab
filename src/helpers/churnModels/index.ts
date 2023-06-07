@@ -6,8 +6,7 @@ export const churnModelValues = {
   oneHundredChoices: (val: number[], val2: any, cyRef: any) =>
     oneHundredChoicesModel(val, val2, cyRef),
   tenChoices: (val: number[], val2: any, cyRef: any) =>
-    tenChoicesModel(val, val2, cyRef)
-
+    tenChoicesModel(val, val2, cyRef),
 };
 
 const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
@@ -16,19 +15,20 @@ const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
   let edgeFailures = edgeData.failures;
   let playerHability;
   let botHability;
+  console.log("duel", duel);
 
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i <1; i++) {
     playerHability = Math.floor(Math.random() * duel[0]);
 
     botHability = Math.floor(Math.random() * duel[1]);
 
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      updateEstimatedPlayerRating(data, true);
+      // updateEstimatedPlayerRating(data, true);
       return true;
     }
     cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
-    updateEstimatedPlayerRating(data, false);
+    // updateEstimatedPlayerRating(data, false);
   }
   return false;
 };
@@ -69,4 +69,3 @@ const tenChoicesModel = (duel: number[], data: any, cyRef: any) => {
 
   return false;
 };
-
