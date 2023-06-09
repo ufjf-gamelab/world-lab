@@ -140,12 +140,63 @@ const Home = () => {
     for (let i = 0; i < simulatorData.numberOfRuns; i++) {
       playerSimulatorPath(simulatorData);
     }
+
+    adaptiveDifficultyChanges();
+
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
     setisLoadingData(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [simulatorData]);
 
+  const adaptiveDifficultyChanges = () => {
+    let newDifficulty;
+    let maxDifficulty = cyRef?.current?.elements().min(function (ele: any) {
+      return ele.data("probabilityOfWinning");
+    });
+    let maxChurnNode = cyRef?.current?.nodes().max(function (ele: any) {
+      return ele.data("churnCount");
+    });
+
+    let aresta = maxChurnNode?.ele.connectedEdges().max(function (ele: any) {
+      return ele.data("failures") / ele.data("attempts");
+    });
+    let sourceDifficultyID = aresta?.ele.data("source");
+    let targetDifficultyID = aresta?.ele.data("target");
+
+    console.log("🚀 ~ file: index.tsx:164 ~ aresta:", aresta);
+
+    let secondWorstDifficulty = cyRef?.current
+      ?.elements()
+      .min(function (ele: any) {
+        if (ele.id() !== maxDifficulty?.ele.id())
+          return ele.data("probabilityOfWinning");
+        return;
+      });
+
+    let elements = cyRef?.current?.elements(); // Obtenha os elementos do seu gráfico
+    let sum = 0;
+    let count = 0;
+    let average = 0;
+
+    elements?.forEach(function (ele) {
+      let difficulty = ele.data("probabilityOfWinning");
+
+      if (difficulty) {
+        sum += difficulty;
+        if (!ele.isNode()) count++;
+      }
+    });
+
+    if (count > 0) {
+      average = sum / count;
+    }
+
+    if (average - secondWorstDifficulty?.value > 30)
+      newDifficulty = (secondWorstDifficulty?.value + average + 40) / 2;
+
+    newDifficulty = (secondWorstDifficulty?.value + average + -10) / 2;
+  };
   const createRelationship = () => {
     if (relationship.length === 2 && isCreatingRelationship) {
       cyRef.current!.add({

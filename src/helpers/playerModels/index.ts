@@ -6,14 +6,14 @@ export const playerModelValues = {
 };
 
 export const explorerModel = (data: any, cyRef: any) => {
-  let dfs = cyRef?.current?.elements().bfs({
+  let dfs = cyRef?.current?.elements().dfs({
     roots: `#${data.firstNode}`,
     visit: function (v: any, e: any, u: any, i: any, depth: any) {
       if (v.data("id") === data.lastNode) return false;
     },
     directed: false,
   });
-  console.log("🚀 ~ file: index.ts:14 ~ dfs ~ dfs:", dfs);
+
 
   if (dfs.path.length === 0) return "";
   let pathCollection = dfs.path;

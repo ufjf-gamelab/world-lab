@@ -6,10 +6,13 @@ export const difficultyModelValues = {
 };
 
 export const adaptativeDificulty = (data: any, cyRef: any) => {
-  let edgeData = data.randomEdge.data();
+  
 
-  cyRef.current?.$(`#${edgeData.id}`).data({ difficulty: data.botDifficulty });
-  data.setBotDifficulty(data.botDifficulty + 10);
+  // pegar os valore sde attempts e failures de todos os nos, fazer uma media e ver o % de failures/attempts
+
+  // pegar o que tiver a maior diferenca, se a diferenca pro outros for gritante, mais de 10%, ajustar.
+
+  // quando descobrir qual a aresta, pegar os dois nos e ver os neighbourhood se tiver, pegar a media de dificuldade de todas as arestas e somar +5%
   return;
 };
 

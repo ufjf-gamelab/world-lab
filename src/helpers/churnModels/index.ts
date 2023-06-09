@@ -15,7 +15,7 @@ const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
   let edgeFailures = edgeData.failures;
   let playerHability;
   let botHability;
-  console.log("duel", duel);
+
 
   for (let i = 0; i <1; i++) {
     playerHability = Math.floor(Math.random() * duel[0]);
