@@ -6,17 +6,22 @@ export const playerModelValues = {
 };
 
 export const explorerModel = (data: any, cyRef: any) => {
-  let dfs = cyRef?.current?.elements().dfs({
+
+  let dfs = cyRef?.current?.elements().bfs({
     roots: `#${data.firstNode}`,
     visit: function (v: any, e: any, u: any, i: any, depth: any) {
-      if (v.data("id") === data.lastNode) return false;
+      if (v.id() === data.lastNode) {
+       
+        return true;
+      }
+   
     },
     directed: false,
   });
 
-
   if (dfs.path.length === 0) return "";
   let pathCollection = dfs.path;
+  console.log("pathcollection teste", dfs);
 
   return pathCollection;
 

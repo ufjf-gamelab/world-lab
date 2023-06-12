@@ -141,19 +141,16 @@ const Home = () => {
       playerSimulatorPath(simulatorData);
     }
 
-    adaptiveDifficultyChanges();
-
+   // adaptiveDifficultyChanges();
+   adaptiveDifficultyFlowChanges();
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
     setisLoadingData(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [simulatorData]);
 
-  const adaptiveDifficultyChanges = () => {
-    let newDifficulty;
-    let maxDifficulty = cyRef?.current?.elements().min(function (ele: any) {
-      return ele.data("probabilityOfWinning");
-    });
+  const adaptiveDifficultyChanges = (challengeModel:string) => {
+   
     let maxChurnNode = cyRef?.current?.nodes().max(function (ele: any) {
       return ele.data("churnCount");
     });
@@ -164,23 +161,32 @@ const Home = () => {
     let sourceDifficultyID = aresta?.ele.data("source");
     let targetDifficultyID = aresta?.ele.data("target");
 
-    console.log("🚀 ~ file: index.tsx:164 ~ aresta:", aresta);
+    let sourceNodeEdges = cyRef.current
+      ?.$(`#${sourceDifficultyID}`)
+      .connectedEdges();
+    let targetNodeEdges = cyRef.current
+      ?.$(`#${targetDifficultyID}`)
+      .connectedEdges();
 
-    let secondWorstDifficulty = cyRef?.current
-      ?.elements()
-      .min(function (ele: any) {
-        if (ele.id() !== maxDifficulty?.ele.id())
-          return ele.data("probabilityOfWinning");
-        return;
-      });
+    console.log(
+      "sourceDifficultyID,sourceDifficultyID",
+      targetNodeEdges,
+      sourceNodeEdges
+    );
 
     let elements = cyRef?.current?.elements(); // Obtenha os elementos do seu gráfico
     let sum = 0;
     let count = 0;
     let average = 0;
 
+    let sourceNodeAverageDifficulty = 0;
+    let countSourceEdges: number = 0;
+
+    let targetNodeAverageDifficulty = 0;
+    let countTargetEdges: number = 0;
+
     elements?.forEach(function (ele) {
-      let difficulty = ele.data("probabilityOfWinning");
+      let difficulty = ele.data(challengeModel);
 
       if (difficulty) {
         sum += difficulty;
@@ -192,11 +198,60 @@ const Home = () => {
       average = sum / count;
     }
 
-    if (average - secondWorstDifficulty?.value > 30)
-      newDifficulty = (secondWorstDifficulty?.value + average + 40) / 2;
 
-    newDifficulty = (secondWorstDifficulty?.value + average + -10) / 2;
+    if (sourceNodeEdges && sourceNodeEdges?.size() > 1) {
+      sourceNodeEdges
+        ?.filter(function (ele: any) {
+          return ele.id() !== aresta?.ele.id();
+        })
+        .forEach(function (ele) {
+          let difficulty = ele.data(challengeModel);
+
+          sourceNodeAverageDifficulty += difficulty;
+          countSourceEdges++;
+        });
+      sourceNodeAverageDifficulty /= countSourceEdges;
+    }
+    else{
+      targetNodeAverageDifficulty =average
+    }
+    if (targetNodeEdges && targetNodeEdges?.size() > 1) {
+      targetNodeEdges
+        ?.filter(function (ele: any) {
+          return ele.id() !== aresta?.ele.id();
+        })
+        .forEach(function (ele) {
+          let difficulty = ele.data((challengeModel));
+
+          targetNodeAverageDifficulty += difficulty;
+          countTargetEdges++;
+        });
+
+      targetNodeAverageDifficulty /= countTargetEdges;
+    }else{
+      targetNodeAverageDifficulty =average
+    }
+
+   
+  
+
+    // let secondWorstDifficulty = cyRef?.current
+    // ?.elements()
+    // .min(function (ele: any) {
+    //   if (ele.id() !== maxDifficulty?.ele.id())
+    //     return ele.data("probabilityOfWinning");
+    //   return;
+    // });
+
+    // if (average - secondWorstDifficulty?.value > 30)
+    //   newDifficulty = (secondWorstDifficulty?.value + average + 40) / 2;
+
+    // newDifficulty = (secondWorstDifficulty?.value + average + -10) / 2;
   };
+
+  const adaptiveDifficultyFlowChanges = () =>{
+
+  }
   const createRelationship = () => {
     if (relationship.length === 2 && isCreatingRelationship) {
       cyRef.current!.add({
@@ -317,7 +372,7 @@ const Home = () => {
     let botHability;
 
     let differenceInDamage;
-    console.log("PlayerStress flow", currentStress);
+
     while (currentStress > 40 && currentStress < 60) {
       playerHability = Math.floor(Math.random() * duel[0]);
       botHability = Math.floor(Math.random() * duel[1]);
@@ -343,59 +398,35 @@ const Home = () => {
     differenceInDamage: number
   ) => {
     //entre 40 e 60 é a zona do flow
-    //agente perdeu
+    //agente ganhou
 
     if (differenceInDamage > 10 && differenceInDamage < 20) {
       setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion - 2);
       return playerStress - 2;
     } else if (differenceInDamage > 20 && differenceInDamage < 30) {
       setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion - 5);
-      return playerStress - 5;
+      return playerStress - 3;
     } else if (differenceInDamage >= 30) {
       setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion - 10);
-      return playerStress - 10;
+      return playerStress - 5;
     }
 
-    // agente ganhou
+    // agente perdeu
     else if (differenceInDamage < 0 && differenceInDamage > -10) {
       setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion + 2);
       return playerStress + 2;
     } else if (differenceInDamage < -20 && differenceInDamage > -30) {
       setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion + 5);
-      return playerStress - +5;
+      return playerStress  +3;
     } else if (differenceInDamage <= -30) {
       setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion + 10);
-      return playerStress + 10;
+      return playerStress + 5;
     }
 
     return playerStress;
   };
 
-  // const playerSimulatorPath = (data: ICustomSearchFormValues) => {
-  //   resetStyles();
-  //   setChurnRate(0);
-  //   let col = cyRef.current?.collection();
-  //   col?.merge(`#${data?.firstNode}`);
-  //   let neighborhoodEdges: any = getNodeEdges(cyRef, data?.firstNode, col);
-
-  //   let randomEdge =
-  //     neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
-
-  //   let nextNode = getNextNode(col, randomEdge);
-
-  //   while (nextNode !== "fail" && nextNode !== data?.lastNode) {
-  //     neighborhoodEdges = getNodeEdges(cyRef, nextNode, col);
-
-  //     if (neighborhoodEdges.length === 0) break;
-
-  //     randomEdge =
-  //       neighborhoodEdges[Math.floor(Math.random() * neighborhoodEdges.length)];
-
-  //     nextNode = getNextNode(col, randomEdge);
-  //   }
-
-  //   col?.addClass("highlighted");
-  // };
+  
 
   const playerModelPath = (data: ICustomSearchFormValues) => {
     resetStyles();

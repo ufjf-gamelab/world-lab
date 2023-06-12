@@ -186,14 +186,14 @@ const Information = ({
                   <h3>{primaryNode?.churnCount}</h3>
                 </div>
 
-                {primaryNode?.newAttributes?.map((a: IAttribute) => {
+                {/* {primaryNode?.newAttributes?.map((a: IAttribute) => {
                   return (
                     <div className="elementInfo">
                       <h4>{a.attribute}:</h4>
                       <h3>{a.value}</h3>
                     </div>
                   );
-                })}
+                })} */}
               </>
             )}
 
