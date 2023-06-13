@@ -34,9 +34,7 @@ const Home = () => {
   const [clickedPosition, setClickedPosition] = useState<IClickedPosition>();
   const [elements, setElements] = useState<any>(graphConsts.defaultGraph);
   const [selectedEdge, setSelectedEdge] = useState<IEdge | null>(null);
-  const [actualPlayerRating, setActualPlayerRating] = useState<number | null>(
-    null
-  );
+  const [actualPlayerRating, setActualPlayerRating] = useState<number>(1500);
   const [playerEmotion, setPlayerEmotion] = useState(50);
   const [estimatedPlayerRating, setEstimatedPlayerRating] =
     useState<number>(1500);
@@ -82,6 +80,7 @@ const Home = () => {
     data: ICustomSearchFormValues
   ) => {
     setisLoadingData(true);
+
     setActualPlayerRating(data.playerRating);
     setSimulatorData(data);
   };
@@ -141,16 +140,23 @@ const Home = () => {
       playerSimulatorPath(simulatorData);
     }
 
-   // adaptiveDifficultyChanges();
-   adaptiveDifficultyFlowChanges();
+    adaptiveDifficultyChanges(simulatorData.challengeModel);
+
+    //adaptiveDifficultyFlowChanges();
     const newNodes = cyRef.current?.elements().jsons();
     setElements(newNodes);
     setisLoadingData(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [simulatorData]);
 
-  const adaptiveDifficultyChanges = (challengeModel:string) => {
-   
+  const adaptiveDifficultyChanges = (challengeModel: string) => {
+    let difficultyParameter: string;
+
+    if (challengeModel === "eloRating") {
+      difficultyParameter = "difficulty";
+    } else {
+      difficultyParameter = "probabilityOfWinning";
+    }
     let maxChurnNode = cyRef?.current?.nodes().max(function (ele: any) {
       return ele.data("churnCount");
     });
@@ -168,12 +174,6 @@ const Home = () => {
       ?.$(`#${targetDifficultyID}`)
       .connectedEdges();
 
-    console.log(
-      "sourceDifficultyID,sourceDifficultyID",
-      targetNodeEdges,
-      sourceNodeEdges
-    );
-
     let elements = cyRef?.current?.elements(); // Obtenha os elementos do seu gráfico
     let sum = 0;
     let count = 0;
@@ -186,7 +186,7 @@ const Home = () => {
     let countTargetEdges: number = 0;
 
     elements?.forEach(function (ele) {
-      let difficulty = ele.data(challengeModel);
+      let difficulty = ele.data(difficultyParameter);
 
       if (difficulty) {
         sum += difficulty;
@@ -198,22 +198,20 @@ const Home = () => {
       average = sum / count;
     }
 
-
     if (sourceNodeEdges && sourceNodeEdges?.size() > 1) {
       sourceNodeEdges
         ?.filter(function (ele: any) {
           return ele.id() !== aresta?.ele.id();
         })
         .forEach(function (ele) {
-          let difficulty = ele.data(challengeModel);
+          let difficulty = ele.data(difficultyParameter);
 
           sourceNodeAverageDifficulty += difficulty;
           countSourceEdges++;
         });
       sourceNodeAverageDifficulty /= countSourceEdges;
-    }
-    else{
-      targetNodeAverageDifficulty =average
+    } else {
+      targetNodeAverageDifficulty = average;
     }
     if (targetNodeEdges && targetNodeEdges?.size() > 1) {
       targetNodeEdges
@@ -221,37 +219,37 @@ const Home = () => {
           return ele.id() !== aresta?.ele.id();
         })
         .forEach(function (ele) {
-          let difficulty = ele.data((challengeModel));
+          let difficulty = ele.data(difficultyParameter);
 
           targetNodeAverageDifficulty += difficulty;
           countTargetEdges++;
         });
 
       targetNodeAverageDifficulty /= countTargetEdges;
-    }else{
-      targetNodeAverageDifficulty =average
+    } else {
+      targetNodeAverageDifficulty = average;
     }
 
-   
-  
+    console.log(
+      "🚀 ~ file: index.tsx:235 ~ adaptiveDifficultyChanges ~ sourceNodeAverageDifficulty:",
+      sourceNodeAverageDifficulty
+    );
+    console.log(
+      "🚀 ~ file: index.tsx:235 ~ adaptiveDifficultyChanges ~ targetNodeAverageDifficulty:",
+      targetNodeAverageDifficulty
+    );
 
-    // let secondWorstDifficulty = cyRef?.current
-    // ?.elements()
-    // .min(function (ele: any) {
-    //   if (ele.id() !== maxDifficulty?.ele.id())
-    //     return ele.data("probabilityOfWinning");
-    //   return;
-    // });
-
-    // if (average - secondWorstDifficulty?.value > 30)
-    //   newDifficulty = (secondWorstDifficulty?.value + average + 40) / 2;
-
-    // newDifficulty = (secondWorstDifficulty?.value + average + -10) / 2;
+    console.log(
+      "dificuldade a ser colocada",
+      (sourceNodeAverageDifficulty + targetNodeAverageDifficulty) / 2
+    );
   };
 
-  const adaptiveDifficultyFlowChanges = () =>{
+  const changePlayerRating = (playerRating: number) => {
+    setEstimatedPlayerRating(playerRating);
+  };
 
-  }
+  const adaptiveDifficultyFlowChanges = () => {};
   const createRelationship = () => {
     if (relationship.length === 2 && isCreatingRelationship) {
       cyRef.current!.add({
@@ -282,6 +280,8 @@ const Home = () => {
     let playerPath = playerModelPath(simulatorData);
     let playerStress = 50;
     let failedToFinish = false;
+    let playerRating = actualPlayerRating;
+    let estimatingPlayerRating = estimatedPlayerRating;
 
     let simulatingPath = playerPath.filter(function (
       ele: any,
@@ -299,9 +299,9 @@ const Home = () => {
       let wonDuel;
       let nodeOperatingData = {
         edge,
-        actualPlayerRating,
-        estimatedPlayerRating,
-        setEstimatedPlayerRating,
+        playerRating,
+        estimatingPlayerRating,
+        changePlayerRating,
         playerStress,
       };
 
@@ -312,7 +312,6 @@ const Home = () => {
 
       if (simulatorData.churnModel === "flow") {
         [wonDuel, playerStress] = flowModel(duelValues, nodeOperatingData);
-        console.log("playerStress", playerStress);
       } else {
         const chosenChurnModel =
           simulatorData?.churnModel as keyof typeof churnModelValues;
@@ -330,22 +329,18 @@ const Home = () => {
           ?.$(`#${initialNodeData.id}`)
           .data({ churnCount: initialNodeData.churnCount + 1 });
       } else {
-        const chosenProgressionModel =
-          simulatorData?.progressionModel as keyof typeof progressionModelValues;
-        setActualPlayerRating(
-          progressionModelValues[chosenProgressionModel](nodeOperatingData)
-        );
-      }
+        if (simulatorData.progressionModel === "incremental") {
+          setActualPlayerRating(
+            (prevActualPlayerRating) => prevActualPlayerRating + 100
+          );
 
-      // const chosendIFFICULTYModel =
-      //   simulatorData?.difficultyModel as keyof typeof difficultyModelValues;
-      // difficultyModelValues[chosenChallengeModel](
-      //   difficultyOperatingData,
-      //   cyRef
-      // );
+          estimatingPlayerRating += 100;
+        }
+      }
 
       return true;
     });
+    console.log("estimatingPlayerRating", estimatingPlayerRating);
     simulatingPath?.addClass("highlighted");
   };
 
@@ -355,7 +350,7 @@ const Home = () => {
 
   const resetNodesAtributes = () => {
     resetStyles();
-    setActualPlayerRating(null);
+    setActualPlayerRating(0);
     setSimulatorData(undefined);
     setEstimatedPlayerRating(1500);
     cyRef.current?.elements().data("attempts", 0);
@@ -417,7 +412,7 @@ const Home = () => {
       return playerStress + 2;
     } else if (differenceInDamage < -20 && differenceInDamage > -30) {
       setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion + 5);
-      return playerStress  +3;
+      return playerStress + 3;
     } else if (differenceInDamage <= -30) {
       setPlayerEmotion((prevPlayerEmotion) => prevPlayerEmotion + 10);
       return playerStress + 5;
@@ -425,8 +420,6 @@ const Home = () => {
 
     return playerStress;
   };
-
-  
 
   const playerModelPath = (data: ICustomSearchFormValues) => {
     resetStyles();

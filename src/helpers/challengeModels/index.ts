@@ -9,7 +9,9 @@ export const eloRatingModel = (data: any) => {
 
   const Ra = data.playerRating;
 
+
   const Rb = edgeData.difficulty;
+
 
   let playerWinProbability = calculateProbabilityEloRating(Rb, Ra) * 100;
  
@@ -17,6 +19,7 @@ export const eloRatingModel = (data: any) => {
 
 
   const duelValues = [playerWinProbability, botWinProbability];
+
 
   return duelValues;
 };

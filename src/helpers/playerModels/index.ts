@@ -21,7 +21,6 @@ export const explorerModel = (data: any, cyRef: any) => {
 
   if (dfs.path.length === 0) return "";
   let pathCollection = dfs.path;
-  console.log("pathcollection teste", dfs);
 
   return pathCollection;
 

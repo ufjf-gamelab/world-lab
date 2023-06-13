@@ -24,11 +24,15 @@ const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
 
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      // updateEstimatedPlayerRating(data, true);
+      let newRating = updateEstimatedPlayerRating(data, true)
+      console.log("new Rating",newRating )
+      data.changePlayerRating(newRating)
       return true;
     }
     cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
-    // updateEstimatedPlayerRating(data, false);
+    let newRating = updateEstimatedPlayerRating(data, false)
+    console.log("new Rating",newRating )
+    data.changePlayerRating(newRating)
   }
   return false;
 };
@@ -43,10 +47,15 @@ const oneHundredChoicesModel = (duel: number[], data: any, cyRef: any) => {
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      updateEstimatedPlayerRating(data, true);
+      let newRating = updateEstimatedPlayerRating(data, true)
+      console.log("new Rating",newRating )
+      data.changePlayerRating(newRating)
+    
       return true;
     }
-    updateEstimatedPlayerRating(data, false);
+    let newRating = updateEstimatedPlayerRating(data, false)
+      console.log("new Rating",newRating )
+      data.changePlayerRating(newRating)
     cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
   }
   return false;
@@ -62,9 +71,15 @@ const tenChoicesModel = (duel: number[], data: any, cyRef: any) => {
     botHability = Math.floor(Math.random() * duel[1]);
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
+      let newRating = updateEstimatedPlayerRating(data, true)
+      console.log("new Rating",newRating )
+      data.changePlayerRating(newRating)
       return true;
     }
     cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
+    let newRating = updateEstimatedPlayerRating(data, false)
+    console.log("new Rating",newRating )
+    data.changePlayerRating(newRating)
   }
 
   return false;

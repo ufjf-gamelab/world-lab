@@ -14,7 +14,7 @@ export const noProgression = (data: any) => {
 export const incrementalProgression = (data: any) => {
   
   
-    return data.playerRating + 50;
+    return data.playerRating + 100;
   
 
 };
