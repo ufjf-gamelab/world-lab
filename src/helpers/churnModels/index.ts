@@ -15,24 +15,21 @@ const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
   let edgeFailures = edgeData.failures;
   let playerHability;
   let botHability;
-
-
-  for (let i = 0; i <1; i++) {
-    playerHability = Math.floor(Math.random() * duel[0]);
-
-    botHability = Math.floor(Math.random() * duel[1]);
+  botHability = duel[1];
+  
+  for (let i = 0; i < 1; i++) {
+    playerHability = Math.floor(Math.random() * 100);
 
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
+  
     if (playerHability > botHability) {
-      let newRating = updateEstimatedPlayerRating(data, true)
-      console.log("new Rating",newRating )
-      data.changePlayerRating(newRating)
+      let newRating = updateEstimatedPlayerRating(data, true);
+      data.changePlayerRating(newRating);
       return true;
     }
     cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
-    let newRating = updateEstimatedPlayerRating(data, false)
-    console.log("new Rating",newRating )
-    data.changePlayerRating(newRating)
+    let newRating = updateEstimatedPlayerRating(data, false);
+    data.changePlayerRating(newRating);
   }
   return false;
 };
@@ -42,20 +39,19 @@ const oneHundredChoicesModel = (duel: number[], data: any, cyRef: any) => {
   let edgeFailures = edgeData.failures;
   let playerHability;
   let botHability;
+  botHability = duel[1];
   for (let i = 0; i < 100; i++) {
-    playerHability = Math.floor(Math.random() * duel[0]);
-    botHability = Math.floor(Math.random() * duel[1]);
+    playerHability = Math.floor(Math.random() * 100);
+
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      let newRating = updateEstimatedPlayerRating(data, true)
-      console.log("new Rating",newRating )
-      data.changePlayerRating(newRating)
-    
+      let newRating = updateEstimatedPlayerRating(data, true);
+      data.changePlayerRating(newRating);
+
       return true;
     }
-    let newRating = updateEstimatedPlayerRating(data, false)
-      console.log("new Rating",newRating )
-      data.changePlayerRating(newRating)
+    let newRating = updateEstimatedPlayerRating(data, false);
+    data.changePlayerRating(newRating);
     cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
   }
   return false;
@@ -66,20 +62,19 @@ const tenChoicesModel = (duel: number[], data: any, cyRef: any) => {
   let edgeFailures = edgeData.failures;
   let playerHability;
   let botHability;
+  botHability = duel[1];
   for (let i = 0; i < 10; i++) {
-    playerHability = Math.floor(Math.random() * duel[0]);
-    botHability = Math.floor(Math.random() * duel[1]);
+    playerHability = Math.floor(Math.random() * 100);
+
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
     if (playerHability > botHability) {
-      let newRating = updateEstimatedPlayerRating(data, true)
-      console.log("new Rating",newRating )
-      data.changePlayerRating(newRating)
+      let newRating = updateEstimatedPlayerRating(data, true);
+      data.changePlayerRating(newRating);
       return true;
     }
     cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
-    let newRating = updateEstimatedPlayerRating(data, false)
-    console.log("new Rating",newRating )
-    data.changePlayerRating(newRating)
+    let newRating = updateEstimatedPlayerRating(data, false);
+    data.changePlayerRating(newRating);
   }
 
   return false;

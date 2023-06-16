@@ -222,6 +222,7 @@ export const graphConsts: Record<string, any> = {
       "text-valign": "center",
       "text-halign": "center",
       color: "#000000",
+      "background-color" : "#B9B9B9",
       "font-family": "Poppins",
       label: function (node: any) {
         const nodeAtribute = node.data();

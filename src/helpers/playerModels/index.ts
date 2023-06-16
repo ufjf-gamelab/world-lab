@@ -10,10 +10,7 @@ export const explorerModel = (data: any, cyRef: any) => {
   let dfs = cyRef?.current?.elements().bfs({
     roots: `#${data.firstNode}`,
     visit: function (v: any, e: any, u: any, i: any, depth: any) {
-      if (v.id() === data.lastNode) {
-       
-        return true;
-      }
+     
    
     },
     directed: false,
@@ -22,7 +19,18 @@ export const explorerModel = (data: any, cyRef: any) => {
   if (dfs.path.length === 0) return "";
   let pathCollection = dfs.path;
 
-  return pathCollection;
+  let lastNodePostion;
+
+  // Percorra cada caminho na coleção de caminhos
+  pathCollection.forEach(function( ele:any , i:string, eles:any){
+    if(ele.id()  === data.lastNode)
+    lastNodePostion = i;
+  });
+  
+let filteredPath =  pathCollection.slice([0], [lastNodePostion])
+
+
+  return filteredPath;
 
   // let filteredPathCollection = pathCollection?.filter(function (ele: any) {
   //   if (

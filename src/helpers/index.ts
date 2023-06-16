@@ -22,14 +22,11 @@ export const eloRatingChallenge = (data: any) => {
 
 export const updateEstimatedPlayerRating = (data: any, playerWon: boolean) => {
   let Ra = data.estimatingPlayerRating;
-  console.log("🚀 ~ file: index.ts:26 ~ updateEstimatedPlayerRating ~ Ra:", Ra);
   let edgeData = data.edge.data();
   const Rb = edgeData.difficulty;
-  console.log("🚀 ~ file: index.ts:28 ~ updateEstimatedPlayerRating ~ Rb:", Rb)
 
   let playerWinProbability = calculateProbabilityEloRating(Rb, Ra);
-  console.log("🚀 ~ file: index.ts:30 ~ updateEstimatedPlayerRating ~ playerWinProbability:", playerWinProbability)
-
+ 
   if (playerWon === true) {
     Ra = Ra + 32 * (1 - playerWinProbability);
   } else {

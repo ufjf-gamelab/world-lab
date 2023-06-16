@@ -140,7 +140,7 @@ const Home = () => {
       playerSimulatorPath(simulatorData);
     }
 
-    adaptiveDifficultyChanges(simulatorData.challengeModel);
+    //adaptiveDifficultyChanges(simulatorData.challengeModel);
 
     //adaptiveDifficultyFlowChanges();
     const newNodes = cyRef.current?.elements().jsons();
@@ -291,12 +291,14 @@ const Home = () => {
       if (failedToFinish) return false;
       if (ele.isEdge()) return true;
       if (ele.id() === simulatorData.lastNode) return true;
+      if (ele.id() === simulatorData.lastNode) return true;
 
       let initialNodeData = ele.data();
       let edge = eles[i + 1];
 
       let duelValues;
       let wonDuel;
+  
       let nodeOperatingData = {
         edge,
         playerRating,
