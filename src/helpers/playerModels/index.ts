@@ -6,13 +6,9 @@ export const playerModelValues = {
 };
 
 export const explorerModel = (data: any, cyRef: any) => {
-
   let dfs = cyRef?.current?.elements().bfs({
     roots: `#${data.firstNode}`,
-    visit: function (v: any, e: any, u: any, i: any, depth: any) {
-     
-   
-    },
+    visit: function (v: any, e: any, u: any, i: any, depth: any) {},
     directed: false,
   });
 
@@ -22,13 +18,11 @@ export const explorerModel = (data: any, cyRef: any) => {
   let lastNodePostion;
 
   // Percorra cada caminho na coleção de caminhos
-  pathCollection.forEach(function( ele:any , i:string, eles:any){
-    if(ele.id()  === data.lastNode)
-    lastNodePostion = i;
+  pathCollection.forEach(function (ele: any, i: string, eles: any) {
+    if (ele.id() === data.lastNode) lastNodePostion = i;
   });
-  
-let filteredPath =  pathCollection.slice([0], [lastNodePostion])
 
+  let filteredPath = pathCollection.slice([0], [lastNodePostion]);
 
   return filteredPath;
 
@@ -62,11 +56,22 @@ let filteredPath =  pathCollection.slice([0], [lastNodePostion])
 };
 
 export const storyModel = (data: any, cyRef: any) => {
+  let difficultyModel: string;
+
+  if (data.challengeModel === "eloRating") {
+    difficultyModel = "difficulty";
+  } else {
+    difficultyModel = "probabilityOfWinning";
+  }
   let aStar = cyRef.current?.elements()?.aStar({
     root: `#${data.firstNode}`,
     goal: `#${data.lastNode}`,
+    weight: function (edge: any) {
+      let difficulty = edge.data(difficultyModel);
+      if (data.challengeModel !== "eloRating") return 1 / difficulty;
+      return difficulty;
+    },
   });
-
   let nodePaths = aStar.path;
   let col = cyRef.current.collection();
 

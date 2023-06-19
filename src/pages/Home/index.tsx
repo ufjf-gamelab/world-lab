@@ -291,16 +291,16 @@ const Home = () => {
       if (failedToFinish) return false;
       if (ele.isEdge()) return true;
       if (ele.id() === simulatorData.lastNode) return true;
-      if (ele.id() === simulatorData.lastNode) return true;
 
       let initialNodeData = ele.data();
       let edge = eles[i + 1];
 
       let duelValues;
       let wonDuel;
-  
+
       let nodeOperatingData = {
         edge,
+        simulatorData,
         playerRating,
         estimatingPlayerRating,
         changePlayerRating,
