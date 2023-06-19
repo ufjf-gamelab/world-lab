@@ -280,7 +280,7 @@ const Home = () => {
     let playerPath = playerModelPath(simulatorData);
     let playerStress = 50;
     let failedToFinish = false;
-    let playerRating = actualPlayerRating;
+    let playerRating = simulatorData.playerRating;
     let estimatingPlayerRating = estimatedPlayerRating;
 
     let simulatingPath = playerPath.filter(function (
@@ -332,17 +332,14 @@ const Home = () => {
           .data({ churnCount: initialNodeData.churnCount + 1 });
       } else {
         if (simulatorData.progressionModel === "incremental") {
-          setActualPlayerRating(
-            (prevActualPlayerRating) => prevActualPlayerRating + 100
-          );
 
           estimatingPlayerRating += 100;
+          playerRating += 100;
         }
       }
 
       return true;
     });
-    console.log("estimatingPlayerRating", estimatingPlayerRating);
     simulatingPath?.addClass("highlighted");
     cyRef?.current?.$(`#${simulatorData.firstNode}`).addClass("firstNodeLabel");
     cyRef?.current?.$(`#${simulatorData.lastNode}`).addClass("lastNodeLabel");
