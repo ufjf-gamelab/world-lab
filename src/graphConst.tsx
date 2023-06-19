@@ -98,7 +98,7 @@ export const graphConsts: Record<string, any> = {
 
         // Define o valor mínimo como 1 e o máximo como 10
         let width = Math.max(1, Math.min(10, ratio * 10));
-     
+
         return width;
       },
     },
@@ -144,7 +144,7 @@ export const graphConsts: Record<string, any> = {
         let failures = ele.data("failures");
 
         let hue;
-        if (failures === 0 ) {
+        if (failures === 0) {
           hue = 0;
         } else {
           hue = ((failures - min) * (100 - 0)) / (max - min) + 1;
@@ -222,7 +222,7 @@ export const graphConsts: Record<string, any> = {
       "text-valign": "center",
       "text-halign": "center",
       color: "#000000",
-      "background-color" : "#B9B9B9",
+      "background-color": "#B9B9B9",
       "font-family": "Poppins",
       label: function (node: any) {
         const nodeAtribute = node.data();
@@ -232,6 +232,23 @@ export const graphConsts: Record<string, any> = {
     },
   },
 
+  firstNodeLabel: {
+    selector: "node.firstNodeLabel",
+    style: {
+      width: 40,
+      height: 40,
+      shape: "round-rectangle",
+    },
+  },
+
+  lastNodeLabel: {
+    selector: "node.lastNodeLabel",
+    style: {
+      width: 40,
+      height: 40,
+      shape: "round-hexagon",
+    },
+  },
   hideNodeLabel: {
     selector: "node.hideNodeLabel",
     style: {
@@ -301,10 +318,9 @@ export const graphConsts: Record<string, any> = {
               100 - (edgeAtribute.failures / edgeAtribute.attempts) * 100
             ) + " %"
           );
-
-          else if( edgeAtribute.failures === 0 && edgeAtribute.attempts > 0){
-            return 100 + "%"
-          }
+        else if (edgeAtribute.failures === 0 && edgeAtribute.attempts > 0) {
+          return 100 + "%";
+        }
 
         return 0;
       },
@@ -495,7 +511,9 @@ export const graphConsts: Record<string, any> = {
 
   classStylesNames: [
     "highlighted",
-    "firstNode",
+    "nodeLabel",
+    // "firstNodeLabel",
+    // "lastNodeLabel",
     "edgeLabel",
     "hideNodeLabel",
     "edgeAttemptsColor",

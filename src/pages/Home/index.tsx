@@ -344,6 +344,8 @@ const Home = () => {
     });
     console.log("estimatingPlayerRating", estimatingPlayerRating);
     simulatingPath?.addClass("highlighted");
+    cyRef?.current?.$(`#${simulatorData.firstNode}`).addClass("firstNodeLabel");
+    cyRef?.current?.$(`#${simulatorData.lastNode}`).addClass("lastNodeLabel");
   };
 
   const resetStyles = () => {

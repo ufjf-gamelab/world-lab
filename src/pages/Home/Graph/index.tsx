@@ -37,6 +37,8 @@ const Graph = ({
         layout={layout}
         stylesheet={[
           graphConsts.nodeLabel,
+          graphConsts.firstNodeLabel,
+          graphConsts.lastNodeLabel,
           graphConsts.hideNodeLabel,
           graphConsts.edgeFailuresAttemptsLabel,
           graphConsts.edgeAttemptsFailuresLabel,
