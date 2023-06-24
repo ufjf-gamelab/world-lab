@@ -48,6 +48,8 @@ const Graph = ({
           graphConsts.edgeFailuresWidth,
           graphConsts.nodeChurnCountColor,
           graphConsts.nodeChurnCountLabel,
+          graphConsts.nodeBoredomChurnCountColor,
+          graphConsts.nodeBoredomChurnCountLabel,
           graphConsts.edgeFailuresAttemptsWidth,
           graphConsts.edgeFailuresColor,
           graphConsts.edgeFailuresAttemptsColor,

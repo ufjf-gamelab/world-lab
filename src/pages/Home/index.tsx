@@ -56,6 +56,7 @@ const Home = () => {
     const data = {
       label: nodeData.label,
       churnCount: nodeData.churnCount,
+      boredomChurnCount: nodeData.boredomChurnCount,
     };
 
     cyRef.current?.$(`#${primaryNode?.id}`).data(data);
@@ -120,6 +121,7 @@ const Home = () => {
           id: newId.toString(),
           label: `Node${newId}`,
           churnCount: 0,
+          boredomChurnCount: 0,
         },
         position: { x: clickedPosition.x, y: clickedPosition.y },
       });
@@ -294,6 +296,7 @@ const Home = () => {
 
       let initialNodeData = ele.data();
       let edge = eles[i + 1];
+      let edgeFailures = edge.data().failures;
 
       let duelValues;
       let wonDuel;
@@ -324,15 +327,28 @@ const Home = () => {
         );
       }
 
+   
       if (!wonDuel) {
         failedToFinish = true;
 
-        cyRef.current
-          ?.$(`#${initialNodeData.id}`)
-          .data({ churnCount: initialNodeData.churnCount + 1 });
+        if (simulatorData.churnModel !== "flow" || playerStress > 60) {
+          console.log("entrei")
+          cyRef.current
+            ?.$(`#${initialNodeData.id}`)
+            .data({ churnCount: initialNodeData.churnCount + 1 });
+        cyRef.current?.$(`#${edge.id()}`).data({ failures: edgeFailures + 1 });
+
+        }
+        if (simulatorData.churnModel === "flow" || playerStress < 60) {
+          cyRef.current
+            ?.$(`#${initialNodeData.id}`)
+            .data({ boredomChurnCount: initialNodeData.boredomChurnCount + 1 });
+          
+
+        }
+
       } else {
         if (simulatorData.progressionModel === "incremental") {
-
           estimatingPlayerRating += 100;
           playerRating += 100;
         }
@@ -357,6 +373,7 @@ const Home = () => {
     cyRef.current?.elements().data("attempts", 0);
     cyRef.current?.elements().data("failures", 0);
     cyRef.current?.elements().data("churnCount", 0);
+    cyRef.current?.elements().data("boredomChurnCount", 0);
   };
 
   const flowModel = (duel: number[], data: any) => {
@@ -365,13 +382,12 @@ const Home = () => {
     let edgeFailures = edgeData.failures;
     let playerHability;
     let currentStress = data.playerStress;
-    let botHability;
+    let botHability =  duel[1];
 
     let differenceInDamage;
 
     while (currentStress > 40 && currentStress < 60) {
       playerHability = Math.floor(Math.random() * duel[0]);
-      botHability = Math.floor(Math.random() * duel[1]);
       cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
       differenceInDamage = playerHability - botHability;
 
@@ -385,7 +401,6 @@ const Home = () => {
       }
       cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
     }
-
     return [false, currentStress];
   };
 
@@ -471,8 +486,7 @@ const Home = () => {
 
   return (
     <div className="wrapper">
-      <h3> Player Skill ${actualPlayerRating}</h3>
-      <h3> Player Rating estimation ${estimatedPlayerRating}</h3>
+
       <Toolbar
         onSubmitCustomSearch={onSubmitCustomSearch}
         handleFileSelected={handleFileSelected}

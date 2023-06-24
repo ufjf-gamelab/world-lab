@@ -27,7 +27,7 @@ const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
       data.changePlayerRating(newRating);
       return true;
     }
-    cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
+    
     let newRating = updateEstimatedPlayerRating(data, false);
     data.changePlayerRating(newRating);
   }
@@ -52,7 +52,7 @@ const oneHundredChoicesModel = (duel: number[], data: any, cyRef: any) => {
     }
     let newRating = updateEstimatedPlayerRating(data, false);
     data.changePlayerRating(newRating);
-    cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
+    
   }
   return false;
 };
@@ -63,7 +63,7 @@ const tenChoicesModel = (duel: number[], data: any, cyRef: any) => {
   let playerHability;
   let botHability;
   botHability = duel[1];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 2; i++) {
     playerHability = Math.floor(Math.random() * 100);
 
     cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
@@ -72,9 +72,9 @@ const tenChoicesModel = (duel: number[], data: any, cyRef: any) => {
       data.changePlayerRating(newRating);
       return true;
     }
-    cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
     let newRating = updateEstimatedPlayerRating(data, false);
     data.changePlayerRating(newRating);
+
   }
 
   return false;

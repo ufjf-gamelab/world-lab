@@ -191,6 +191,45 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
+
+  nodeBoredomChurnCountLabel: {
+    selector: "node.nodeBoredomChurnCountLabel",
+    style: {
+      label: function (ele: any) {
+        const nodeAtribute = ele.data();
+        // let labelFinal = "";
+        // Object.keys(nodeAtribute).map(function (key, index) {
+        //   return (labelFinal += ` ${key} = ${nodeAtribute[key]} `);
+        // });
+        // return labelFinal;
+        return nodeAtribute.boredomChurnCount;
+      },
+    },
+  },
+
+  nodeBoredomChurnCountColor: {
+    selector: "node.nodeBoredomChurnCountColor",
+    style: {
+      backgroundColor: function (ele: any) {
+        let core = ele.cy();
+        let max = core.elements().max(function (ele: any) {
+          return ele.data("boredomChurnCount");
+        }).value;
+        let min = core.elements().min(function (ele: any) {
+          return ele.data("boredomChurnCount");
+        }).value;
+        let churnCount = ele.data("boredomChurnCount");
+        let hue;
+        if (churnCount === 0) {
+          hue = 0;
+        } else {
+          hue = ((churnCount - min) * (100 - 0)) / (max - min) + 1;
+        }
+
+        return ["hsl(", 100 - hue, ",100%,50%)"].join("");
+      },
+    },
+  },
   edgeFailuresAttemptsColor: {
     selector: "edge.edgeFailuresAttemptsColor",
     style: {
@@ -339,6 +378,29 @@ export const graphConsts: Record<string, any> = {
       },
     },
   },
+
+  classStylesNames: [
+    "highlighted",
+    "nodeLabel",
+    // "firstNodeLabel",
+    // "lastNodeLabel",
+    "edgeLabel",
+    "hideNodeLabel",
+    "edgeAttemptsColor",
+    "edgeAttemptsWidth",
+    "edgeFailuresWidth",
+    "edgeAttemptsFailuresLabel",
+    "edgeFailuresColor",
+    "edgeEloLabel",
+    "edgeprobabilityOfWinningLabel",
+    "edgeFailuresAttemptsWidth",
+    "edgeFailuresAttemptsColor",
+    "edgeFailuresAttemptsLabel",
+    "nodeChurnCountColor",
+    "nodeChurnCountLabel",
+    "nodeBoredomChurnCountLabel",
+    "nodeBoredomChurnCountColor",
+  ],
 
   defaultGraph: [
     {
@@ -507,25 +569,5 @@ export const graphConsts: Record<string, any> = {
         difficulty: 1600,
       },
     },
-  ],
-
-  classStylesNames: [
-    "highlighted",
-    "nodeLabel",
-    // "firstNodeLabel",
-    // "lastNodeLabel",
-    "edgeLabel",
-    "hideNodeLabel",
-    "edgeAttemptsColor",
-    "edgeAttemptsWidth",
-    "edgeFailuresWidth",
-    "edgeFailuresColor",
-    "edgeEloLabel",
-    "edgeDifficultyOfWinning",
-    "edgeFailuresAttemptsWidth",
-    "edgeFailuresAttemptsColor",
-    "edgeFailuresAttemptsLabel",
-    "nodeChurnCountColor",
-    "nodeChurnCountLabel",
   ],
 };

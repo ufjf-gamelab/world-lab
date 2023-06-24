@@ -2,6 +2,7 @@ export type INode  = {
     id: string;
     label: string;
     churnCount: number;
+    boredomChurnCount: number;
     newAttributes?: {
       attribute: string;
       value: string;
@@ -44,6 +45,7 @@ export type INode  = {
   export type FormValues  = {
     label: string;
     churnCount: number;
+    boredomChurnCount: number;
     attempts?: number;
     difficulty?: number;
     failures?: string;

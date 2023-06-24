@@ -182,8 +182,12 @@ const Information = ({
                   <h3>{primaryNode?.label}</h3>
                 </div>
                 <div className="elementInfo">
-                  <h4>Churn count:</h4>
+                  <h4>Stress Churn count:</h4>
                   <h3>{primaryNode?.churnCount}</h3>
+                </div>
+                <div className="elementInfo">
+                  <h4> Boredom Churn count:</h4>
+                  <h3>{primaryNode?.boredomChurnCount}</h3>
                 </div>
 
                 {/* {primaryNode?.newAttributes?.map((a: IAttribute) => {
@@ -466,6 +470,40 @@ const Information = ({
                     onChange={(e) =>
                       changeStyleSettings(
                         "nodeChurnCountLabel",
+                        e.target.checked
+                      )
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <div className="switchContainer">
+                <h4 className="switchTitle">Node Boredom Churn Color</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings(
+                        "nodeBoredomChurnCountColor",
+                        e.target.checked
+                      )
+                    }
+                  />
+                  <span className="slider round"></span>
+                </label>
+              </div>
+            </li>
+            <li>
+              <div className="switchContainer">
+                <h4 className="switchTitle">Node Boredom Churn Count</h4>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      changeStyleSettings(
+                        "nodeBoredomChurnCountLabel",
                         e.target.checked
                       )
                     }
