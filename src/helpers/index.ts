@@ -32,7 +32,7 @@ export const updateEstimatedPlayerRating = (data: any, playerWon: boolean) => {
   } else {
     Ra = Ra + 32 * (0 - playerWinProbability);
   }
-  data.estimatingPlayerRating = Ra;
+
   return Ra;
 };
 
