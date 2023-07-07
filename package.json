@@ -23,7 +23,7 @@
     "web-vitals": "^2.1.4"
   },
   
-  "homepage": "https://ufjf-gamelab.github.io/world-lab",
+  "homepage": "https://ufjf-gamelab.github.io/world-lab/",
 
   "scripts": {
     "start": "react-scripts start",
