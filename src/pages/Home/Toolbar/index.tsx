@@ -147,8 +147,8 @@ const Toolbar = ({
               <h3>Churn model </h3>
               <select {...registerValue("churnModel")}>
                 <option value="oneChance">1 Chance</option>
-                <option value="tenChoices">10 Chances</option>
-                <option value="oneHundredChoices">100 Chances</option>
+                <option value="twoChoices">2 Chances</option>
+                <option value="threeChoices">3 Chances</option>
                 <option value="flow">flow</option>
               </select>
             </div>
