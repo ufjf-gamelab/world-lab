@@ -27,14 +27,19 @@ const Graph = ({
   layout,
   cyRef,
 }: GraphProps) => {
-
+  let elementsNew;
+  if(elements){
+    elementsNew = elements
+  }
+  else{
+    elementsNew = graphConsts.defaultGraph
+  }
   
   return (
     <>
       <CytoscapeComponent
-        elements={[...elements]}
+        elements={ [...elementsNew]}
         style={containerStyle}
-        layout={layout}
         stylesheet={[
           graphConsts.nodeLabel,
           graphConsts.firstNodeLabel,
@@ -57,16 +62,15 @@ const Graph = ({
           graphConsts.customPath,
           graphConsts.edgeLabel,
           graphConsts.edgeEloLabel,
-          graphConsts.edgeprobabilityOfWinningLabel
+          graphConsts.edgeprobabilityOfWinningLabel,
         ]}
         cy={(cy) => {
           if (!cyRef) return "";
           cyRef.current = cy;
 
-    
           cy.pon("dragfree").then(function (event) {
             const newNodes = cyRef.current?.elements().jsons();
-      
+
             setElements(newNodes);
           });
           cy.on("tap", "node", function (event) {

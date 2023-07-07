@@ -513,7 +513,7 @@ const Home = () => {
       }
 
       cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
-      edgeFailures+=1;
+      edgeFailures += 1;
       rating = updateEstimatedPlayerRating(data, false);
     }
     data.estimatingPlayerRating = rating;
@@ -602,6 +602,7 @@ const Home = () => {
     };
 
     reader.readAsText(file!);
+    resetStyles();
   };
 
   return (
@@ -620,6 +621,7 @@ const Home = () => {
               <img src={loadingIcon} alt="loading" />
             </div>
           )}
+
           <Graph
             elements={elements}
             setSelectedEdge={setSelectedEdge}
@@ -632,6 +634,7 @@ const Home = () => {
             cyRef={cyRef}
             layout={layout}
           />
+
           <div className="graphActions">
             <MdZoomIn
               fontSize={30}
