@@ -517,20 +517,7 @@ const Information = ({
             </li>
           </ul>
         </div>
-        <div className="layoutContainer">
-          <select
-            placeholder="Nome do layout do grafo aqui"
-            onChange={(e) => {
-              setLayout({ ...layouts[e.target.value] });
-            }}
-          >
-            {Object.keys(layouts).map((l) => (
-              <option key={l} value={l}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+     
       </div>
     </>
   );

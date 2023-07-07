@@ -30,6 +30,7 @@ const oneChanceModel = (duel: number[], data: any, cyRef: any) => {
     
     let newRating = updateEstimatedPlayerRating(data, false);
     data.estimatingPlayerRating = newRating;
+    edgeAttempts+=1;
   }
   return false;
 };
@@ -52,7 +53,7 @@ const threeChoicesModel = (duel: number[], data: any, cyRef: any) => {
     }
     let newRating = updateEstimatedPlayerRating(data, false);
     data.changePlayerRating(newRating);
-    
+    edgeAttempts+=1;
   }
   return false;
 };
@@ -75,7 +76,7 @@ const twoChoicesModel = (duel: number[], data: any, cyRef: any) => {
     }
     let newRating = updateEstimatedPlayerRating(data, false);
     data.estimatingPlayerRating = newRating;
-
+    edgeAttempts+=1;
   }
 
   return false;

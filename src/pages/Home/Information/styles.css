@@ -64,9 +64,9 @@
   font-size: 20px;
 }
 
-
 .containerRelationship,
-.containerCreateNode, .nodeEdgeInformation {
+.containerCreateNode,
+.nodeEdgeInformation {
   display: flex;
   flex-direction: column;
   border-radius: 17px;
@@ -175,23 +175,13 @@
 .InformationContainer {
   overflow: auto;
 }
-.settingsContainer,
-.layoutContainer {
+.settingsContainer {
   background: #ffffff;
   box-shadow: 0px 10px 30px rgba(122, 137, 254, 0.04);
   border-radius: 10px;
   padding: 10px 6px;
 }
 
-.layoutContainer select {
-  width: 100%;
-  background: #f2f2f2;
-  border-radius: 7px;
-}
-
-.layoutContainer select > option:hover {
-  background-color: #1f075f !important;
-}
 .editButton {
   display: flex;
   align-items: center;

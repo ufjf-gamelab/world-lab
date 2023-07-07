@@ -138,7 +138,7 @@ const Home = () => {
   }, [clickedPosition]);
   useEffect(() => {
     if (!isSimulationFinished) return;
-    
+
     if (simulatorData?.difficultyModel === "adaptive") {
       if (simulatorData.churnModel === "flow") {
         adaptiveDifficultyFlowChanges(simulatorData.challengeModel);
@@ -350,11 +350,17 @@ const Home = () => {
     }
 
     let newDifficulty =
-    (targetNodeAverageDifficulty + sourceNodeAverageDifficulty ) / 2;
-    
-    console.log("🚀 ~ file: index.tsx:353 ~ adaptiveDifficultyFlowChanges ~ newDifficulty:", newDifficulty)
-    
-    console.log("🚀 ~ file: index.tsx:353 ~ adaptiveDifficultyFlowChanges ~ newDifficulty:", (newDifficulty + estimatedPlayerRating  ) / 2)
+      (targetNodeAverageDifficulty + sourceNodeAverageDifficulty) / 2;
+
+    console.log(
+      "🚀 ~ file: index.tsx:353 ~ adaptiveDifficultyFlowChanges ~ newDifficulty:",
+      newDifficulty
+    );
+
+    console.log(
+      "🚀 ~ file: index.tsx:353 ~ adaptiveDifficultyFlowChanges ~ newDifficulty:",
+      (newDifficulty + estimatedPlayerRating) / 2
+    );
   };
   const createRelationship = () => {
     if (relationship.length === 2 && isCreatingRelationship) {
@@ -493,6 +499,7 @@ const Home = () => {
       data.estimatingPlayerRating = rating;
       playerHability = Math.floor(Math.random() * 100);
       cyRef.current?.$(`#${edgeData.id}`).data({ attempts: edgeAttempts + 1 });
+      edgeAttempts += 1;
       differenceInDamage = playerHability - botHability;
 
       currentStress = changePlayerEmotionState(
@@ -506,6 +513,7 @@ const Home = () => {
       }
 
       cyRef.current?.$(`#${edgeData.id}`).data({ failures: edgeFailures + 1 });
+      edgeFailures+=1;
       rating = updateEstimatedPlayerRating(data, false);
     }
     data.estimatingPlayerRating = rating;
