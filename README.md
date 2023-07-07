@@ -13,6 +13,7 @@ Technologies Used:
 
 - React: JavaScript library for building user interfaces.
 - TypeScript: Superset of JavaScript that adds static typing to the code.
+- Cytoscape.js: JavaScript library for graph visualization and manipulation.
 - Other dependencies and tools used.
 
 How to Run the Project:
