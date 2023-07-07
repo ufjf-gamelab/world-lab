@@ -11,6 +11,7 @@
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "@types/react-icons": "^3.0.0",
+    "caniuse-lite": "^1.0.30001513",
     "cytoscape": "3.22",
     "react": "^18.2.0",
     "react-cytoscapejs": "^1.2.1",
@@ -22,9 +23,7 @@
     "typescript": "^4.7.4",
     "web-vitals": "^2.1.4"
   },
-  
   "homepage": "https://ufjf-gamelab.github.io/world-lab/",
-
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
