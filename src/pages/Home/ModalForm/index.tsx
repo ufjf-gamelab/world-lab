@@ -4,6 +4,7 @@ import "./styles.css";
 interface FormValues {
   label: string;
   churnCount: number;
+  boredomChurnCount: number;
   attempts?: number;
   difficulty?: number;
   failures?: number;
@@ -73,6 +74,8 @@ const ModalForm = ({
       contentLabel="modal-form"
     >
       {primaryNode && (
+        <>
+        <h3>Edit node</h3>
         <form onSubmit={handleSubmit(onSubmitNode)}>
           <div className="formContainer">
             <div className="formInput">
@@ -93,6 +96,17 @@ const ModalForm = ({
                   required: true,
                 })}
                 defaultValue={primaryNode?.churnCount}
+              />
+            </div>
+            <div className="formInput">
+              <h3>Churn Count</h3>
+              <input
+                type="number"
+                {...register("boredomChurnCount", {
+                  valueAsNumber: true,
+                  required: true,
+                })}
+                defaultValue={primaryNode?.boredomChurnCount}
               />
             </div>
 
@@ -122,23 +136,17 @@ const ModalForm = ({
               );
             })}
 
-            <button
-              type="button"
-              onClick={() =>
-                append({
-                  attribute: "",
-                  value: "",
-                })
-              }
-            >
-              APPEND
-            </button>
-            <input type="submit" />
+      
+            <input type="submit" value="Save"/>
+      
           </div>
         </form>
+        </>
       )}
 
       {selectedEdge && (
+        <>
+           <h3>Edit edge</h3>
         <form onSubmit={handleSubmitEdge(onSubmitEdge)}>
           <div className="formContainer">
             <div className="formInput">
@@ -223,20 +231,11 @@ const ModalForm = ({
               );
             })}
 
-            <button
-              type="button"
-              onClick={() =>
-                append({
-                  attribute: "",
-                  value: "",
-                })
-              }
-            >
-              APPEND
-            </button>
+      
             <input type="submit" />
           </div>
         </form>
+        </>
       )}
     </Modal>
   );

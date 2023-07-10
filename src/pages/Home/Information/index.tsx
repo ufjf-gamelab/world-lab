@@ -189,15 +189,6 @@ const Information = ({
                   <h4> Boredom Churn count:</h4>
                   <h3>{primaryNode?.boredomChurnCount}</h3>
                 </div>
-
-                {/* {primaryNode?.newAttributes?.map((a: IAttribute) => {
-                  return (
-                    <div className="elementInfo">
-                      <h4>{a.attribute}:</h4>
-                      <h3>{a.value}</h3>
-                    </div>
-                  );
-                })} */}
               </>
             )}
 
