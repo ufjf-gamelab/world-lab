@@ -352,15 +352,10 @@ const Home = () => {
     let newDifficulty =
       (targetNodeAverageDifficulty + sourceNodeAverageDifficulty) / 2;
 
-    console.log(
-      "🚀 ~ file: index.tsx:353 ~ adaptiveDifficultyFlowChanges ~ newDifficulty:",
-      newDifficulty
-    );
-
-    console.log(
-      "🚀 ~ file: index.tsx:353 ~ adaptiveDifficultyFlowChanges ~ newDifficulty:",
-      (newDifficulty + estimatedPlayerRating) / 2
-    );
+    newDifficulty = (newDifficulty + estimatedPlayerRating) / 2;
+    cyRef.current
+      ?.$(`#${aresta?.ele.id()}`)
+      .data({ difficultyParameter: newDifficulty });
   };
   const createRelationship = () => {
     if (relationship.length === 2 && isCreatingRelationship) {
@@ -464,7 +459,6 @@ const Home = () => {
     });
 
     setEstimatedPlayerRating(estimatingPlayerRating);
-    simulatingPath?.addClass("highlighted");
     cyRef?.current?.$(`#${simulatorData.firstNode}`).addClass("firstNodeLabel");
     cyRef?.current?.$(`#${simulatorData.lastNode}`).addClass("lastNodeLabel");
     setIsSimulationFinished(true);
