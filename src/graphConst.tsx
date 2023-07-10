@@ -425,7 +425,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: false,
-      classes: "edgeProbabilityOfWinning edgeAttemptsLabel",
+      classes: " ",
     },
     {
       data: {
@@ -448,7 +448,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: false,
-      classes: "edgeProbabilityOfWinning edgeAttemptsLabel",
+      classes: " ",
     },
     {
       data: {
@@ -467,7 +467,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: false,
-      classes: "edgeProbabilityOfWinning firstNodeLabel edgeAttemptsLabel",
+      classes: " firstNodeLabel ",
     },
     {
       data: {
@@ -487,7 +487,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: false,
-      classes: "edgeProbabilityOfWinning edgeAttemptsLabel",
+      classes: " ",
     },
     {
       data: {
@@ -506,7 +506,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: false,
-      classes: "edgeProbabilityOfWinning lastNodeLabel edgeAttemptsLabel",
+      classes: " lastNodeLabel ",
     },
     {
       data: {
@@ -525,7 +525,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: false,
-      classes: "edgeAttemptsLabel",
+      classes: "",
     },
     {
       data: {
@@ -544,7 +544,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: false,
-      classes: "edgeAttemptsLabel",
+      classes: "",
     },
     {
       data: {
@@ -568,7 +568,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: true,
-      classes: "edgeProbabilityOfWinning edgeAttemptsLabel",
+      classes: " ",
     },
     {
       data: {
@@ -593,7 +593,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: true,
-      classes: "edgeProbabilityOfWinning edgeAttemptsLabel",
+      classes: " ",
     },
     {
       data: {
@@ -616,7 +616,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: true,
-      classes: "edgeAttemptsLabel",
+      classes: "",
     },
     {
       data: {
@@ -641,7 +641,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: true,
-      classes: "edgeProbabilityOfWinning edgeAttemptsLabel",
+      classes: " ",
     },
     {
       data: {
@@ -664,7 +664,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: true,
-      classes: "edgeAttemptsLabel",
+      classes: "",
     },
     {
       data: {
@@ -688,7 +688,7 @@ export const graphConsts: Record<string, any> = {
       locked: false,
       grabbable: true,
       pannable: true,
-      classes: "edgeAttemptsLabel",
+      classes: "",
     },
   ],
 };
