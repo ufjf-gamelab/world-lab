@@ -503,9 +503,9 @@ const Information = ({
                 </label>
               </div>
             </li>
-            <li>
+            {/* <li>
               <button className="resetStylesButton">Reset styles</button>
-            </li>
+            </li> */}
           </ul>
         </div>
      
