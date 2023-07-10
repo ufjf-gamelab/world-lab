@@ -1,0 +1,56 @@
+.formContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 700px;
+    gap: 20px;
+  }
+  
+  .formInput {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .formInput h3 {
+    font-family: "Poppins";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+  }
+  
+  button[type="submit"],
+  input[type="submit"] {
+    background: #1f075f;
+    color: white;
+    border: none;
+    font-size: 16px;
+  }
+  
+  button[type="submit"]:hover,
+  input[type="submit"]:hover {
+    opacity: 0.8;
+  }
+  
+  button[type="submit"]:active,
+  input[type="button"]:active,
+  input[type="submit"]:active {
+    transition: 0.3s all;
+    transform: translateY(3px);
+    border: 1px solid transparent;
+    opacity: 0.8;
+  }
+  
+  input:disabled {
+    opacity: 0.4;
+  }
+  
+  input[type="button"]:hover {
+    transition: 0.3s all;
+  }
+  
+  button[type="submit"],
+  input[type="button"],
+  input[type="submit"] {
+    -webkit-appearance: none;
+  }
+  

@@ -75,166 +75,181 @@ const ModalForm = ({
     >
       {primaryNode && (
         <>
-        <h3>Edit node</h3>
-        <form onSubmit={handleSubmit(onSubmitNode)}>
-          <div className="formContainer">
-            <div className="formInput">
-              <h3>Label</h3>
-              <input
-                {...register("label")}
-                defaultValue={primaryNode?.label}
-                placeholder="Label"
-              />
-            </div>
-
-            <div className="formInput">
-              <h3>Churn Count</h3>
-              <input
-                type="number"
-                {...register("churnCount", {
-                  valueAsNumber: true,
-                  required: true,
-                })}
-                defaultValue={primaryNode?.churnCount}
-              />
-            </div>
-            <div className="formInput">
-              <h3>Churn Count</h3>
-              <input
-                type="number"
-                {...register("boredomChurnCount", {
-                  valueAsNumber: true,
-                  required: true,
-                })}
-                defaultValue={primaryNode?.boredomChurnCount}
-              />
-            </div>
-
-            {fields.map((field, index) => {
-              return (
-                <div key={field.id}>
-                  <section className={"section"} key={field.id}>
-                    <input
-                      placeholder="attribute"
-                      {...register(
-                        `newAttributes.${index}.attribute` as const,
-                        {}
-                      )}
-                      defaultValue={field.attribute}
-                    />
-                    <input
-                      placeholder="name"
-                      {...register(`newAttributes.${index}.value` as const, {})}
-                      defaultValue={field.value}
-                    />
-
-                    <button type="button" onClick={() => remove(index)}>
-                      DELETE
-                    </button>
-                  </section>
-                </div>
-              );
-            })}
-
-      
-            <input type="submit" value="Save"/>
-      
+          <div className="titleContainerModal">
+            <h3 className="title">Edit node </h3>
+            <span onClick={closeModal} className="closeButton">X</span>
           </div>
-        </form>
+
+          <form onSubmit={handleSubmit(onSubmitNode)}>
+            <div className="formContainerModal">
+              <div className="formInput">
+                <h3>Label</h3>
+                <input
+                  {...register("label")}
+                  defaultValue={primaryNode?.label}
+                  placeholder="Label"
+                />
+              </div>
+
+              <div className="formInput">
+                <h3>Churn Count</h3>
+                <input
+                  type="number"
+                  {...register("churnCount", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
+                  defaultValue={primaryNode?.churnCount}
+                />
+              </div>
+              <div className="formInput">
+                <h3>Churn Count</h3>
+                <input
+                  type="number"
+                  {...register("boredomChurnCount", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
+                  defaultValue={primaryNode?.boredomChurnCount}
+                />
+              </div>
+
+              {fields.map((field, index) => {
+                return (
+                  <div key={field.id}>
+                    <section className={"section"} key={field.id}>
+                      <input
+                        placeholder="attribute"
+                        {...register(
+                          `newAttributes.${index}.attribute` as const,
+                          {}
+                        )}
+                        defaultValue={field.attribute}
+                      />
+                      <input
+                        placeholder="name"
+                        {...register(
+                          `newAttributes.${index}.value` as const,
+                          {}
+                        )}
+                        defaultValue={field.value}
+                      />
+
+                      <button type="button" onClick={() => remove(index)}>
+                        DELETE
+                      </button>
+                    </section>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="buttonContainerModal">
+              <button onClick={closeModal} className="cancelButton">
+                Cancel
+              </button>
+              <input  className="submitModalButton" type="submit" value="Save" />
+            </div>
+          </form>
         </>
       )}
 
       {selectedEdge && (
         <>
-           <h3>Edit edge</h3>
-        <form onSubmit={handleSubmitEdge(onSubmitEdge)}>
-          <div className="formContainer">
-            <div className="formInput">
-              <h3>Label</h3>
-              <input
-                {...registerEdge("label")}
-                defaultValue={selectedEdge?.label}
-                placeholder="Label"
-              />
-            </div>
-
-            <div className="formInput">
-              <h3>Difficulty</h3>
-              <input
-                type="number"
-                {...registerEdge("difficulty", {
-                  valueAsNumber: true,
-                  required: true,
-                })}
-                defaultValue={selectedEdge?.difficulty}
-              />
-            </div>
-            <div className="formInput">
-              <h3>attempts</h3>
-              <input
-                type="number"
-                {...registerEdge("attempts", {
-                  valueAsNumber: true,
-                  required: true,
-                })}
-                defaultValue={selectedEdge?.attempts}
-              />
-            </div>
-            <div className="formInput">
-              <h3>failures</h3>
-              <input
-                type="number"
-                {...registerEdge("failures", {
-                  valueAsNumber: true,
-                  required: true,
-                })}
-                defaultValue={selectedEdge?.failures}
-              />
-            </div>
-            <div className="formInput">
-              <h3>Probability of winning</h3>
-              <input
-                type="number"
-                {...registerEdge("probabilityOfWinning", {
-                  valueAsNumber: true,
-                  required: true,
-                })}
-                defaultValue={selectedEdge?.probabilityOfWinning}
-              />
-            </div>
-            {fields.map((field, index) => {
-              return (
-                <div key={field.id}>
-                  <section className={"section"} key={field.id}>
-                    <input
-                      placeholder="attribute"
-                      {...registerEdge(
-                        `newAttributes.${index}.attribute` as const,
-                        {}
-                      )}
-                      defaultValue={field.attribute}
-                    />
-                    <input
-                      placeholder="name"
-                      {...registerEdge(
-                        `newAttributes.${index}.value` as const,
-                        {}
-                      )}
-                      defaultValue={field.value}
-                    />
-
-                    <button type="button" onClick={() => remove(index)}>
-                      DELETE
-                    </button>
-                  </section>
-                </div>
-              );
-            })}
-
-      
-            <input type="submit" />
+          <div className="titleContainerModal">
+            <h3 className="title">Edit edge </h3>
+            <span  className="closeButton" onClick={closeModal}>X</span>
           </div>
-        </form>
+          <form onSubmit={handleSubmitEdge(onSubmitEdge)}>
+            <div className="formContainerModal">
+              <div className="formInput">
+                <h3>Label</h3>
+                <input
+                  {...registerEdge("label")}
+                  defaultValue={selectedEdge?.label}
+                  placeholder="Label"
+                />
+              </div>
+
+              <div className="formInput">
+                <h3>Difficulty</h3>
+                <input
+                  type="number"
+                  {...registerEdge("difficulty", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
+                  defaultValue={selectedEdge?.difficulty}
+                />
+              </div>
+              <div className="formInput">
+                <h3>attempts</h3>
+                <input
+                  type="number"
+                  {...registerEdge("attempts", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
+                  defaultValue={selectedEdge?.attempts}
+                />
+              </div>
+              <div className="formInput">
+                <h3>failures</h3>
+                <input
+                  type="number"
+                  {...registerEdge("failures", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
+                  defaultValue={selectedEdge?.failures}
+                />
+              </div>
+              <div className="formInput">
+                <h3>Probability of winning</h3>
+                <input
+                  type="number"
+                  {...registerEdge("probabilityOfWinning", {
+                    valueAsNumber: true,
+                    required: true,
+                  })}
+                  defaultValue={selectedEdge?.probabilityOfWinning}
+                />
+              </div>
+              {fields.map((field, index) => {
+                return (
+                  <div key={field.id}>
+                    <section className={"section"} key={field.id}>
+                      <input
+                        placeholder="attribute"
+                        {...registerEdge(
+                          `newAttributes.${index}.attribute` as const,
+                          {}
+                        )}
+                        defaultValue={field.attribute}
+                      />
+                      <input
+                        placeholder="name"
+                        {...registerEdge(
+                          `newAttributes.${index}.value` as const,
+                          {}
+                        )}
+                        defaultValue={field.value}
+                      />
+
+                      <button type="button" onClick={() => remove(index)}>
+                        DELETE
+                      </button>
+                    </section>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="buttonContainerModal">
+              <button onClick={closeModal} className="cancelButton">
+                Cancel
+              </button>
+              <input  className="submitModalButton" type="submit" value="Save" />
+            </div>
+          </form>
         </>
       )}
     </Modal>
