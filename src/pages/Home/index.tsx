@@ -83,7 +83,8 @@ const Home = () => {
     data: ICustomSearchFormValues
   ) => {
     setisLoadingData(true);
-
+    changeStyleSettings("firstNodeLabel", false);
+    changeStyleSettings("lastNodeLabel", false);
     setActualPlayerRating(data.playerRating);
     setSimulatorData(data);
   };
