@@ -105,8 +105,8 @@ const Toolbar = ({
             <div className="formInput">
               <h3>Player model </h3>
               <select {...registerValue("playerModel")}>
-                <option value="explorer">Explorer</option>
-                <option value="story">Story</option>
+                <option value="story">Achiever</option>
+                <option value="explorer">Completionist</option>
        
               </select>
             </div>
@@ -114,7 +114,7 @@ const Toolbar = ({
             <div className="formInput">
               <h3>Challenge model </h3>
               <select {...registerValue("challengeModel")}>
-                <option value="randomProbability">Random</option>
+                <option value="randomProbability">Fixed odds</option>
                 <option value="eloRating">Elo rating</option>
               </select>
             </div>
@@ -132,7 +132,7 @@ const Toolbar = ({
             <div className="formInput ">
               <h3>Difficulty model </h3>
               <select {...registerValue("difficultyModel")}>
-                <option value="linear">Linear</option>
+                <option value="linear">Non adaptive</option>
                 <option value="adaptive">Adaptive</option>
               </select>
             </div>
@@ -140,7 +140,7 @@ const Toolbar = ({
               <h3>Progression model </h3>
               <select {...registerValue("progressionModel")}>
                 <option value="noProgression">No progression</option>
-                <option value="incremental">Incremental</option>
+                <option value="incremental">Progression</option>
               </select>
             </div>
             <div className="formInput">
