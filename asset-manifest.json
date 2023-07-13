@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/world-lab/static/css/main.9d3bcbbc.css",
-    "main.js": "/world-lab/static/js/main.fc074f1e.js",
+    "main.js": "/world-lab/static/js/main.2dcce903.js",
     "static/js/787.253bfacb.chunk.js": "/world-lab/static/js/787.253bfacb.chunk.js",
     "static/media/logo.svg": "/world-lab/static/media/logo.6829b0df6e199f8d7370c2e019b55f73.svg",
     "static/media/loadingIcon.svg": "/world-lab/static/media/loadingIcon.29035b0c7b0ebfafa42dd4086e1f8894.svg",
     "index.html": "/world-lab/index.html",
     "main.9d3bcbbc.css.map": "/world-lab/static/css/main.9d3bcbbc.css.map",
-    "main.fc074f1e.js.map": "/world-lab/static/js/main.fc074f1e.js.map",
+    "main.2dcce903.js.map": "/world-lab/static/js/main.2dcce903.js.map",
     "787.253bfacb.chunk.js.map": "/world-lab/static/js/787.253bfacb.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9d3bcbbc.css",
-    "static/js/main.fc074f1e.js"
+    "static/js/main.2dcce903.js"
   ]
 }
