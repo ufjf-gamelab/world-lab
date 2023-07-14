@@ -467,6 +467,8 @@ const Home = () => {
 
   const resetStyles = () => {
     cyRef.current?.elements().removeClass(graphConsts.classStylesNames);
+    const newNodes = cyRef.current?.elements().jsons();
+    setElements(newNodes);
   };
 
   const resetNodesAtributes = () => {
@@ -478,6 +480,8 @@ const Home = () => {
     cyRef.current?.elements().data("failures", 0);
     cyRef.current?.elements().data("churnCount", 0);
     cyRef.current?.elements().data("boredomChurnCount", 0);
+    const newNodes = cyRef.current?.elements().jsons();
+    setElements(newNodes);
   };
 
   const flowModel = (duel: number[], data: any) => {
